@@ -76,8 +76,15 @@ export class CollisionWorld {
   }
 
   _nearbyEdges(minX, minZ, maxX, maxZ) {
-    const out = new Set();
-    this._cellsFor(minX, minZ, maxX, maxZ, (k) => { const l = this.grid.get(k); if (l) for (const e of l) out.add(e); });
+    // v0.54.4: same edges in the same order as before, de-duplicated with a stamp array instead of a Set
+    const out = [], cs = this.cs, n = this.edges.length;
+    if (!this._stamp || this._stamp.length < n) { this._stamp = new Uint32Array(n + 4096); this._mk = 0; }
+    if (++this._mk >= 0xffffffff) { this._stamp.fill(0); this._mk = 1; }
+    const st = this._stamp, mk = this._mk;
+    for (let gx = Math.floor(minX / cs); gx <= Math.floor(maxX / cs); gx++)
+      for (let gz = Math.floor(minZ / cs); gz <= Math.floor(maxZ / cs); gz++) {
+        const l = this.grid.get(this._key(gx, gz)); if (l) for (let i = 0; i < l.length; i++) { const e = l[i]; if (st[e] !== mk) { st[e] = mk; out.push(e); } }
+      }
     return out;
   }
 

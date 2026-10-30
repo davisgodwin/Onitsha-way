@@ -56,7 +56,10 @@ export function buildDistrictDressing(g) {
   // everything is grouped per 400 m cell (trees and palms instanced), so only the cells near you are drawn (update() below)
   const cells = new Map(), cellOf = (x, z) => Math.floor(x / 400) + ',' + Math.floor(z / 400);
   const cellList = (list) => { const m = new Map(); for (const t of list) { const k = cellOf(t.x, t.z); if (!m.has(k)) m.set(k, []); m.get(k).push(t); } return m; };
-  const addCell = (k, mesh) => { if (!cells.has(k)) { const [cx, cz] = k.split(',').map(Number); cells.set(k, { x: (cx + 0.5) * 400, z: (cz + 0.5) * 400, meshes: [] }); } cells.get(k).meshes.push(mesh); };
+  const cellAt = (k) => { if (!cells.has(k)) { const [cx, cz] = k.split(',').map(Number); cells.set(k, { x: (cx + 0.5) * 400, z: (cz + 0.5) * 400, meshes: [], lazy: [], built: [] }); } return cells.get(k); };
+  const addCell = (k, mesh) => { cellAt(k).meshes.push(mesh); };
+  // v0.54.4: drains, kerbs, lawns and lamp posts are made only for the cells near you (made again if you come back)
+  const lazy = (k, make) => { cellAt(k).lazy.push(make); };
   if (trees.length) {
     const trunk = new THREE.CylinderGeometry(0.14, 0.22, 2.4, 6); trunk.translate(0, 1.2, 0);
     const crown = new THREE.IcosahedronGeometry(2.6, 0); const cp = crown.attributes.position, tr = mulberry32(48); for (let i = 0; i < cp.count; i++) { const k = 0.82 + tr() * 0.32; cp.setXYZ(i, cp.getX(i) * k, cp.getY(i) * k * 0.66, cp.getZ(i) * k); } crown.computeVertexNormals(); crown.translate(0, 3.7, 0);
@@ -81,7 +84,7 @@ export function buildDistrictDressing(g) {
   // strips along the road edge, cut into short pieces; a piece that would lie on another road (junctions) is left out
   const strips = (list, width, y, hex, name, { piece = 2.5, alt = null, h = 0.02 } = {}) => {
     if (!list.length) return; const c1 = new THREE.Color(hex), c2 = alt ? new THREE.Color(alt) : c1;
-    for (const [ck, cl] of cellList(list)) { const parts = [];
+    for (const [ck, cl] of cellList(list)) lazy(ck, () => { const parts = [];
     for (const d of cl) {
       const n = Math.max(1, Math.floor(d.len / piece)), len = d.len / n, ux = Math.sin(d.yaw), uz = Math.cos(d.yaw);
       for (let i = 0; i < n; i++) {
@@ -91,18 +94,24 @@ export function buildDistrictDressing(g) {
         for (let k = 0; k < a.length; k += 3) cc.toArray(a, k); gg.setAttribute('color', new THREE.BufferAttribute(a, 3)); gg.deleteAttribute('uv'); gg.translate(0, y, 0); gg.rotateY(d.yaw); gg.translate(cx, 0, cz); parts.push(gg);
       }
     }
-    if (!parts.length) continue; const m = new THREE.Mesh(mergeGeometries(parts), mat(name)); m.name = name; m.receiveShadow = true; group.add(m); addCell(ck, m); }
+    if (!parts.length) return null; const m = new THREE.Mesh(mergeGeometries(parts), mat(name)); m.name = name; m.receiveShadow = true; for (const p of parts) p.dispose(); return m; });
   };
   const mats = new Map(), mat = (name) => { if (!mats.has(name)) mats.set(name, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9 })); return mats.get(name); };
   strips(drains, 0.6, 0.02, '#2c2a26', 'drains', { piece: 4 });
   strips(kerbs, 0.18, 0.197, '#f2f2ee', 'kerbs', { piece: 1.2, alt: '#1b1b1b' }); // on top of the kerb (0.19 m)
   strips(lawns, 1.6, 0.035, '#5d8f3a', 'gra-lawns', { piece: 4 });
-  if (lamps.length) { const lm = new THREE.MeshStandardMaterial({ color: '#3a3f44', roughness: 0.6, metalness: 0.4 }); for (const [ck, cl] of cellList(lamps)) { const parts = []; for (const l of cl) { const pole = new THREE.CylinderGeometry(0.07, 0.09, 7, 8); pole.translate(l.x, 3.5, l.z); parts.push(pole.toNonIndexed()); const head = new THREE.BoxGeometry(0.35, 0.14, 1.1); head.translate(0, 0, 0.45); head.rotateY(l.yaw); head.translate(l.x, 7, l.z); parts.push(head.toNonIndexed()); col.addCircle(l.x, l.z, 0.12); } for (const p of parts) p.deleteAttribute('uv'); const m = new THREE.Mesh(mergeGeometries(parts), lm); m.name = 'gra-lamps'; group.add(m); addCell(ck, m); } }
+  if (lamps.length) { const lm = new THREE.MeshStandardMaterial({ color: '#3a3f44', roughness: 0.6, metalness: 0.4 }); for (const [ck, cl] of cellList(lamps)) { for (const l of cl) col.addCircle(l.x, l.z, 0.12); lazy(ck, () => { const parts = []; for (const l of cl) { const pole = new THREE.CylinderGeometry(0.07, 0.09, 7, 8); pole.translate(l.x, 3.5, l.z); parts.push(pole.toNonIndexed()); const head = new THREE.BoxGeometry(0.35, 0.14, 1.1); head.translate(0, 0, 0.45); head.rotateY(l.yaw); head.translate(l.x, 7, l.z); parts.push(head.toNonIndexed()); } for (const p of parts) p.deleteAttribute('uv'); const m = new THREE.Mesh(mergeGeometries(parts), lm); m.name = 'gra-lamps'; return m; }); } }
   if (cars.length) {
     const byModel = new Map(), cm2 = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.35, metalness: 0.35 }); for (const c of cars) { const key = c.model + '|' + cellOf(c.x, c.z); if (!byModel.has(key)) byModel.set(key, []); byModel.get(key).push(c); }
     for (const [key, list] of byModel) { const [model, ck] = key.split('|'), T = g.traffic?.typeInfo(model); if (!T) continue; const geo = T.geo(); const im = new THREE.InstancedMesh(geo, cm2, list.length); list.forEach((c, i) => { q.setFromAxisAngle(up, c.yaw); m4.compose(P.set(c.x, 0, c.z), q, S.set(1, 1, 1)); im.setMatrixAt(i, m4); im.setColorAt(i, C.set(c.paint)); }); im.castShadow = true; im.name = 'gra-cars'; im.computeBoundingSphere(); group.add(im); addCell(ck, im); }
   }
-  group.userData.update = (f, range = 650) => { for (const c of cells.values()) { const v = Math.hypot(c.x - f.x, c.z - f.z) < range; for (const m of c.meshes) m.visible = v; } };
+  let lazyLeft = 0; for (const c of cells.values()) lazyLeft += c.lazy.length;
+  group.userData.update = (f, range = 650) => { let made = 0;
+    for (const c of cells.values()) { const d = Math.hypot(c.x - f.x, c.z - f.z), v = d < range; for (const m of c.meshes) m.visible = v;
+      if (v && c.lazy.length && !c.built.length && made < 1) { made++; for (const make of c.lazy) { const m = make(); if (m) { group.add(m); c.built.push(m); } } }
+      else if (!v && c.built.length && d > range + 300) { for (const m of c.built) { group.remove(m); m.geometry.dispose(); } c.built = []; } }
+  };
+  group.userData.buildAll = () => { for (const c of cells.values()) if (c.lazy.length && !c.built.length) for (const make of c.lazy) { const m = make(); if (m) { group.add(m); c.built.push(m); } } };
   group.userData.stats = { ...stats, trees: trees.length, palms: palms.length, drains: drains.length, kerbs: kerbs.length, lawns: lawns.length, lamps: lamps.length, cars: cars.length };
   return group;
 }

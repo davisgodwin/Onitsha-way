@@ -2,21 +2,23 @@ import { segDistSq, pointInPolygon } from '../core/utils.js';
 
 // Check complete edges, including a road crossing the middle of a footprint.
 export function roadConflict(map, pts, margin = 1.2, skip = null) {
-  const xs=pts.map(p=>p[0]),zs=pts.map(p=>p[1]);
-  const minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs),seen=new Set();
-  const reach=30+margin,c=map.cell;
-  for(let gx=Math.floor((minX-reach)/c);gx<=Math.floor((maxX+reach)/c);gx++)for(let gz=Math.floor((minZ-reach)/c);gz<=Math.floor((maxZ+reach)/c);gz++)for(const si of map.grid.get(gx+','+gz)??[]){
-    if(seen.has(si))continue;seen.add(si);const s=map.segments[si],r=s.road;
-    if(r.elevated||['footway','path','steps','pedestrian'].includes(r.type)||skip?.(r))continue;
+  let minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity;for(const p of pts){if(p[0]<minX)minX=p[0];if(p[0]>maxX)maxX=p[0];if(p[1]<minZ)minZ=p[1];if(p[1]>maxZ)maxZ=p[1];}
+  // v0.54.4: same checks in the same order, without string keys, a Set or argument spreading (load-time hot spot)
+  const reach=30+margin,c=map.cell,num=!!map.cellSegs,mark=num?map.segMark():0,stamp=num?map._stamp:null,seen=num?null:new Set(),n=pts.length;
+  for(let gx=Math.floor((minX-reach)/c);gx<=Math.floor((maxX+reach)/c);gx++)for(let gz=Math.floor((minZ-reach)/c);gz<=Math.floor((maxZ+reach)/c);gz++)for(const si of (num?map.cellSegs(gx,gz):map.grid.get(gx+','+gz)??[])){
+    if(num){if(stamp[si]===mark)continue;stamp[si]=mark;}else{if(seen.has(si))continue;seen.add(si);}
+    const s=map.segments[si],r=s.road,t=r.type;
+    if(r.elevated||t==='footway'||t==='path'||t==='steps'||t==='pedestrian'||skip?.(r))continue;
     const lim=r.width/2+margin;
     if(Math.max(s.ax,s.bx)<minX-lim||Math.min(s.ax,s.bx)>maxX+lim||Math.max(s.az,s.bz)<minZ-lim||Math.min(s.az,s.bz)>maxZ+lim)continue;
     if(pointInPolygon(s.ax,s.az,pts)||pointInPolygon(s.bx,s.bz,pts))return s;
-    for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];
-      if(crosses(a,b,[s.ax,s.az],[s.bx,s.bz])||Math.min(segDistSq(...a,s.ax,s.az,s.bx,s.bz),segDistSq(...b,s.ax,s.az,s.bx,s.bz),segDistSq(s.ax,s.az,...a,...b),segDistSq(s.bx,s.bz,...a,...b))<lim*lim)return s;
+    const L2=lim*lim;
+    for(let i=0;i<n;i++){const a=pts[i],b=pts[(i+1)%n];
+      if(crosses(a[0],a[1],b[0],b[1],s.ax,s.az,s.bx,s.bz)||Math.min(segDistSq(a[0],a[1],s.ax,s.az,s.bx,s.bz),segDistSq(b[0],b[1],s.ax,s.az,s.bx,s.bz),segDistSq(s.ax,s.az,a[0],a[1],b[0],b[1]),segDistSq(s.bx,s.bz,a[0],a[1],b[0],b[1]))<L2)return s;
     }
   }return null;
 }
-function crosses(a,b,c,d){const cross=(p,q,r)=>(q[0]-p[0])*(r[1]-p[1])-(q[1]-p[1])*(r[0]-p[0]);return cross(a,b,c)*cross(a,b,d)<0&&cross(c,d,a)*cross(c,d,b)<0;}
+function crosses(ax,az,bx,bz,cx,cz,dx,dz){const cr=(px,pz,qx,qz,rx,rz)=>(qx-px)*(rz-pz)-(qz-pz)*(rx-px);return cr(ax,az,bx,bz,cx,cz)*cr(ax,az,bx,bz,dx,dz)<0&&cr(cx,cz,dx,dz,ax,az)*cr(cx,cz,dx,dz,bx,bz)<0;}
 export function rect(x,z,w,d,yaw=0){const c=Math.cos(yaw),s=Math.sin(yaw);return [[-w/2,-d/2],[w/2,-d/2],[w/2,d/2],[-w/2,d/2]].map(([a,b])=>[x+c*a+s*b,z-s*a+c*b]);}
 export function streetReference(map,x,z){let best=null;const seen=new Set(),c=map.cell;for(let gx=Math.floor((x-90)/c);gx<=Math.floor((x+90)/c);gx++)for(let gz=Math.floor((z-90)/c);gz<=Math.floor((z+90)/c);gz++)for(const si of map.grid.get(gx+','+gz)??[]){if(seen.has(si))continue;seen.add(si);const {ax,az,bx,bz,road}=map.segments[si];if(road.elevated||['footway','path','steps','pedestrian','construction'].includes(road.type))continue;const dx=bx-ax,dz=bz-az,t=Math.max(0,Math.min(1,((x-ax)*dx+(z-az)*dz)/(dx*dx+dz*dz||1))),px=ax+t*dx,pz=az+t*dz,dist=Math.hypot(px-x,pz-z);if(dist<85&&(!best||dist<best.dist))best={dist,px,pz,road,yaw:Math.atan2(px-x,pz-z)};}return best;}
 export function streetFacing(map,x,z){return streetReference(map,x,z)?.yaw??0;}

@@ -1,4 +1,6 @@
-## Current update — v0.54.0: ready to launch on Render (game + accounts + multiplayer + Paystack test), playable on Vercel offline
+## Current update — v0.54.4: faster loading (about 18% on the test machine), same city layout, street dressing built near you. See [UPDATE_54_4.md](UPDATE_54_4.md).
+
+## Previous update — v0.54.0: ready to launch on Render (game + accounts + multiplayer + Paystack test), playable on Vercel offline
 
 `npm start` runs the public server: one port serves the game, the API and the live connection, behind the host's HTTPS. `render.yaml` sets up Render with a persistent disk. On a host without the server (Vercel) the game offers "Play now" and saves in the browser. See [LAUNCH_RENDER.md](LAUNCH_RENDER.md).
 

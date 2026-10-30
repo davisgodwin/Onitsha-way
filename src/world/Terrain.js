@@ -28,7 +28,9 @@ export function buildTerrain(map, tex, collision) {
   const bank = new GeoBuilder();
   // v0.49: a bounding box per water polygon first (exact same answer, far fewer full polygon tests)
   const wbox = map.water.map((w) => { let a = Infinity, b = -Infinity, c = Infinity, d = -Infinity; for (const [x, z] of w.outer) { a = Math.min(a, x); b = Math.max(b, x); c = Math.min(c, z); d = Math.max(d, z); } return { w, a, b, c, d }; });
-  const waterTest = (x, z) => wbox.some((q) => x >= q.a && x <= q.b && z >= q.c && z <= q.d && inPoly(x, z, q.w.outer));
+  // v0.54.4: plus edges bucketed by z band, so a point only tests the edges its ray can cross (identical parity answer)
+  for (const q of wbox) q.band = bandIndex(q.w.outer, q.c, q.d);
+  const waterTest = (x, z) => wbox.some((q) => x >= q.a && x <= q.b && z >= q.c && z <= q.d && inPolyBanded(x, z, q.w.outer, q.band));
   const col = new THREE.Color('#ffffff');
   const skirt = (ring) => {
     for (let i = 0; i < ring.length; i++) {
@@ -68,6 +70,24 @@ export function buildTerrain(map, tex, collision) {
 }
 
 function rectAround(b, pad) { return [[b.minX - pad, b.minZ - pad], [b.maxX + pad, b.minZ - pad], [b.maxX + pad, b.maxZ + pad], [b.minX - pad, b.maxZ + pad]]; }
+const BAND = 16;
+export function bandIndex(pts, minZ, maxZ) {
+  const n = Math.max(1, Math.ceil((maxZ - minZ) / BAND) + 1), bands = Array.from({ length: n }, () => []);
+  for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+    const lo = Math.min(pts[i][1], pts[j][1]), hi = Math.max(pts[i][1], pts[j][1]);
+    for (let b = Math.max(0, Math.floor((lo - minZ) / BAND)); b <= Math.min(n - 1, Math.floor((hi - minZ) / BAND)); b++) bands[b].push(i, j);
+  }
+  return { minZ, bands };
+}
+export function inPolyBanded(x, z, pts, band) {
+  const list = band.bands[Math.floor((z - band.minZ) / BAND)]; if (!list) return false;
+  let c = false;
+  for (let k = 0; k < list.length; k += 2) {
+    const pi = pts[list[k]], pj = pts[list[k + 1]], xi = pi[0], zi = pi[1], xj = pj[0], zj = pj[1];
+    if ((zi > z) !== (zj > z) && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) c = !c;
+  }
+  return c;
+}
 export function inPoly(x, z, pts) {
   let c = false;
   for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {

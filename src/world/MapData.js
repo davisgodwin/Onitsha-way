@@ -5,6 +5,7 @@ import { segDistSq } from '../core/utils.js';
  * Read-only access to the extracted OSM map (public/data/onitsha_core.json).
  * Also exposes the road graph that NPC navigation and transport routes will use later.
  */
+const EMPTY = Object.freeze([]);
 export class MapData {
   static async load(url, onProgress) {
     const res = await fetch(url);
@@ -63,10 +64,18 @@ export class MapData {
    * Is (x, z) on the carriageway of any road (within its half-width + margin)? Footpaths and raised decks
    * (you can stand under a flyover) don't count. Used to keep stalls, kiosks and parked cars off roads.
    */
+  /** v0.54.4: the segment list of one grid cell, looked up by number (no string building in hot loops). Same arrays as `grid`. */
+  cellSegs(gx, gz) {
+    const n = (gx + 32768) * 65536 + (gz + 32768), m = (this._gridN ??= new Map());
+    let l = m.get(n); if (l === undefined) { l = this.grid.get(gx + ',' + gz) ?? EMPTY; m.set(n, l); } return l;
+  }
+  /** v0.54.4: a fresh "seen" mark for de-duplicating segments without allocating a Set. */
+  segMark() { if (!this._stamp || this._stamp.length < this.segments.length) { this._stamp = new Uint32Array(this.segments.length + 64); this._mk = 0; } if (++this._mk >= 0xffffffff) { this._stamp.fill(0); this._mk = 1; } return this._mk; }
+
   onCarriageway(x, z, margin = 0, skip = null) {
     const c = this.cell, gx = Math.floor(x / c), gz = Math.floor(z / c);
     for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) {
-      for (const si of this.grid.get(gx + dx + ',' + (gz + dz)) ?? []) {
+      for (const si of this.cellSegs(gx + dx, gz + dz)) {
         const s = this.segments[si], r = s.road;
         if (r.elevated || r.type === 'footway' || r.type === 'path' || r.type === 'steps' || r.type === 'pedestrian' || skip?.(r)) continue;
         const lim = r.width / 2 + margin;
