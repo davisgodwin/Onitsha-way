@@ -11,6 +11,7 @@ import { planBuilding, drawParts, oldCoreWeight, drawUnfinished } from './buildi
 import { LEGACY_HOMES } from '../data/legacyHomes.js';
 import { drawCompound } from './buildings/CompoundKit.js';
 import { polysOverlap } from './ExpansionSites.js';
+import { freeAfterUpload } from '../render/CanvasRelease.js';
 const pointIn = (x, z, pts) => { let c = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, zi] = pts[i], [xj, zj] = pts[j]; if ((zi > z) !== (zj > z) && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) c = !c; } return c; };
 
 /*
@@ -444,7 +445,7 @@ export class City {
     };
     add(walls, this.materials.wall); add(roofs, this.materials.roof); add(signs, this.materials.sign, false);
     add(boards, this.materials.board); add(misc, this.materials.misc); add(glow, this.glowMaterial ??= this.makeGlowMaterial(), false);
-    ch.group = g;
+    ch.group = g; freeAfterUpload(g); // v0.54.3: drop the vertex copies once on the graphics card (phones)
     this.group.add(g);
   }
 

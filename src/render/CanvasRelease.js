@@ -57,3 +57,29 @@ export function installCanvasRelease(renderer) {
 export const IS_IOS = typeof navigator !== 'undefined' && (/iP(hone|od|ad)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
 /** a phone (iPhone or Android): touch screen and a small screen */
 export const IS_PHONE = typeof navigator !== 'undefined' && (IS_IOS || /Android.+Mobile|Mobile Safari/.test(navigator.userAgent) || (navigator.maxTouchPoints > 0 && Math.min(screen.width, screen.height) < 600));
+
+/**
+ * v0.54.3: three.js keeps a copy of every shape (vertex arrays) in memory after sending it to the graphics card. On
+ * iPhones the card shares the same memory, so the city was stored twice and Safari reloaded the page. For the big
+ * static parts of the city (market districts, street dressing, city blocks, roads, props, bus stops…), the copy is
+ * dropped once it is on the card. Only shapes used by one object are dropped (shared models are kept, because other
+ * code builds new things from them), and instanced meshes are left alone.
+ */
+let hooked = false;
+export function freeAfterUpload(root) {
+  if (!root) return 0;
+  if (!hooked) { hooked = true; const proto = THREE.BufferAttribute.prototype, orig = proto.onUploadCallback;
+    proto.onUploadCallback = function () { orig?.call(this); if (this.__freeAfterUpload) this.array = null; };
+    const desc = Object.getOwnPropertyDescriptor(proto, 'needsUpdate');
+    if (desc?.set) Object.defineProperty(proto, 'needsUpdate', { configurable: true, get: desc.get, set(v) { if (this.array === null) return; desc.set.call(this, v); } });
+  }
+  const uses = new Map(); root.traverse((o) => { if (o.geometry) uses.set(o.geometry, (uses.get(o.geometry) ?? 0) + 1); });
+  let n = 0;
+  root.traverse((o) => {
+    const g = o.geometry; if (!g || o.isInstancedMesh || o.isSkinnedMesh || o.userData?.sharedModel || o.userData?.dynamic || uses.get(g) !== 1 || g.userData?.keepArrays) return;
+    if (!g.boundingSphere) g.computeBoundingSphere(); if (!g.boundingBox) g.computeBoundingBox(); // needed later for culling; computed now while the arrays are here
+    for (const a of Object.values(g.attributes)) if (!a.isInterleavedBufferAttribute && a.usage === THREE.StaticDrawUsage && a.version === 0) { a.__freeAfterUpload = true; n++; }
+    if (g.index && g.index.version === 0) g.index.__freeAfterUpload = true;
+  });
+  return n;
+}

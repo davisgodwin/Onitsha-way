@@ -7,7 +7,7 @@ export class Renderer {
     this.container = container;
     this.qualityName = qualityName;
     const q = CONFIG.quality[qualityName];
-    this.renderer = new THREE.WebGLRenderer({ antialias: qualityName !== 'low', powerPreference: 'high-performance' });
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' }); // v0.54.3: smooth edges on phones too
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.0;
@@ -87,7 +87,9 @@ export class Renderer {
     if (a.t < 2) return;
     const fps = a.n / a.t; a.t = 0; a.n = 0;
     let s = this.resScale;
-    if (fps < 34) s = Math.max(0.55, s - 0.1); else if (fps > 56) s = Math.min(1, s + 0.05);
+    // v0.54.3: never below one pixel per screen point (it used to drop to about half, which made phones blurry)
+    const floor = Math.min(1, Math.max(0.55, 1 / this.basePixelRatio));
+    if (fps < 34) s = Math.max(floor, s - 0.1); else if (fps > 56) s = Math.min(1, s + 0.05);
     if (Math.abs(s - this.resScale) > 1e-3) { this.resScale = s; this.renderer.setPixelRatio(this.basePixelRatio * s); }
     this.lastFps = fps;
   }

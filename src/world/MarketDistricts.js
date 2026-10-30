@@ -7,18 +7,19 @@ const GOODS=['TOMATOES & PEPPERS','RICE • BEANS • GARRI','ANKARA & TEXTILES'
 const PAINT=['#aa5a3c','#b49550','#436d67','#526680','#79556e','#4c7159','#b5a488','#995a43'];
 const STORES=['MAMA NGOZI • FOODSTUFFS','CHUKWU & SONS • WHOLESALE','AMAKA TEXTILES','OBINNA FOOTWEAR','CHIDI COMMUNICATIONS','IFEANYI GENERAL STORES','ADA FRUIT & PROVISIONS','EMEKA MOTOR PARTS'];
 function labelAtlas(){const cv=document.createElement('canvas');cv.width=1024;cv.height=1024;const g=cv.getContext('2d');for(let i=0;i<8;i++){g.fillStyle=['#e4d6b5','#2b4d42','#273f58','#7d3c2c'][i%4];g.fillRect(0,i*128,1024,128);g.fillStyle=i%4===0?'#433d32':'#fff2d6';g.font='bold 42px Arial';g.textAlign='center';g.textBaseline='middle';g.fillText(STORES[i],512,i*128+41,970);g.font='28px Arial';g.fillText(GOODS[i]+'  •  RETAIL & WHOLESALE',512,i*128+92,970);}const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;return t;}
+const NOOP=new Proxy({},{get:()=>()=>0}); // v0.54.3: a builder that draws nothing (walls only at load)
 export class MarketDistricts{
  constructor(world){this.world=world;this.group=new THREE.Group();this.group.name='MarketDistricts';this.stalls=[];this.districts=[];this.time=0;
  const tex=labelAtlas();this.signMaterial=new THREE.MeshStandardMaterial({map:tex,roughness:.8,emissiveMap:tex,emissive:'#ffffff',emissiveIntensity:.18});
  for(const lm of world.landmarks.list.filter(l=>['market','bridgehead'].includes(l.kind)))this.build(lm);
  this.stats={districts:this.districts.length,stalls:this.stalls.length};console.info('[Market districts]',this.stats);
  }
- build(lm){const {map,collision,terrain}=this.world,rng=mulberry32(hashString(lm.id)+220),root=new THREE.Group();root.name='market:'+lm.id;this.group.add(root);const batches=new Map(),spots=[];const batch=(x,z)=>{const key=Math.floor(x/50)+','+Math.floor(z/50);if(!batches.has(key))batches.set(key,{gb:new GeoBuilder(),sg:new GeoBuilder(),x:(Math.floor(x/50)+.5)*50,z:(Math.floor(z/50)+.5)*50});return batches.get(key);};
+ build(lm){const {map,collision,terrain}=this.world,rng=mulberry32(hashString(lm.id)+220),root=new THREE.Group();root.name='market:'+lm.id;this.group.add(root);const batches=new Map(),spots=[];const batch=(x,z)=>{const key=Math.floor(x/50)+','+Math.floor(z/50);if(!batches.has(key))batches.set(key,{stalls:[],x:(Math.floor(x/50)+.5)*50,z:(Math.floor(z/50)+.5)*50});return batches.get(key);};
  const add=(x,z,yaw)=>{
   if(spots.length>=(lm.id==='ochanja'?180:420)||Math.hypot(x-lm.x,z-lm.z)>lm.radius||spots.some(s=>Math.hypot(s.x-x,s.z-z)<5.1)||this.stalls.some(s=>Math.hypot(s.x-x,s.z-z)<5.1))return;
   const pts=[[-2.7,-2.65],[2.7,-2.65],[2.7,3.45],[-2.7,3.45]].map(([a,b])=>[x+Math.cos(yaw)*a+Math.sin(yaw)*b,z-Math.sin(yaw)*a+Math.cos(yaw)*b]);if(roadConflict(map,pts,1.4))return;
   for(let a=-2.7;a<=2.75;a+=1.125)for(let b=-2.65;b<=3.5;b+=1.2){const px=x+Math.cos(yaw)*a+Math.sin(yaw)*b,pz=z-Math.sin(yaw)*a+Math.cos(yaw)*b;if(!collision.isFree(px,pz,.35)||terrain.isWater(px,pz))return;}
-  const s={id:`market22:${lm.id}:${spots.length}`,x,z,yaw,variant:spots.length%8,lm:lm.id};spots.push(s);this.stalls.push(s);const {gb,sg}=batch(x,z);this.stall(gb,sg,s,rng);
+  const s={id:`market22:${lm.id}:${spots.length}`,x,z,yaw,variant:spots.length%8,lm:lm.id};spots.push(s);this.stalls.push(s);const b=batch(x,z);b.stalls.push(s);this.stall(NOOP,NOOP,s,rng); // v0.54.3: walls now, shapes later (when you get near)
  };
  // Parallel shop rows follow each street. The front faces the carriageway;
  // a generous pedestrian strip stays between the canopy and the road.
@@ -27,11 +28,11 @@ export class MarketDistricts{
  for(let t=3;t<L-1;t+=5.4)for(const side of[-1,1]){const off=r.width/2+5.6,x=a[0]+ux*t-uz*side*off,z=a[1]+uz*t+ux*side*off;add(x,z,Math.atan2(uz*side,-ux*side));}
  }}
  // No scattered infill sheds: every shop opens onto an actual street.
- const material=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.86,side:THREE.DoubleSide});const chunks=[];for(const b of batches.values()){const chunk=new THREE.Group();chunk.name='market-chunk';const mesh=new THREE.Mesh(b.gb.build(),material);mesh.castShadow=true;mesh.receiveShadow=true;chunk.add(mesh,new THREE.Mesh(b.sg.build(),this.signMaterial));root.add(chunk);chunks.push({root:chunk,x:b.x,z:b.z});}
+ const material=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.86,side:THREE.DoubleSide});this.material??=material;const chunks=[];for(const b of batches.values()){const chunk=new THREE.Group();chunk.name='market-chunk';root.add(chunk);chunks.push({root:chunk,x:b.x,z:b.z,stalls:b.stalls,built:false});}
  this.districts.push({id:lm.id,root,stalls:spots,x:lm.x,z:lm.z,radius:lm.radius,chunks});lm.marketStalls=spots.length;
  }
  stall(gb,sg,s,rng){const {x,z,yaw,variant:k}=s,c=Math.cos(yaw),sn=Math.sin(yaw),P=(a,b)=>[x+c*a+sn*b,z-sn*a+c*b],C=color=>new THREE.Color(color),col=PAINT[k];
- const box=(w,h,d,a,y,b,color,solid=false)=>{const[px,pz]=P(a,b);gb.box(px,pz,y-h/2,y+h/2,w,d,yaw,C(color));if(solid)this.world.collision.addPolygon(rect(px,pz,w,d,yaw),h);};
+ const box=(w,h,d,a,y,b,color,solid=false)=>{const[px,pz]=P(a,b);gb.box(px,pz,y-h/2,y+h/2,w,d,yaw,C(color));if(solid&&!this.noCollide)this.world.collision.addPolygon(rect(px,pz,w,d,yaw),h);};
  // Attached, deep-shaded lock-up shop bays with concrete trading floors above.
  // This replaces the repeating freestanding garden-shed silhouette of v22.
  const block=Math.abs(Math.floor((x*c-z*sn)/23)),upper=s.lm==='main-market'?1+block%3:(s.lm==='ochanja'?1:block%2+1),wall=['#d9cdb1','#c2cec7','#bfc9c5','#d0bbac'][block%4];
@@ -75,5 +76,11 @@ export class MarketDistricts{
  /** v0.49: stall keepers for the stalls of a market opened later (stalls from index `from`). */
  registerFrom(npcs,from){const all=this.stalls;this.stalls=all.slice(from);try{this.register(npcs,from);}finally{this.stalls=all;}}
  register(npcs,offset=0){for(let i=0;i<this.stalls.length;i++){const s=this.stalls[i],female=i%2===0;const r=npcs.addAnchored({id:s.id,kind:'stall',role:'trader',name:female?['Mama Ngozi','Madam Amaka','Mama Chioma','Ada Textiles'][i%4]:['Oga Emeka','Chidi Stores','Oga Obinna','Uche & Sons'][i%4],...s.vendor,schedule:[7,19.5],gender:female?'female':'male'});r.goods=GOODS[s.variant].toLowerCase();}}
- update(dt,focus){this.time+=dt;const range={low:125,medium:185,high:260}[this.world.quality]??185;for(const d of this.districts){d.root.visible=Math.hypot(focus.x-d.x,focus.z-d.z)<d.radius+range;for(const ch of d.chunks)ch.root.visible=Math.hypot(focus.x-ch.x,focus.z-ch.z)<range+36;}}
+ update(dt,focus){this.time+=dt;const range={low:125,medium:185,high:260}[this.world.quality]??185;let builds=0;for(const d of this.districts){d.root.visible=Math.hypot(focus.x-d.x,focus.z-d.z)<d.radius+range;for(const ch of d.chunks){const dist=Math.hypot(focus.x-ch.x,focus.z-ch.z);ch.root.visible=dist<range+36;
+  // v0.54.3: a block of stalls gets its shapes when you come near (two blocks a frame) and lets them go far away
+  if(ch.root.visible&&!ch.built&&builds<2){this.buildChunk(ch);builds++;}else if(ch.built&&dist>range+160)this.dropChunk(ch);}}}
+ buildChunk(ch){const gb=new GeoBuilder(),sg=new GeoBuilder();this.noCollide=true;try{for(const s of ch.stalls)this.stall(gb,sg,s,null);}finally{this.noCollide=false;}const mesh=new THREE.Mesh(gb.build(),this.material);mesh.castShadow=true;mesh.receiveShadow=true;ch.root.add(mesh,new THREE.Mesh(sg.build(),this.signMaterial));ch.built=true;}
+ dropChunk(ch){for(const m of [...ch.root.children]){m.geometry?.dispose();ch.root.remove(m);}ch.built=false;}
+ /** build every block now (tests and screenshots) */
+ buildAll(){for(const d of this.districts)for(const ch of d.chunks)if(!ch.built)this.buildChunk(ch);}
 }

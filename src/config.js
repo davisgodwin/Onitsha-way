@@ -37,7 +37,7 @@ export const CONFIG = {
   },
 
   quality: {
-    low:    { pixelRatio: 1,   shadows: false, shadowMap: 1024, drawDistance: 260, props: 0.5 },
+    low:    { pixelRatio: 1.75, shadows: false, shadowMap: 1024, drawDistance: 260, props: 0.5 }, // v0.54.3: sharp on phones (was 1: blurry)
     medium: { pixelRatio: 1.5, shadows: true,  shadowMap: 2048, drawDistance: 420, props: 1 },
     high:   { pixelRatio: 2,   shadows: true,  shadowMap: 4096, drawDistance: 700, props: 1 },
   },

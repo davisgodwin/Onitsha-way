@@ -24,7 +24,7 @@ import { ClubInterior } from '../life/ClubInterior.js';
 import { TVShows } from '../life/TVShows.js';
 import { FuelStationLife } from '../life/FuelStationLife.js';
 import { CompoundGates } from '../world/CompoundGates.js';
-import { installCanvasRelease, IS_PHONE } from '../render/CanvasRelease.js';
+import { installCanvasRelease, IS_PHONE, freeAfterUpload } from '../render/CanvasRelease.js';
 import { RetailShop } from '../life/RetailShop.js';
 import { CityLife } from '../life/CityLife.js';
 import { CONFIG } from '../config.js';
@@ -115,7 +115,7 @@ export class Game {
     this.ui = new UIManager(this.bus);
     this.settings = SaveSystem.loadSettings(DEFAULT_SETTINGS);
     // v0.54: phones (iPhones above all) have far less memory for web pages: start them on the low setting once (they can change it after)
-    try { if (IS_PHONE && !localStorage.getItem('onitshaway:phone54')) { localStorage.setItem('onitshaway:phone54', '1'); if (this.settings.quality !== 'low') { this.settings.quality = 'low'; SaveSystem.saveSettings(this.settings); } } } catch { /* private mode */ }
+    /* v0.54.3: no longer forced to low on phones (low is now sharp anyway) */
     let hasSettings = false;
     try { hasSettings = !!localStorage.getItem('onitshaway:settings'); } catch { /* storage blocked */ }
     if (isTouchDevice() && !hasSettings) this.settings.quality = 'low';
@@ -319,6 +319,9 @@ export class Game {
     this.bindCreatorDrag();
     this.atmosphere.update(this.clock.minutes);
     // build the streets around the starting point (and a saved position, if any) before showing the menu
+    // v0.54.3: the big static parts of the city keep no second copy of their shapes once on the graphics card (phones)
+    try { const W = this.world, freed = [W.roads, W.props?.group, W.bridges?.group, W.markets?.group, W.districtDressing, W.comingSoon?.group, W.graWelcome?.group, W.graGround?.group, this.transport?.shelters, W.riverfront?.group, W.placeSigns?.group, W.terrain?.group]
+      .reduce((n, grp) => n + freeAfterUpload(grp), 0); for (const ch of W.root?.children ?? []) if (/MarketDistricts|Monuments|MallPrecinct|Flyover|LandmarkDressing|civic:/.test(ch.name)) freeAfterUpload(ch); W.stats.freedAttrs = freed; } catch (err) { console.warn('[memory]', err); }
     await this.loadStep(0.62, 'Building the streets around Old Market Road');
     await this.world.warmUp(this.spawn.x, this.spawn.z, (p) => this.ui.setLoading(0.62 + p * 0.36));
     this.ui.setLoading(1, 'Ready');

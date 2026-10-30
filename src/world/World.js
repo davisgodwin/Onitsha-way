@@ -35,7 +35,7 @@ import {Riverfront} from './Riverfront.js';
 import { MarketDistricts } from './MarketDistricts.js';
 
 const nextFrame = () => new Promise((r) => requestAnimationFrame(() => r()));
-const FACADE_SCALE = { low: 1, medium: 1.5, high: 2 };
+const FACADE_SCALE = { low: 1.5, medium: 1.5, high: 2 }; // v0.54.3: sharper building fronts on phones (the canvas is freed after upload)
 
 /**
  * The city: terrain + river, roads, bridges, the streamed buildings, landmarks and props,

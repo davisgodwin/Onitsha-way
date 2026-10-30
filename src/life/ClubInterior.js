@@ -22,7 +22,7 @@ const W = 30, D = 24, H = 6.2;
 const NOTE_COLORS = ['#c2e0c9', '#f2c6d2', '#cfd8f4', '#f5e2b0'];
 export class ClubInterior {
  constructor(g){this.g=g;this.inside=null;this.people=[];this.t=0;this.lights=[];this.group=new THREE.Group();this.group.name='NightclubInterior';this.group.visible=false;g.renderer.scene.add(this.group);this.ox=9500;this.oz=0;
-  g.world.collision.addZone({minX:this.ox-1,maxX:this.ox+W+1,minZ:-1,maxZ:D+1});this.mats=new Map();this.build();}
+  g.world.collision.addZone({minX:this.ox-1,maxX:this.ox+W+1,minZ:-1,maxZ:D+1});this.mats=new Map();this.seats=[];} // v0.54.3: the room is built the first time someone goes in (saves memory and loading time)
  mat(color,glow=0,opts={}){const k=color+'|'+glow+JSON.stringify(opts);if(!this.mats.has(k))this.mats.set(k,new THREE.MeshStandardMaterial({color,roughness:.5,metalness:.15,emissive:glow?color:'#000000',emissiveIntensity:glow,...opts}));return this.mats.get(k);}
  build(){const g=this.g,c=g.world.collision,grp=this.group,st=new THREE.Group();st.name='club-static';grp.add(st);this.static=st;
   const box=(w,h,d,x,y,z,color,solid=false,glow=0,parent=st)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),this.mat(color,glow));m.position.set(this.ox+x,y,z);m.castShadow=false;m.receiveShadow=true;parent.add(m);if(solid)c.addPolygon([[this.ox+x-w/2,z-d/2],[this.ox+x+w/2,z-d/2],[this.ox+x+w/2,z+d/2],[this.ox+x-w/2,z+d/2]],h);return m;};this.box=box;
@@ -96,6 +96,7 @@ export class ClubInterior {
  }
  register(x,z,label,onInteract,radius=2){this.g.interactions.register({x:this.ox+x,z,radius,enabled:()=>!!this.inside&&!this.show,label:()=>label,onInteract});}
  enter(v){if(this.g.saveData.character.ageGroup==='child'){this.g.ui.toast('Nightclubs are unavailable for child characters.');return false;}const g=this.g;if(!v||!openAt(g.clock.minutes/60,v.hours)||g.homes.inside||g.civic.inside||g.vehicles.driving||g.transport.riding){g.ui.toast('The club is closed or you must finish your trip first. Nightclubs open 19:00–04:00 WAT.');return false;}
+  if(!this.built){this.built=true;this.build();}
   this.inside=v;this.group.visible=true;g.hudTimer=0;this.clearNotes();const ctx=this.titleCanvas.getContext('2d');ctx.clearRect(0,0,1024,128);ctx.shadowColor='#ff2bd6';ctx.shadowBlur=24;ctx.fillStyle='#ffe9f8';ctx.font='800 64px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(v.name.toUpperCase(),512,64,980);this.titleTexture.needsUpdate=true;
   g.closeChoice();g.player.teleport(this.ox+15,20.8,Math.PI);g.cameraRig.setMode('follow');g.cameraRig.indoor={ceiling:H-.3,distance:4.6,height:1.4};g.cameraRig.yaw=0;g.cameraRig.pitch=.32;g.cameraRig.snapTo(g.player.position.clone().add(new THREE.Vector3(0,1.3,0)));g.cameraRig.currentDist=1;g.cameraRig.update(1,g.player.position);g.atmosphere.indoor={lamp:true,daylight:0};
   this.shout(`WELCOME TO ${v.name.toUpperCase()}`,6);g.ui.toast(`${v.name} · DJ, dance floor, bar, VIP & WC`);g.saveGame();return true;}
