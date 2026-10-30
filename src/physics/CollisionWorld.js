@@ -33,7 +33,7 @@ export class CollisionWorld {
     const pi = this.polys.length;
     let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
     for (const [x, z] of pts) { minX = Math.min(minX, x); maxX = Math.max(maxX, x); minZ = Math.min(minZ, z); maxZ = Math.max(maxZ, z); }
-    this.polys.push({ pts, height, minX, maxX, minZ, maxZ, tag: this.tag ?? 0 }); // tag: v0.48 map-extension phase
+    this.polys.push({ pts, height, minX, maxX, minZ, maxZ, tag: this.tag ?? 0, e0: this.edges.length, en: pts.length }); // tag: v0.48 map-extension phase; e0/en: its walls (v0.54.2)
     for (let i = 0; i < pts.length; i++) {
       const [ax, az] = pts[i], [bx, bz] = pts[(i + 1) % pts.length];
       const L = Math.hypot(bx - ax, bz - az) || 1;
@@ -66,10 +66,12 @@ export class CollisionWorld {
   /** Take a polygon (and its walls) out again. */
   removePolygon(pi) {
     const p = this.polys[pi]; if (!p) return;
-    this.edges.forEach((e, ei) => {
-      if (e.poly !== pi) return;
+    // v0.54.2: only this polygon's own walls (they were added together), not a scan of every wall in the city
+    const from = p.e0 ?? 0, to = p.e0 != null ? p.e0 + p.en : this.edges.length;
+    for (let ei = from; ei < to; ei++) { const e = this.edges[ei];
+      if (e.poly !== pi) continue;
       this._cellsFor(Math.min(e.ax, e.bx), Math.min(e.az, e.bz), Math.max(e.ax, e.bx), Math.max(e.az, e.bz), (k) => { const l = this.grid.get(k); if (l) { const i = l.indexOf(ei); if (i >= 0) l.splice(i, 1); } });
-    });
+    }
     p.minX = p.minZ = Infinity; p.maxX = p.maxZ = -Infinity; // never "inside" it again
   }
 

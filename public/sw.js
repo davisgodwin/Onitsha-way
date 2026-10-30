@@ -5,7 +5,7 @@
   - The page itself: network first, falling back to the cached copy when offline.
   Bump CACHE when the caching rules change; old caches are removed on activate.
 */
-const CACHE = 'onitsha-way-v0541'; // bumped each release so phones drop the old copy
+const CACHE = 'onitsha-way-v0542'; // bumped each release so phones drop the old copy
 
 self.addEventListener('install', (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./', './data/onitsha_core.json', './audio/afrobeat/iweka-afterglow.mp3', './audio/afrobeat/niger-breeze.mp3', './audio/afrobeat/market-lights.mp3']).catch(() => {}))); });
 self.addEventListener('activate', (e) => {

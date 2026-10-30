@@ -49,13 +49,14 @@ export class OrderlyFill {
   constructor(g, { cap = 14000, keep = null } = {}) {
     const t0 = performance.now(), w = g.world, map = w.map, col = w.collision, pa = w.playArea, D = w.districts;
     this.houses = []; this.lots = 0; const keepClear = keep ?? new KeepClear(g), B = map.fullBounds ?? map.bounds;
-    const open = (map.areas ?? []).filter((a) => OPEN_AREAS.includes(a.kind) && a.pts?.length > 2);
+    const bb = (pts) => { let a = Infinity, b = -Infinity, c = Infinity, d = -Infinity; for (const [x, z] of pts) { a = Math.min(a, x); b = Math.max(b, x); c = Math.min(c, z); d = Math.max(d, z); } return [a, b, c, d]; };
+    const open = (map.areas ?? []).filter((a) => OPEN_AREAS.includes(a.kind) && a.pts?.length > 2).map((a) => ({ pts: a.pts, bb: bb(a.pts) })); // v0.54.2: with a bounding box (same answers, much faster)
     const keepLm = w.landmarks.list.filter((l) => KEEP_OPEN.includes(l.kind));
     const jgrid = new Map(); for (const i of map.junctions) { const n = map.nodes[i]; if (!n) continue; const k = Math.floor(n[0] / 40) + ',' + Math.floor(n[1] / 40); if (!jgrid.has(k)) jgrid.set(k, []); jgrid.get(k).push(n); }
     const nearJunction = (x, z, r) => { const gx = Math.floor(x / 40), gz = Math.floor(z / 40); for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) for (const n of jgrid.get((gx + i) + ',' + (gz + j)) ?? []) if (Math.hypot(x - n[0], z - n[1]) < r) return true; return false; };
     const taken = new Map(), tk = (x, z) => Math.floor(x / 40) + ',' + Math.floor(z / 40);
     const overlaps = (x, z, r, pts) => { const gx = Math.floor(x / 40), gz = Math.floor(z / 40); for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) for (const q of taken.get((gx + i) + ',' + (gz + j)) ?? []) if (Math.hypot(q.x - x, q.z - z) < q.r + r) { for (const p of pts) if (inPoly(p[0], p[1], q.pts)) return true; for (const p of q.pts) if (inPoly(p[0], p[1], pts)) return true; if (Math.hypot(q.x - x, q.z - z) < (q.r + r) * 0.6) return true; } return false; };
-    const venues = (w.venuePlots ?? []).map((v) => v.pts).filter(Boolean);
+    const venues = (w.venuePlots ?? []).map((v) => v.pts).filter(Boolean).map((pts) => ({ pts, bb: bb(pts) }));
     // bridge decks and flyovers are left out of the road checks (things stand under them): keep plots out from under them
     const decks = map.segments.filter((q) => q.road.elevated), nearDeck = (x, z) => decks.some((q) => { const dx = q.bx - q.ax, dz = q.bz - q.az, L = dx * dx + dz * dz || 1, t = Math.max(0, Math.min(1, ((x - q.ax) * dx + (z - q.az) * dz) / L)); return Math.hypot(x - q.ax - t * dx, z - q.az - t * dz) < q.road.width / 2 + 2; });
     const underDeck = (pts, x, z) => nearDeck(x, z) || pts.some(([a, b], i) => { const [c, d] = pts[(i + 1) % pts.length]; return nearDeck(a, b) || nearDeck((a + c) / 2, (b + d) / 2); });
@@ -89,8 +90,9 @@ export class OrderlyFill {
           if (overlaps(x, z, r, pts)) continue;
           if (row === 0 && nearJunction(x + (-nx) * hd, z + (-nz) * hd, T.W / 2 + 7)) continue;
           if (keepLm.some((l) => Math.hypot(x - l.x, z - l.z) < Math.min((l.radius ?? 60) + 20, 200))) continue;
-          if (open.some((a) => inPoly(x, z, a.pts) || pts.some(([px, pz]) => inPoly(px, pz, a.pts)))) continue;
-          if (venues.some((v) => inPoly(x, z, v) || v.some(([px, pz]) => inPoly(px, pz, pts)))) continue;
+          const near = (q) => x + r > q.bb[0] && x - r < q.bb[1] && z + r > q.bb[2] && z - r < q.bb[3];
+          if (open.some((a) => near(a) && (inPoly(x, z, a.pts) || pts.some(([px, pz]) => inPoly(px, pz, a.pts))))) continue;
+          if (venues.some((v) => near(v) && (inPoly(x, z, v.pts) || v.pts.some(([px, pz]) => inPoly(px, pz, pts))))) continue;
           if (map.stadiumSite && (inPoly(x, z, map.stadiumSite.pts) || pts.some(([px, pz]) => inPoly(px, pz, map.stadiumSite.pts)))) continue;
           if (roadConflict(map, pts, 1.2) || underDeck(pts, x, z)) continue;
           // the whole plot clear: a grid of small circles

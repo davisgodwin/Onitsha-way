@@ -218,8 +218,7 @@ export class Game {
     this.transport = new TransportController(this);
     this.transport.setup();
     // homes to rent (real houses, shared interiors) and vehicles for sale
-    this.ui.setLoading(0.61, 'Houses to let and cars for sale');
-    await new Promise((r) => setTimeout(r, 0));
+    await this.loadStep(0.61, 'Houses to let and cars for sale');
     this.homes = new HomeController(this);
     this.homes.setup();
     this.vehicles = new VehicleController(this);
@@ -233,6 +232,7 @@ export class Game {
     this.setupChurch();
     this.phone = new PhoneController(this);
     this.civic=new CivicInterior(this);this.club=new ClubInterior(this);this.tvShows=new TVShows(this);this.cityLife = new CityLife(this); this.cityLife.setup();
+    await this.loadStep(0.612, 'Jobs, careers and shops'); // v0.54.2: let the page breathe between the long steps (phones)
     this.story=new StoryController(this);this.story.setup();
     this.life=new LifeController(this); // v0.40 open life: occupations, reputation, legal record
     this.retail=new RetailShop(this);this.retail.setup();
@@ -253,6 +253,7 @@ export class Game {
     this.news=new NewsFeed(this);try{this.news.setup();this.activityPlaces.push(this.news);}catch(err){console.warn('[news] could not set up',err.message);} // v0.47 stage 8: the city responds
     this.posture = new Posture(this); // v0.45 sit and lie down
     this.authority = new AuthorityClient(this); CloudSave.beforePush = () => this.authority.sync(); CloudSave.onCorrected = () => this.authority.sync(); // v0.43 server authority
+    await this.loadStep(0.614, 'Houses on the empty land'); // v0.54.2: let the page breathe between the long steps (phones)
     this.world.infill=new ResidentialInfill(this);
     this.justice=new JusticeController(this);try{this.justice.setup();this.activityPlaces.push(this.justice);}catch(err){console.warn('[justice] could not set up',err.message);} // v0.42 crime, cases, court, police/EFCC, Hustle Kingdoms
     // neighbours standing at the new compound gates (they use the same resident system and schedules)
@@ -267,6 +268,7 @@ export class Game {
     this.world.activateLock(this.graph); // v0.48 Onitsha only: Asaba and the Delta island are COMING SOON
     // interiors (homes, clubs, civic buildings, story rooms) sit off the map: they are never COMING SOON
     this.interactions.locked = (x, z) => !(this.homes?.inside || this.civic?.inside || this.club?.inside || this.world.collision.inZone(x, z)) && this.world.playArea.locked(x, z);
+    await this.loadStep(0.616, 'Signs at the edge of Onitsha'); // v0.54.2: let the page breathe between the long steps (phones)
     this.world.comingSoon = buildComingSoon(this.world); this.renderer.scene.add(this.world.comingSoon.group);
     this.world.graWelcome = buildGRAWelcome(this.world); this.renderer.scene.add(this.world.graWelcome.group); // v0.50
     try { const sh = this.transport.shelters = buildStopShelters(this); this.renderer.scene.add(sh); for (const m of sh.userData.nightMaterials ?? []) this.atmosphere.nightMaterials.push(m); } catch (err) { console.warn('[stops] could not build', err.message); } // v0.48 real bus stops
@@ -274,13 +276,16 @@ export class Game {
     this.showroom = new Showroom(this); try { this.showroom.setup(); this.activityPlaces.push(this.showroom); } catch (err) { console.warn('[showroom] could not set up', err.message); } // v0.48 premium cars
     try { this.world.districtDressing = buildDistrictDressing(this); this.renderer.scene.add(this.world.districtDressing); } catch (err) { console.warn('[districts] could not dress', err.message); } // v0.48 neighbourhoods
     // v0.49: more working places all over Onitsha (built before the new rows of houses, so they get the plots)
+    await this.loadStep(0.617, 'Filling stations, hotels, schools and churches'); // v0.54.2: let the page breathe between the long steps (phones)
     this.morePlaces = new MorePlaces(this); try { this.morePlaces.setup(); this.activityPlaces.push(this.morePlaces); } catch (err) { console.warn('[places] could not add more', err); }
     // v0.49: traffic lights and wardens at the busy junctions
     try { this.traffic.control = new TrafficControl(this.graph, { landmarks: this.world.landmarks, locked: (x, z) => this.world.playArea.locked(x, z) }); this.traffic.control.build(this.renderer.scene, this.npcs, this.world.collision); } catch (err) { console.warn('[traffic] no lights', err); }
     // v0.49: houses in rows and columns on the empty land, and a wall and a gate round every house
+    await this.loadStep(0.6175, 'Houses in rows on every street'); // v0.54.2: let the page breathe between the long steps (phones)
     try { const keep = new KeepClear(this); const lotsQ = /[?&]lots=(\d+)/.exec(location.search); this.world.orderly = new OrderlyFill(this, { keep, cap: lotsQ ? +lotsQ[1] : ({ low: 7000, medium: 12000 }[this.settings.quality] ?? 15000) }); for (const h of this.world.orderly.houses) keep.add(h.plot.x, h.plot.z, 0); fenceCity(this, keep); } catch (err) { console.warn('[orderly] could not fill', err); }
     try { this.homes.addListings([...(this.world.orderly?.houses ?? []).slice(0, 7000), ...this.world.infill.houses.filter((h) => !h.removed && h.compound)]); } catch (err) { console.warn('[homes] could not add more', err); } // v0.49: homes to rent or buy in the walled houses (lots beyond 7,000 exist only on higher settings, so never listed)
     // v0.53: compound gates that slide open as you come up to them
+    await this.loadStep(0.618, 'Compound gates'); // v0.54.2: let the page breathe between the long steps (phones)
     try { this.gates = new CompoundGates(this); this.world.stats.gates = this.gates.setup(); } catch (err) { console.warn('[gates]', err); }
     // v0.53: no kiosk in front of an entrance (gates, doors, venue fronts)
     try { const zones = [], R = (x, z, ux, uz, nx, nz, a0, a1, b0, b1) => [[x + ux * a0 + nx * b0, z + uz * a0 + nz * b0], [x + ux * a1 + nx * b0, z + uz * a1 + nz * b0], [x + ux * a1 + nx * b1, z + uz * a1 + nz * b1], [x + ux * a0 + nx * b1, z + uz * a0 + nz * b1]];
@@ -291,6 +296,7 @@ export class Game {
       this.world.stats.kiosksAtEntrances = this.world.city.clearEntranceKiosks(zones); } catch (err) { console.warn('[kiosks]', err); }
     // v0.52: more homes to rent or buy in both GRAs (after the others, so every earlier listing keeps its place)
     try { const D = this.world.districts; this.world.stats.graListings = this.homes.addListings([...(this.world.orderly?.houses ?? []).slice(0, 7000), ...this.world.infill.houses.filter((h) => !h.removed && h.compound)].filter((h) => (h.tier === 'gra' || D.premiumAt(h.x ?? h.plot?.x ?? 0, h.z ?? h.plot?.z ?? 0) > 0.5)), 140, { cellSize: 55, spacing: 30, spread: 40 }); } catch (err) { console.warn('[homes] GRA', err); }
+    await this.loadStep(0.619, 'Drawing the map'); // v0.54.2: let the page breathe between the long steps (phones)
     this.minimap.addFootprints([...this.world.infill.houses.filter((h) => !h.removed), ...(this.world.orderly?.houses ?? [])].map((h) => ({ pts: h.pts, kind: 'residential', wall: h.compound?.ring })));
     this.minimap.addFootprints([...this.world.city.chunks.values()].flatMap((ch) => (ch.compounds ?? []).filter((c) => c.fence && c.item && !c.item.infill).map((c) => ({ pts: c.item.b.pts, kind: c.item.b.renderKind ?? c.item.kind, wall: c.ring }))));
     this.minimap.setPlayArea(this.world.playArea); // the map shows every house, every wall and the COMING SOON land
@@ -313,7 +319,7 @@ export class Game {
     this.bindCreatorDrag();
     this.atmosphere.update(this.clock.minutes);
     // build the streets around the starting point (and a saved position, if any) before showing the menu
-    this.ui.setLoading(0.62, 'Building the streets around Old Market Road');
+    await this.loadStep(0.62, 'Building the streets around Old Market Road');
     await this.world.warmUp(this.spawn.x, this.spawn.z, (p) => this.ui.setLoading(0.62 + p * 0.36));
     this.ui.setLoading(1, 'Ready');
     this.ui.hideLoading();
@@ -1526,6 +1532,11 @@ export class Game {
     return `Careful: ${late.map((j) => `“${j.title}” is due by ${clockLabel(j.deadline)}`).join('; ')} — you would miss ${late.length > 1 ? 'them' : 'it'}.`;
   }
 
+  /** v0.54.2: a loading step: show it, note how long the last one took, and let the browser draw and breathe */
+  async loadStep(frac, label) {
+    const now = performance.now(); if (this._stepAt) console.info(`[load] ${this._stepLabel}: ${Math.round(now - this._stepAt)} ms`);
+    this._stepAt = now; this._stepLabel = label; this.ui.setLoading(frac, label); await new Promise((r) => setTimeout(r, 0));
+  }
   /** Jump the clock: sleeping, resting, cooking, skipping a ride or a drive. Everything time-based follows. */
   skipTime(minutes, { riding = false, sleeping = false, resting = 0 } = {}) {
     minutes = Math.max(0, Math.round(minutes));

@@ -106,7 +106,9 @@ export class World {
     for(const home of LEGACY_HOMES){const b=w.map.buildings.find(b=>b.id===home.buildingId),d=b&&doorOf(b);if(!d)continue;const nr=w.map.nearestRoad(d.stand.x,d.stand.z,{maxDist:26}),L=Math.min(26,(nr?.dist??8)+1.5),a=[d.stand.x,d.stand.z],end=[a[0]+d.nx*L,a[1]+d.nz*L];access.push({a,b:end});accessPolys.push(w.collision.addPolygon(rect((a[0]+end[0])/2,(a[1]+end[1])/2,2.2,L+1,Math.atan2(d.nx,d.nz)),.01));}
     accessPolys.push(w.collision.addPolygon(w.map.stadiumSite.pts,.01));
     w.map.homeAccessCorridors=access;
-    w.map.inHomeAccess=(x,z,r=0)=>access.some(s=>segDistSq(x,z,...s.a,...s.b)<(1.15+r)**2);
+    {const AG=new Map(),AC=24;for(const s of access){const x0=Math.floor((Math.min(s.a[0],s.b[0])-3)/AC),x1=Math.floor((Math.max(s.a[0],s.b[0])+3)/AC),z0=Math.floor((Math.min(s.a[1],s.b[1])-3)/AC),z1=Math.floor((Math.max(s.a[1],s.b[1])+3)/AC);for(let i=x0;i<=x1;i++)for(let j=z0;j<=z1;j++){const k=i+','+j;(AG.get(k)??AG.set(k,[]).get(k)).push(s);}}
+    // v0.54.2: only the corridors near the point (same answer; r stays small, under 3 m)
+    w.map.inHomeAccess=(x,z,r=0)=>{if(r>2.9)return access.some(s=>segDistSq(x,z,...s.a,...s.b)<(1.15+r)**2);const l=AG.get(Math.floor(x/AC)+','+Math.floor(z/AC));return!!l&&l.some(s=>segDistSq(x,z,...s.a,...s.b)<(1.15+r)**2);};}
     planCivicSites(w); // v0.46: plots for the cathedrals, the palace, CKC and Shanahan University, before anything else is placed
     w.map.billboardSites=planBillboardSites(w.map,w.landmarks);
     // Keep the full sign envelopes reserved through dealership / venue / infill setup.
