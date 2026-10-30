@@ -1,7 +1,7 @@
 {
   "name": "onitsha-way",
-  "version": "0.53.0",
-  "description": "Onitsha Way — open-world Nigerian lifestyle simulator (browser, Three.js)",
+  "version": "0.54.0",
+  "description": "Onitsha Way \u2014 open-world Nigerian lifestyle simulator (browser, Three.js)",
   "scripts": {
     "dev": "node scripts/local.mjs",
     "build": "vite build",
@@ -69,7 +69,8 @@
     "test:database": "node --test tests/database33.test.mjs tests/cloudsave33.test.mjs",
     "e2e:cloud": "node tests/e2e/cloudsave33.mjs",
     "lan": "node scripts/lan.mjs",
-    "test:lan": "node --test tests/lan34.test.mjs"
+    "test:lan": "node --test tests/lan34.test.mjs",
+    "start": "node scripts/production.mjs"
   },
   "license": "ISC",
   "dependencies": {
@@ -85,6 +86,6 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   }
 }

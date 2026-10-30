@@ -16,7 +16,7 @@ export class VoiceChat {
  eligible(p){const o=this.o,a=o.presence();return this.mode!=='off'&&p.voice===this.mode&&!o.data?.blocks?.includes(p.id)&&((this.mode==='team'&&o.data?.team?.members.includes(p.id))||(this.mode==='nearby'&&p.scene===a.scene&&Math.hypot(p.x-a.x,p.z-a.z)<60));}
  async peer(id){
   if(this.peers.has(id))return this.peers.get(id);if(!this.stream)return null;
-  const pc=new RTCPeerConnection({iceServers:[]});const audio=document.createElement('audio');audio.autoplay=true;audio.setAttribute('playsinline','');audio.hidden=true;document.body.append(audio);const p={pc,audio,queue:[]};this.peers.set(id,p);
+  const pc=new RTCPeerConnection({iceServers:location.hostname==='localhost'||/^(127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(location.hostname)?[]:[{urls:'stun:stun.l.google.com:19302'}]}) /* v0.54: on the internet, a public STUN server helps two players connect */;const audio=document.createElement('audio');audio.autoplay=true;audio.setAttribute('playsinline','');audio.hidden=true;document.body.append(audio);const p={pc,audio,queue:[]};this.peers.set(id,p);
   this.stream.getTracks().forEach(t=>pc.addTrack(t,this.stream));pc.onicecandidate=e=>{if(e.candidate)this.o.send({type:'signal',target:id,data:{candidate:e.candidate}});};pc.ontrack=e=>{audio.srcObject=e.streams[0];audio.play().catch(()=>this.o.notice('Tap the 🎙 Voice button to hear players.'));};return p;
  }
  async signal(from,data){try{const remote=this.o.players.find(p=>p.id===from);if(!remote||!this.eligible(remote))return;const p=await this.peer(from);if(!p)return;

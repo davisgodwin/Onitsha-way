@@ -1,0 +1,31 @@
+# Render Blueprint for Onitsha Way: one web service that serves the game, the account server and the live
+# connection on one port, with a persistent disk for accounts and saves.
+# Render dashboard > New > Blueprint > pick this repo. Then fill in the secret values it asks for.
+services:
+  - type: web
+    name: onitsha-way
+    runtime: node
+    plan: starter            # needs a paid plan: free services sleep and cannot have a disk (accounts would be lost)
+    region: frankfurt        # closest Render region to Nigeria
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    disk:
+      name: onitsha-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATA_DIR
+        value: /var/data
+      - key: DB_DRIVER
+        value: json
+      - key: TEST_PAYMENTS
+        value: "false"       # ads can only be paid through Paystack (still TEST mode: test cards, no real money)
+      - key: PAYSTACK_SECRET_KEY
+        sync: false          # paste your sk_test_… key in the dashboard
+      - key: PAYSTACK_PUBLIC_KEY
+        sync: false          # paste your pk_test_… key
+      - key: EXTRA_ORIGINS
+        sync: false          # optional: other addresses players open the game from (e.g. your own domain), comma-separated

@@ -27,15 +27,20 @@ export const CA_PATH = '/onitsha-way-local-ca.crt';
  * With `tls` ({ key, cert, caCert }) the gateway speaks https, and plain-http visitors on the same port (someone
  * typing the address without https://) are redirected — the first byte of a connection tells the two apart.
  */
-export function createGateway({ distDir, backendHost = '127.0.0.1', backendPort = 8787, secret, extraNets = [], tls = null, log = console } = {}) {
+/**
+ * v0.54: `open: true` (production hosting, e.g. Render) lets everyone in, and with `trustProxy: true` the player's
+ * address is read from the hosting platform's X-Forwarded-For header (its load balancer is the only thing that
+ * talks to this server). For LAN play both stay off.
+ */
+export function createGateway({ distDir, backendHost = '127.0.0.1', backendPort = 8787, secret, extraNets = [], tls = null, log = console, open = false, trustProxy = false } = {}) {
   if (!secret) throw Error('gateway secret required');
   const root = path.resolve(distDir), gz = new Map();
-  const allowed = (sock) => isLocalNetwork(sock.remoteAddress, extraNets);
-  const clientIp = (sock) => normalizeIp(sock.remoteAddress);
+  const allowed = (sock) => open || isLocalNetwork(sock.remoteAddress, extraNets);
+  const clientIp = (sock, req) => { const xf = trustProxy && req ? String(req.headers['x-forwarded-for'] ?? '').split(',')[0].trim() : ''; return normalizeIp(xf || sock.remoteAddress); };
   const forwardHeaders = (req) => {
     const h = {};
     for (const [k, v] of Object.entries(req.headers)) if (!HOP.has(k)) h[k] = v;
-    h['x-ow-client-ip'] = clientIp(req.socket); h['x-ow-gateway'] = secret;
+    h['x-ow-client-ip'] = clientIp(req.socket, req); h['x-ow-gateway'] = secret;
     return h;
   };
 
@@ -52,6 +57,16 @@ export function createGateway({ distDir, backendHost = '127.0.0.1', backendPort 
       let body = gz.get(key); if (!body) { body = zlib.gzipSync(fs.readFileSync(file), { level: 6 }); gz.set(key, body); }
       res.setHeader('Content-Encoding', 'gzip'); res.setHeader('Vary', 'Accept-Encoding'); res.setHeader('Content-Length', body.length);
       res.writeHead(200); res.end(req.method === 'HEAD' ? undefined : body); return;
+    }
+    // v0.54: byte ranges (audio and video streaming, required by Safari / iPhone)
+    res.setHeader('Accept-Ranges', 'bytes');
+    const m = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range ?? '');
+    if (m && (m[1] || m[2])) {
+      let start = m[1] ? Number(m[1]) : Math.max(0, stat.size - Number(m[2])), end = m[1] && m[2] ? Math.min(Number(m[2]), stat.size - 1) : stat.size - 1;
+      if (start > end || start >= stat.size) { res.setHeader('Content-Range', `bytes */${stat.size}`); res.writeHead(416); res.end(); return; }
+      res.setHeader('Content-Range', `bytes ${start}-${end}/${stat.size}`); res.setHeader('Content-Length', end - start + 1); res.writeHead(206);
+      if (req.method === 'HEAD') { res.end(); return; }
+      fs.createReadStream(file, { start, end }).on('error', () => res.destroy()).pipe(res); return;
     }
     res.setHeader('Content-Length', stat.size); res.writeHead(200);
     if (req.method === 'HEAD') { res.end(); return; }
@@ -75,13 +90,14 @@ export function createGateway({ distDir, backendHost = '127.0.0.1', backendPort 
       const headers = { ...r.headers }; delete headers.connection; delete headers['keep-alive'];
       res.writeHead(r.statusCode ?? 502, headers); r.pipe(res);
     });
-    up.on('error', () => { if (!res.headersSent) { res.writeHead(502, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: 'The account server on the host computer is not running. Restart npm run lan there.' })); } else res.destroy(); });
+    up.on('error', () => { if (!res.headersSent) { res.writeHead(502, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: open ? 'The game server is restarting. Try again in a minute.' : 'The account server on the host computer is not running. Restart npm run lan there.' })); } else res.destroy(); });
     req.pipe(up);
   }
 
   const sendCa = (res) => { res.writeHead(200, { 'Content-Type': 'application/x-x509-ca-cert', 'Content-Disposition': 'attachment; filename="onitsha-way-local-ca.crt"', 'Cache-Control': 'no-store' }); res.end(tls.caCert); };
   const handler = (req, res) => {
     if (!allowed(req.socket)) { res.writeHead(403, { 'Content-Type': 'text/plain' }); res.end('Onitsha Way LAN play is only open to devices on the same local network.'); return; }
+    if (open) { res.setHeader('X-Frame-Options', 'SAMEORIGIN'); res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin'); }
     const pathname = new URL(req.url, 'http://lan').pathname;
     if (tls && pathname === CA_PATH) return sendCa(res);
     if (pathname === '/api' || pathname.startsWith('/api/')) return proxyApi(req, res);

@@ -11,15 +11,29 @@ export class EntryFlow {
  }
  splashStatus(text){this.loadingScreen.querySelector('.load-status').textContent=text;}
  async start(){
-  const ready=new Promise(resolve=>this.resolve=resolve);this.loading('Checking your account…');
+  const ready=new Promise(resolve=>this.resolve=resolve);this.check();return ready;
+ }
+ async check(){this.loading('Checking your account…');
   try{
    const token=sessionStorage.getItem('onitshaway:session');
    const r=await fetch('/api/session',{cache:'no-store',signal:AbortSignal.timeout(8000),headers:token?{Authorization:`Bearer ${token}`}:{}});
-   if(r.ok){const a=await r.json();if(a.ok&&a.me?.id&&a.token){this.finish(a);return ready;}}
+   if(r.ok){const a=await r.json();if(a.ok&&a.me?.id&&a.token){this.finish(a);return;}}
    else if(r.status!==401)throw Error('Local server unavailable.');else{try{this.joinCodeRequired=(await r.json()).joinCodeRequired===true;}catch{}}
    sessionStorage.removeItem('onitshaway:session');this.render('signup');
-  }catch{this.render('signup','Start the game with npm run dev, then keep that terminal open. This starts the game and account server together.');}
-  return ready;
+  }catch{
+   // v0.54: no account server (a static web host such as Vercel, or the server isn't running): play in this browser
+   const local=['localhost','127.0.0.1','[::1]'].includes(location.hostname);
+   this.renderOffline(local?'The account server isn\'t running. To play online, start the game with npm run dev and keep that terminal open.':'');
+  }
+ }
+ /** v0.54: the front door when there is no account server: single-player, saved in this browser */
+ renderOffline(note=''){
+  this.shell();const c=this.card;this.mode='offline';this.splashStatus('Ready to play.');
+  c.append(node('p','NNỌỌ · WELCOME','entry-kicker'),node('h2','A new life starts here.'),node('p','Make your character and step into Onitsha. Your game is saved in this browser on this device.','entry-muted'));
+  this.button(c,localStorage.getItem('onitshaway:save')?'Continue →':'Play now →',()=>this.finish(null),true);
+  c.append(node('p','Online play (friends, other players, business ads and cloud saves) needs the game\'s account server, which this web version doesn\'t run. Everything else works.','entry-small'));
+  if(note)c.append(node('p',note,'entry-small'));
+  if(['localhost','127.0.0.1','[::1]'].includes(location.hostname))this.button(c,'Try the account server again',()=>this.check());
  }
  shell(){
   this.root.replaceChildren();this.card=node('section',null,'entry-card');this.root.append(this.card);

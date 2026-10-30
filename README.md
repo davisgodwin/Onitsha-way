@@ -1,4 +1,8 @@
-## Current update — v0.53.0: more GRA homes, busy filling stations, compound gates that open, free furniture placement, no kiosks at entrances
+## Current update — v0.54.0: ready to launch on Render (game + accounts + multiplayer + Paystack test), playable on Vercel offline
+
+`npm start` runs the public server: one port serves the game, the API and the live connection, behind the host's HTTPS. `render.yaml` sets up Render with a persistent disk. On a host without the server (Vercel) the game offers "Play now" and saves in the browser. See [LAUNCH_RENDER.md](LAUNCH_RENDER.md).
+
+## Previous update — v0.53.0: more GRA homes, busy filling stations, compound gates that open, free furniture placement, no kiosks at entrances
 
 See [UPDATE_53.md](UPDATE_53.md) and [TEST_RESULTS_53.md](TEST_RESULTS_53.md).
 
