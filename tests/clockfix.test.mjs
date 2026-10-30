@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import { normalizeSettings } from '../src/save/SaveSystem.js';
+import { SimClock } from '../src/sim/SimClock.js';
+import { calendar, setRealCalendar } from '../src/sim/Calendar.js';
+export let passed=0;
+const test=(name,fn)=>{try{fn();passed++;console.log('  ✓',name);}catch(e){console.error('  ✗',name,e);process.exitCode=1;}};
+console.log('Real-time hotfix');
+test('legacy accelerated settings cannot override real time',()=>{const s=normalizeSettings({quality:'medium'},{clockMode:'game',clockSpeed:2,quality:'low',liveWeather:true});assert.equal(s.clockMode,'real');assert.equal(s.clockSpeed,1);assert.equal(s.quality,'low');assert.equal(s.liveWeather,false);});
+test('missing malformed or null settings remain real and offline',()=>{for(const v of [undefined,null,[],5]){const s=normalizeSettings({},v);assert.equal(s.clockMode,'real');assert.equal(s.liveWeather,false);}});
+test('an explicit optional weather opt-in survives reload',()=>assert.equal(normalizeSettings({},{clockFixVersion:1,liveWeather:true}).liveWeather,true));
+test('reported 4:22 pm WAT is 16:22 not simulated 09:22',()=>{const c=new SimClock(null,{minutes:562});c.setMode('real',{now:Date.parse('2026-10-19T15:22:00Z')});assert.equal(c.label(),'16:22');assert.equal(calendar(c.day).label,'Monday · 19 October 2026');setRealCalendar(null);});
+test('one real minute advances one minute even with stale fast speed',()=>{const t=Date.parse('2026-10-19T15:22:00Z'),c=new SimClock(null);c.setMode('real',{now:t});c.rate=100;c.paused=true;c.syncReal(t+60000);assert.equal(c.label(),'16:23');c.advance(480);assert.equal(c.label(),'16:23');setRealCalendar(null);});

@@ -1,0 +1,29 @@
+/* Reserve a dedicated 44 px touch target next to Pause, including landscape safe areas. */
+.hud-visibility-toggle{position:absolute;top:max(17px,env(safe-area-inset-top));right:calc(70px + env(safe-area-inset-right,0px));width:44px;height:44px;min-width:44px;min-height:44px;display:grid;justify-items:center;align-content:center;gap:1px;padding:4px;border:1px solid #ffffff80;border-radius:15px;background:#173027df;color:#fff;box-shadow:0 2px 10px #0003;pointer-events:auto;touch-action:manipulation;z-index:9;cursor:pointer;font:700 9px system-ui}
+.hud-visibility-toggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.hud-visibility-toggle:focus-visible{outline:3px solid #f2c36b;outline-offset:3px}
+.mobile-hud-can-minimize .city-status{left:max(12px,env(safe-area-inset-left));right:calc(124px + env(safe-area-inset-right,0px));transform:none;width:fit-content;max-width:calc(100vw - 142px);flex-wrap:wrap}
+.mobile-hud-minimized #screen-hud .city-status,
+.mobile-hud-minimized #screen-hud .hud-top-left,
+.mobile-hud-minimized #screen-hud .minimap-wrap,
+.mobile-hud-minimized #screen-hud .hud-phone,
+.mobile-hud-minimized #screen-hud .hud-needs,
+.mobile-hud-minimized #screen-hud .city-nav,
+.mobile-hud-minimized #screen-hud .city-avatar,
+.mobile-hud-minimized #screen-hud .hud-hints,
+.mobile-hud-minimized #screen-hud .hud-fps,
+.mobile-hud-minimized .online-dock,
+.mobile-hud-minimized #preview-tools{display:none!important}
+/* Keep joystick/drag-look, Run, Jump, contextual Use, Pause, exits, floors and vehicle panels. */
+.mobile-hud-minimized .touch-buttons{bottom:max(18px,calc(env(safe-area-inset-bottom) + 12px))!important;opacity:.76}
+.mobile-hud-minimized .touch-buttons:focus-within,.mobile-hud-minimized .touch-buttons:active{opacity:1}
+.mobile-hud-minimized #screen-hud .hud-prompt{bottom:max(126px,calc(env(safe-area-inset-bottom) + 126px));font-size:11px;padding:7px 11px;max-width:calc(100vw - 150px);opacity:.9}
+.mobile-hud-minimized #screen-hud .hud-prompt kbd{display:none}
+.mobile-hud-minimized #screen-hud .toasts{bottom:max(172px,calc(env(safe-area-inset-bottom) + 172px));max-width:min(330px,calc(100vw - 100px));font-size:11px;pointer-events:none}
+.mobile-hud-minimized #screen-hud .toasts .toast:not(:last-child){display:none}
+.mobile-hud-minimized #screen-hud .city-exit{bottom:max(136px,calc(env(safe-area-inset-bottom) + 136px));right:max(12px,env(safe-area-inset-right));font-size:12px}
+.mobile-hud-minimized #screen-hud .city-floor{top:auto;bottom:max(188px,calc(env(safe-area-inset-bottom) + 188px));right:max(12px,env(safe-area-inset-right));font-size:12px}
+.mobile-hud-minimized #screen-hud .hud-drive,.mobile-hud-minimized #screen-hud .hud-ride{bottom:max(12px,env(safe-area-inset-bottom))}
+@media(max-width:540px){.hud-visibility-toggle{top:max(20px,env(safe-area-inset-top));right:calc(66px + env(safe-area-inset-right,0px))}.mobile-hud-can-minimize .city-status{right:calc(120px + env(safe-area-inset-right,0px));max-width:calc(100vw - 132px)}}
+
+.mobile-hud-minimized .tbtn-interact{width:auto;min-width:64px;max-width:min(220px,56vw);height:auto;min-height:48px;padding:10px 14px;white-space:normal;text-overflow:clip;overflow-wrap:anywhere;line-height:1.2;font-size:12px;border-radius:24px}

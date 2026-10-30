@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {OUTFITS,OUTFIT_CATEGORIES,OUTFIT_COLORS,SHOE_COLORS,outfitInfo} from '../src/characters/Wardrobe.js';
+import {normalizeAppearance,defaultAppearance,HAIR_STYLES} from '../src/characters/HumanRig.js';
+export let passed=0;
+const test=(name,fn)=>{try{fn();passed++;console.log('  ✓',name);}catch(e){console.error('  ✗',name,e);process.exitCode=1;}};
+console.log('Character and wardrobe');
+test('each gender has sixteen unique valid outfits',()=>{for(const gender of ['male','female']){const looks=OUTFITS[gender];assert.equal(looks.length,16);assert.equal(new Set(looks.map(o=>o.id)).size,16);for(const o of looks)assert.ok(OUTFIT_CATEGORIES.some(([c])=>c===o.category));}});
+test('shorts and suits are available to both genders',()=>{for(const gender of ['male','female'])for(const id of ['tee_shorts','linen_shorts','cargo_shorts','shirt_trousers','suit','suit_tie'])assert.equal(outfitInfo(gender,id).id,id);});
+test('legacy outfits and original six colours retain their IDs',()=>{for(const[gender,ids]of[['male',['ankara_jeans','tee_chinos','senator']],['female',['ankara_top_jeans','ankara_gown','blouse_skirt']]])for(const id of ids)assert.equal(normalizeAppearance({gender,outfit:id}).outfit,id);assert.deepEqual(OUTFIT_COLORS.slice(0,6),['#1d2b4f','#7a1f2b','#f1ead8','#2f5d3a','#3b3b3b','#c9a227']);});
+test('old characters get automatic trouser and shoe colours',()=>{const a=normalizeAppearance({gender:'male',outfit:'tee_chinos',name:'Chidi',phone:'niger'});assert.equal(a.bottomColor,null);assert.equal(a.shoeColor,null);assert.equal(a.name,'Chidi');assert.equal(a.phone,'niger');});
+test('independent clothing colours persist through normalization',()=>{const a={...defaultAppearance('female'),outfit:'suit_tie',color:8,bottomColor:11,shoeColor:3,hair:'cornrows'};assert.deepEqual(normalizeAppearance(a),a);assert.equal(SHOE_COLORS.length,4);});
+test('invalid appearance values fall back safely',()=>{const a=normalizeAppearance({gender:'invalid',skin:-2,hair:'missing',outfit:'missing',palette:NaN,color:Infinity,bottomColor:-1,shoeColor:-1});assert.equal(a.gender,'male');assert.equal(a.skin,1);assert.equal(a.color,0);assert.equal(a.outfit,'ankara_jeans');assert.equal(a.hair,'lowcut');assert.equal(a.bottomColor,null);});
+test('NPC redcaps and all existing hair styles remain supported',()=>{assert.equal(normalizeAppearance({gender:'male',hair:'redcap'}).hair,'redcap');for(const gender of ['male','female'])for(const h of HAIR_STYLES[gender])assert.equal(normalizeAppearance({gender,hair:h.id}).hair,h.id);});

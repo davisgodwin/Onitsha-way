@@ -1,0 +1,14 @@
+✔ six named Onitsha dealerships keep all lot IDs and catalogue assignments (1.351967ms)
+✔ stadium keeps stable save/navigation identity and existing footprint (0.411641ms)
+✔ place display paths contain names without approximate labels or visiting-hour suffixes (1.339841ms)
+✔ stand footprint is rejected if any part enters a building, including a thin centre wall (0.80934ms)
+✔ stands cannot overlap stadium, dealership, other signs, home access, water or residents (0.444713ms)
+✔ naming update does not change mission or wallet save schema/state (2.682458ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 99.883477

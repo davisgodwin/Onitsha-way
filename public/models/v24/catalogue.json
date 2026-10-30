@@ -1,0 +1,146 @@
+[
+  {
+    "id": "car-sedan",
+    "type": "vehicle",
+    "source": "NormalCar1",
+    "vehicle": true,
+    "pack": "vehicle 1",
+    "bytes": 320176
+  },
+  {
+    "id": "car-executive",
+    "type": "vehicle",
+    "source": "NormalCar2",
+    "vehicle": true,
+    "pack": "vehicle 1",
+    "bytes": 338480
+  },
+  {
+    "id": "car-suv",
+    "type": "vehicle",
+    "source": "SUV",
+    "vehicle": true,
+    "pack": "vehicle 1",
+    "bytes": 356848
+  },
+  {
+    "id": "car-sport",
+    "type": "vehicle",
+    "source": "SportsCar",
+    "vehicle": true,
+    "pack": "vehicle 1",
+    "bytes": 333552
+  },
+  {
+    "id": "human-male_casual",
+    "type": "human",
+    "pack": "male character",
+    "clips": [
+      "HumanArmature|Man_Walk",
+      "HumanArmature|Man_Run",
+      "HumanArmature|Man_Idle",
+      "HumanArmature|Man_Sitting",
+      "HumanArmature|Man_Jump"
+    ],
+    "bytes": 612096,
+    "optimizedPrimitives": 6
+  },
+  {
+    "id": "human-male_shirt",
+    "type": "human",
+    "pack": "male character",
+    "clips": [
+      "HumanArmature|Man_Walk",
+      "HumanArmature|Man_Run",
+      "HumanArmature|Man_Idle",
+      "HumanArmature|Man_Sitting",
+      "HumanArmature|Man_Jump"
+    ],
+    "bytes": 612352,
+    "optimizedPrimitives": 9
+  },
+  {
+    "id": "human-male_longsleeve",
+    "type": "human",
+    "pack": "male character",
+    "clips": [
+      "HumanArmature|Man_Walk",
+      "HumanArmature|Man_Run",
+      "HumanArmature|Man_Idle",
+      "HumanArmature|Man_Sitting",
+      "HumanArmature|Man_Jump"
+    ],
+    "bytes": 629272,
+    "optimizedPrimitives": 5
+  },
+  {
+    "id": "human-male_suit",
+    "type": "human",
+    "pack": "male character",
+    "clips": [
+      "HumanArmature|Man_Walk",
+      "HumanArmature|Man_Run",
+      "HumanArmature|Man_Idle",
+      "HumanArmature|Man_Sitting",
+      "HumanArmature|Man_Jump"
+    ],
+    "bytes": 696224,
+    "optimizedPrimitives": 7
+  },
+  {
+    "id": "human-female_casual",
+    "type": "human",
+    "pack": "female character",
+    "clips": [
+      "HumanArmature|Female_Jump",
+      "HumanArmature|Female_Idle",
+      "HumanArmature|Female_Walk",
+      "HumanArmature|Female_Sitting",
+      "HumanArmature|Female_Run"
+    ],
+    "bytes": 753024,
+    "optimizedPrimitives": 8
+  },
+  {
+    "id": "human-female_alternative",
+    "type": "human",
+    "pack": "female character",
+    "clips": [
+      "HumanArmature|Female_Idle",
+      "HumanArmature|Female_Run",
+      "HumanArmature|Female_Walk",
+      "HumanArmature|Female_Sitting",
+      "HumanArmature|Female_Jump"
+    ],
+    "bytes": 637876,
+    "optimizedPrimitives": 10
+  },
+  {
+    "id": "human-female_dress",
+    "type": "human",
+    "pack": "female character",
+    "clips": [
+      "HumanArmature|Female_Jump",
+      "HumanArmature|Female_Idle",
+      "HumanArmature|Female_Walk",
+      "HumanArmature|Female_Sitting",
+      "HumanArmature|Female_Run"
+    ],
+    "bytes": 602740,
+    "optimizedPrimitives": 5
+  },
+  {
+    "id": "human-female_tanktop",
+    "type": "human",
+    "pack": "female character",
+    "clips": [
+      "HumanArmature|Female_Jump",
+      "HumanArmature|Female_Idle",
+      "HumanArmature|Female_Walk",
+      "HumanArmature|Female_Sitting",
+      "HumanArmature|Female_Run"
+    ],
+    "bytes": 681180,
+    "optimizedPrimitives": 7
+  }
+]

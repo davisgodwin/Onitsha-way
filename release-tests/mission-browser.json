@@ -1,0 +1,47 @@
+{
+  "checks": [
+    "mission uses existing source and gate neighbour",
+    "journal offers world navigation, not remote accept/complete",
+    "available mission follows source without accepting",
+    "E opens actual nearby NPC conversation",
+    "source explains real mission before acceptance",
+    "accepting tracks friend but does not pay or complete",
+    "active mission reload retains binding and zero reward",
+    "arriving at friend does not complete mission",
+    "E opens actual nearby NPC conversation",
+    "unrelated NPC opener is not completion",
+    "welcome conversation records first objective only",
+    "finishing conversation pays precisely 500 and records permanent receipt",
+    "completion removes mission marker and does not duplicate residents",
+    "reload keeps completed journal and never pays twice",
+    "completed mission has no accept or follow buttons",
+    "journal fits mobile without horizontal overflow",
+    "touch controls initialize with mission journal",
+    "mobile tap tracks the existing mission contact",
+    "mobile contextual touch opens the actual source NPC",
+    "mobile dialogue accepts without paying",
+    "mobile touch dialogue completes and pays once",
+    "existing keyboard movement remains functional",
+    "existing camera can still turn",
+    "no browser or game-frame exceptions"
+  ],
+  "errors": [],
+  "source": {
+    "id": "career-city:market",
+    "name": "Workplace mentor",
+    "spot": {
+      "x": -257.29043357715784,
+      "z": -645.6486526844658,
+      "label": "Talk to Workplace mentor · Find Your Friend"
+    }
+  },
+  "friend": {
+    "id": "gate:117",
+    "name": "Halima",
+    "spot": {
+      "x": -245.7344830581247,
+      "z": -916.4822096822049,
+      "label": "Talk to Halima · Find Your Friend"
+    }
+  }
+}

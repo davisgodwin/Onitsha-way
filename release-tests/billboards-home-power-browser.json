@@ -1,0 +1,37 @@
+{
+  "checks": [
+    "all 200 boards face the road squarely",
+    "no billboard envelope enters any building or later venue",
+    "home access and decorative houses remain intact",
+    "temporary sign reservation colliders removed for walking",
+    "purchased inverter and home appliances are installed with interactions",
+    "outage leaves bulbs off when backup is disabled",
+    "walking up to inverter opens its direct power controls",
+    "inverter control immediately restores home lights during outage",
+    "disabling backup extinguishes lights during outage",
+    "TV switch saves on-state and illuminates its screen",
+    "fan switch starts the visible rotor",
+    "switched-on home radio plays bundled music through game audio",
+    "empty battery stops bulbs, TV, fan and radio",
+    "washing machine action is disabled without electricity",
+    "grid return charges battery and re-enables appliance use",
+    "washing machine performs its named household activity",
+    "home appliance switches and inverter reserve survive reload",
+    "direct appliance controls fit mobile screen",
+    "phone home menu opens installed appliance controls",
+    "outdoor generator has a reachable direct interaction",
+    "empty generator cannot start",
+    "fuelled generator supplies backup after direct refuel and start",
+    "no browser or game frame errors"
+  ],
+  "errors": [],
+  "audit": {
+    "boards": 200,
+    "houses": 800,
+    "buildingOverlaps": [],
+    "venueOverlaps": [],
+    "unfacing": [],
+    "blockedDoors": [],
+    "reservations": 0
+  }
+}

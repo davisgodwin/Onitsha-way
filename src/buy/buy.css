@@ -1,0 +1,98 @@
+.buy-mode{position:fixed;inset:0;z-index:75;font:16px/1.45 system-ui,sans-serif;color:#243044;pointer-events:none}.buy-mode[hidden]{display:none}.buy-active #screen-hud{visibility:hidden}.buy-top{position:absolute;inset:16px 24px auto;display:flex;align-items:center;justify-content:space-between;gap:16px;pointer-events:auto}.buy-mode-label,.buy-balance{padding:12px 18px;background:#fff;border:1px solid #e4e8ed;border-radius:22px;font-size:14px}.buy-balance{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap}.buy-round{margin-left:auto;width:44px;height:44px;background:white;border:1px solid #e4e8ed;border-radius:50%;font:24px system-ui;color:#243044;cursor:pointer}.buy-view-tools{position:absolute;top:76px;left:24px;display:flex;flex-wrap:wrap;gap:8px;pointer-events:auto}.buy-floors{display:flex;gap:4px;padding:4px;background:white;border-radius:18px;border:1px solid #e4e8ed}.buy-button,.buy-confirm,.buy-tab,.buy-hide{font:600 14px/1.3 system-ui;min-height:44px;min-width:44px;border:0;border-radius:14px;padding:10px 14px;background:#eff2f7;color:#42516b;cursor:pointer}.buy-button.active,.buy-tab.active{background:#202837;color:#fff}.buy-mode :focus-visible{outline:3px solid #2783de;outline-offset:3px}.buy-mode button:disabled{opacity:.5;cursor:not-allowed}.buy-stage{position:absolute;inset:126px 0 48dvh;pointer-events:auto;touch-action:none}.buy-panel{position:absolute;left:50%;transform:translateX(-50%);bottom:16px;width:min(900px,calc(100vw - 40px));height:46dvh;max-height:calc(100dvh - 140px);min-height:260px;background:#fff;border:1px solid #e4e8ed;border-radius:26px;padding:20px;box-sizing:border-box;pointer-events:auto;display:flex;flex-direction:column;box-shadow:0 8px 32px #1424311a}.buy-panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-shrink:0;margin-bottom:8px}.buy-panel-head h2{font:750 22px/1.3 system-ui;margin:0}.buy-hide{font-weight:500;background:#f2f4f8;min-height:36px;padding:7px 14px}.buy-panel-content{display:flex;flex-direction:column;min-height:0;flex:1}.buy-panel-content[hidden]{display:none}.buy-tabs{display:flex;overflow-x:auto;flex-shrink:0;gap:6px;padding:4px 2px 8px;scrollbar-width:thin}.buy-tab{white-space:nowrap;min-height:40px;padding:9px 14px;border-radius:20px}.buy-hint{font-size:14px;color:#56637a;margin:4px 0 12px}.buy-list{overflow-y:auto;overscroll-behavior:contain;min-height:0;flex:1;padding:2px 6px 6px 0;scrollbar-width:thin}.buy-group-label{font:650 13px/1.3 system-ui;color:#59687b;margin:8px 0}.buy-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}.buy-card{background:#f2f4f8;border:2px solid transparent;border-radius:18px;padding:6px;text-align:left;cursor:pointer;color:#243044;display:flex;flex-direction:column;gap:3px;min-width:0;min-height:106px;font:14px/1.3 system-ui;overflow:hidden}.buy-card img{width:100%;height:90px;object-fit:contain;border-radius:12px;background:#eef2f3}.buy-card strong{font-size:14px;font-weight:600;overflow-wrap:anywhere}.buy-card-price{font-size:14px;font-weight:600}.buy-card.is-owned .buy-card-price{color:#13734c}.buy-card.is-active{border-color:#199b69;background:#eef8f2}.buy-swatch{display:block;position:relative;height:54px;width:100%;background:var(--finish);border-radius:14px;overflow:hidden}.buy-swatch:after{content:'';position:absolute;inset:0 0 0 50%;background:#fff3}.buy-swatch.is-floor{background-image:linear-gradient(#ffffff66 1px,transparent 1px),linear-gradient(90deg,#ffffff66 1px,transparent 1px);background-size:20px 20px}.buy-detail{border-top:1px solid #e3e7ed;margin-top:10px;padding-top:12px;flex-shrink:0}.buy-detail-copy{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}.buy-detail-copy>strong{font-size:16px}.buy-status{font-size:14px;color:#56637a;margin:0 0 8px;flex:1;min-width:180px}.buy-detail-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.buy-confirm{background:#207e59;color:#fff}.buy-result{font-size:14px;color:#20704f;margin:8px 0 0}.buy-home-note{position:absolute;top:150px;left:50%;transform:translateX(-50%);width:min(600px,calc(100% - 40px));background:#ffffffed;border:1px solid #e4e8ed;border-radius:20px;padding:20px;box-sizing:border-box;pointer-events:auto}.buy-home-note h2{margin:0 0 8px;font:750 24px/1.3 system-ui}.buy-home-note p{margin:0 0 12px;font-size:14px;color:#56637a}.buy-mode[data-editable=false]{background:linear-gradient(150deg,#d9e8eeed,#edf1e9ed)}.buy-mode.is-collapsed .buy-panel{height:auto;min-height:0;padding:12px 20px}.buy-mode.is-collapsed .buy-panel-head{margin:0}.buy-mode.is-collapsed .buy-stage{bottom:84px}
+@media(max-width:600px){.buy-top{inset:12px 12px auto;gap:6px}.buy-mode-label{padding:9px 12px;font-size:14px}.buy-balance{top:51px;left:auto;right:0;transform:none;font-size:14px;padding:9px 12px}.buy-view-tools{left:12px;top:68px;max-width:55%;gap:4px}.buy-view-tools>.buy-button{padding:8px}.buy-floors{gap:2px;padding:2px;max-width:100%}.buy-floors .buy-button{padding:8px;font-size:14px}.buy-panel{bottom:8px;width:calc(100vw - 16px);height:51dvh;min-height:260px;max-height:calc(100dvh - 160px);padding:14px;border-radius:22px}.buy-panel-head h2{font-size:20px}.buy-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.buy-card{min-height:110px}.buy-card img{height:92px}.buy-stage{bottom:calc(51dvh + 8px);top:130px}.buy-hint{font-size:14px;margin-bottom:8px}.buy-detail-copy{gap:3px}.buy-detail-actions{gap:6px}.buy-detail-actions .buy-button{padding:8px 10px}.buy-confirm{flex:1}.buy-home-note{top:135px;padding:16px}.buy-home-note h2{font-size:20px}.buy-home-note p{margin-bottom:8px}.buy-tab{min-height:44px}}
+@media(max-height:500px){.buy-panel{height:62dvh;left:auto;right:10px;transform:none;width:52vw;bottom:8px;min-height:190px;padding:12px}.buy-top{inset:8px 12px auto}.buy-balance{position:static;transform:none}.buy-view-tools{top:64px;left:12px;width:40%;gap:4px}.buy-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.buy-hint{display:none}.buy-stage{inset:110px 54vw 10px 0}.buy-detail{padding-top:6px;margin-top:4px}.buy-status{display:none}.buy-card{min-height:90px}.buy-swatch{height:42px}.buy-card img{height:60px}.buy-panel-head h2{font-size:18px}.buy-detail-actions{flex-wrap:nowrap}.buy-detail-actions .buy-button{padding:8px}.buy-detail-copy>strong{font-size:14px}.buy-home-note{top:120px;left:12px;transform:none;width:42vw}.buy-home-note p{font-size:14px}}
+@media(prefers-reduced-motion:reduce){.buy-mode *{scroll-behavior:auto}}
+
+.buy-tab{flex:0 0 auto}
+@media(max-width:600px){.buy-money-label{display:none}}
+
+.buy-top,.buy-view-tools,.buy-home-note,.buy-panel{z-index:2}.buy-stage{top:0}
+
+/* v0.37: tiers, colours, placing */
+.buy-tiers{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 4px}.buy-chip{font:600 13px/1.2 system-ui;min-height:36px;border:1px solid #d9dfe7;border-radius:18px;padding:7px 12px;background:#fff;color:#42516b;cursor:pointer}.buy-chip.active{background:#202837;border-color:#202837;color:#fff}
+.buy-card{position:relative}.buy-tier{position:absolute;top:10px;left:10px;font:700 11px/1 system-ui;letter-spacing:.02em;padding:4px 7px;border-radius:10px;background:#fff;color:#56637a}.buy-tier.is-standard{background:#e5eef9;color:#2b5d93}.buy-tier.is-premium{background:#f7ecd4;color:#8a5a00}
+.buy-dot{position:absolute;top:10px;right:10px;width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #0002}
+.buy-detail-price{font-size:14px;color:#56637a}.buy-facts{font-size:13px;color:#56637a;margin:4px 0 6px}
+.buy-swatches{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 8px}.buy-colour{width:36px;height:36px;min-width:36px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #c9d1db;cursor:pointer;padding:0}.buy-colour.active{box-shadow:0 0 0 3px #199b69}
+.buy-danger{background:#b4413a}
+.buy-mode.is-placing .buy-panel{height:auto;min-height:0}.buy-mode.is-placing .buy-panel-content{display:none}.buy-mode.is-placing .buy-stage{bottom:170px}
+@media(max-width:600px){.buy-colour{width:32px;height:32px;min-width:32px}.buy-tier{top:8px;left:8px}.buy-mode.is-placing .buy-stage{bottom:190px}}
+
+.buy-fittings{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}.buy-fitting{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#f2f4f8;border-radius:14px;padding:6px 6px 6px 12px;font-size:14px}
+
+/* ───────────── v0.52: Buy mode, redesigned ─────────────
+   Wide screens: the catalogue is a side panel on the right and the room fills the rest.
+   Phones: a bottom sheet whose list never gets squeezed away by the selected item. */
+.buy-mode{--bm-ink:#1d2533;--bm-soft:#5b6779;--bm-line:#e3e7ee;--bm-card:#f5f7fa;--bm-accent:#127a55;--bm-accent-soft:#e6f4ee;color:var(--bm-ink)}
+.buy-mode-label{display:flex;align-items:baseline;gap:4px;font:700 15px/1.2 system-ui;box-shadow:0 2px 10px #12203112}
+.buy-mode-home{font-weight:500;color:var(--bm-soft);max-width:28ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.buy-balance{background:#13281f;color:#e8f7ee;border-color:#13281f;font-weight:700;box-shadow:0 2px 10px #12203122}
+.buy-balance .buy-money-label{color:#a9cdb9;font-weight:500}
+.buy-round{box-shadow:0 2px 10px #12203118}
+.buy-view-tools .buy-button,.buy-floors{background:#fff;box-shadow:0 2px 10px #12203112}
+.buy-panel{border:0;box-shadow:0 18px 50px #12203126,0 2px 6px #1220310f}
+.buy-panel-head h2{font:800 22px/1.2 system-ui;letter-spacing:-.01em}
+.buy-tabs{gap:6px;padding-bottom:10px;border-bottom:1px solid var(--bm-line);margin-bottom:10px}
+.buy-tab{background:transparent;color:var(--bm-soft);border:1px solid var(--bm-line);font-weight:600}
+.buy-tab:hover{background:var(--bm-card)}
+.buy-tab.active{background:var(--bm-ink);border-color:var(--bm-ink);color:#fff}
+.buy-chip{border-color:var(--bm-line);font-weight:600}
+.buy-chip.active{background:var(--bm-accent);border-color:var(--bm-accent)}
+.buy-search{display:block;margin:2px 0 8px}
+.buy-search input{box-sizing:border-box;width:100%;min-height:42px;border:1px solid var(--bm-line);border-radius:12px;padding:9px 12px 9px 36px;font:15px/1.3 system-ui;color:var(--bm-ink);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235b6779' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") no-repeat 12px center}
+.buy-search input:focus{outline:3px solid #2783de55;border-color:#2783de}
+.buy-hint{font-size:13px;line-height:1.45;color:var(--bm-soft)}
+.buy-group-label{font:800 12px/1.2 system-ui;letter-spacing:.08em;color:var(--bm-soft);text-transform:uppercase}
+.buy-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.buy-card{background:#fff;border:1px solid var(--bm-line);border-radius:16px;padding:8px 8px 10px;gap:4px;transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease}
+.buy-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px #12203114;border-color:#cdd5df}
+.buy-card img{height:104px;border-radius:11px;background:linear-gradient(160deg,#f6f8fb,#e7edf2)}
+.buy-card strong{font-size:14px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.5em}
+.buy-card-price{font:700 14px/1.2 system-ui;color:var(--bm-ink)}
+.buy-card.is-owned .buy-card-price{color:var(--bm-accent)}
+.buy-card.is-active{border:2px solid var(--bm-accent);background:var(--bm-accent-soft);box-shadow:0 6px 18px #127a5522}
+.buy-tier{top:12px;left:12px;box-shadow:0 1px 3px #0001}
+.buy-detail{border-top:0;margin-top:8px;padding:14px;background:var(--bm-card);border-radius:18px;max-height:46%;overflow-y:auto;overscroll-behavior:contain}
+.buy-detail-copy{align-items:center}
+.buy-detail-thumb{width:56px;height:56px;object-fit:contain;border-radius:12px;background:#fff;border:1px solid var(--bm-line);flex-shrink:0}
+.buy-detail-copy>strong{font:800 17px/1.25 system-ui}
+.buy-detail-price{font-weight:600}
+.buy-facts{font-size:13px;line-height:1.45}
+.buy-detail-actions{margin-top:6px}
+.buy-detail .buy-button{background:#fff;border:1px solid var(--bm-line)}
+.buy-confirm{background:var(--bm-accent);box-shadow:0 4px 12px #127a5533;font-weight:700}
+.buy-confirm:hover{background:#0f6748}
+.buy-panel{overflow:hidden}.buy-panel-content{min-height:0;overflow:hidden}.buy-list{min-height:0}.buy-detail{flex-shrink:0}
+.buy-home-note{border:0;box-shadow:0 18px 50px #12203126;border-radius:22px}
+.buy-fitting{background:#fff;border:1px solid var(--bm-line)}
+.buy-none{margin-top:12px}
+
+/* wide screens: the side panel */
+@media (min-width:900px) and (min-height:560px){
+ .buy-top{inset:16px 456px auto 20px}
+ .buy-balance{position:static;transform:none;margin-left:auto}
+ .buy-round{margin-left:0}
+ .buy-view-tools{top:76px;left:20px}
+ .buy-panel{left:auto;right:16px;top:16px;bottom:16px;transform:none;width:424px;height:auto;max-height:none;min-height:0;border-radius:24px;padding:20px 18px 18px}
+ .buy-tabs{mask-image:linear-gradient(90deg,#000 88%,transparent)}
+ .buy-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .buy-stage{inset:0 456px 0 0}
+ .buy-mode.is-collapsed .buy-panel{bottom:auto}
+ .buy-mode.is-collapsed .buy-stage,.buy-mode.is-placing .buy-stage{inset:0 456px 0 0}
+ .buy-mode.is-placing .buy-panel{bottom:auto}
+ .buy-home-note{left:calc((100% - 456px)/2)}
+}
+/* phones */
+@media (max-width:600px){
+ .buy-panel{height:58dvh;padding:14px 12px 12px}
+ .buy-stage{bottom:calc(58dvh + 8px)}
+ .buy-mode.has-selection .buy-tiers,.buy-mode.has-selection .buy-search{display:none}
+ .buy-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .buy-card img{height:84px}
+ .buy-card{min-height:0}
+ .buy-detail{max-height:52%;padding:10px 12px}
+ .buy-detail .buy-facts{display:none}
+ .buy-detail-thumb{width:44px;height:44px}
+ .buy-hint{display:none}
+ .buy-mode-home{display:none}
+}

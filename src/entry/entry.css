@@ -1,0 +1,31 @@
+/* Signup lives inside the original warm Onitsha Way loading screen. */
+#screen-loading.entry-active{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:16px;overflow-y:auto;padding:32px max(24px,env(safe-area-inset-right)) 32px max(24px,env(safe-area-inset-left));touch-action:pan-y}
+#screen-loading.entry-active>.brand{flex:none;text-align:center}
+#screen-loading.entry-active .brand-title{font-size:clamp(44px,6vw,64px)}
+#screen-loading.entry-active>.loadbar{flex:none;height:6px;width:min(460px,100%)}
+#screen-loading.entry-active>.load-status{flex:none;max-width:460px;font-size:14px}
+.entry{width:min(460px,100%);flex:none;color:var(--cream);font-family:var(--font-body)}
+.entry-card{padding:24px;border:1px solid var(--panel-line);border-radius:12px;background:var(--panel);min-width:0}
+.entry-card h2{font-family:var(--font-display);font-size:28px;line-height:1.2;margin:16px 0 8px}
+.entry-tabs{display:flex;gap:8px}.entry-tabs .entry-button{flex:1;margin:0}
+.entry-button{display:block;width:100%;min-height:44px;padding:12px 16px;margin-top:12px;background:transparent;border:1px solid #796c58;border-radius:8px;color:var(--cream);font:700 14px var(--font-body);cursor:pointer;white-space:normal}
+.entry-primary{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.entry button:disabled{opacity:.55;cursor:wait}.entry button:hover:not(:disabled){filter:brightness(1.1)}
+.entry :focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.entry-steps,.entry-kicker{font-size:14px;line-height:1.5;color:#eac983;margin:16px 0 0}
+.entry-muted{font-size:16px;line-height:1.5;color:var(--cream-dim);margin:0 0 16px}
+.entry-field{display:block;margin-top:12px;font-size:14px;font-weight:600}.entry-field span{display:block;margin-bottom:6px}
+.entry-field input{width:100%;min-height:44px;padding:10px 12px;border:1px solid #796c58;border-radius:8px;background:var(--ink);color:var(--cream);font:16px var(--font-body)}
+.entry-hint,.entry-small{font-size:14px;line-height:1.5;color:var(--cream-dim);margin:8px 0}
+.entry-check{display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.5;margin:12px 0;color:var(--cream)}
+.entry-check input{flex:none;width:20px;height:20px;accent-color:var(--gold);margin:1px 0}
+.entry-password-toggle{min-height:44px;border:0;background:none;padding:8px 0;color:#eac983;font:14px var(--font-body);cursor:pointer}
+.entry-status{font-size:14px;color:#ffe0a8;line-height:1.5;overflow-wrap:anywhere}.entry-status:empty{display:none}
+.entry-small{margin:16px 0 0}
+@media(max-width:540px){#screen-loading.entry-active{padding:24px 16px;gap:16px}.entry-card{padding:20px}.entry-card h2{font-size:26px}}
+/* v0.44: the account screen shares the signboard look (title board, asphalt card with a painted top edge) */
+#screen-loading.entry-active .sign-board{font-size:clamp(40px,6vw,62px)}
+#screen-loading{background:radial-gradient(1100px 620px at 28% 18%,#2a2d36,#15171c)}
+.entry-card{background:var(--asphalt);border:1px solid var(--asphalt-line);border-top:6px solid var(--keke);border-radius:var(--board-radius)}
+.entry-button{border-radius:var(--board-radius)}
+.entry-primary{background:var(--keke);border-color:var(--keke);color:#121212}

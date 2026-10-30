@@ -1,0 +1,10 @@
+/** Original three-lane runner. One obstacle per row always leaves two passable lanes. */
+export class ChaseRun {
+ constructor(seed=1,saved=null){this.seed=seed>>>0;this.time=0;this.distance=0;this.lane=1;this.health=3;this.jump=0;this.slide=0;this.next=28;this.rows=[];this.serial=0;this.done=null;this.paused=false;if(saved){for(const k of ['time','distance','lane','health','jump','slide','next','serial'])if(Number.isFinite(saved[k]))this[k]=saved[k];if(Array.isArray(saved.rows))this.rows=saved.rows.map(r=>({...r}));this.seed=Number.isFinite(saved.seed)?saved.seed>>>0:this.seed;this.lane=Math.max(0,Math.min(2,Math.round(this.lane)));this.health=Math.max(0,Math.min(3,this.health));}}
+ rand(){this.seed=(Math.imul(this.seed,1664525)+1013904223)>>>0;return this.seed/4294967296;}
+ action(a){if(this.paused||this.done)return;if(a==='left')this.lane=Math.max(0,this.lane-1);if(a==='right')this.lane=Math.min(2,this.lane+1);if(a==='jump'&&this.jump<=0&&this.slide<=0)this.jump=.95;if(a==='slide'&&this.slide<=0&&this.jump<=0)this.slide=.95;}
+ update(dt){if(this.done||this.paused)return this.done;dt=Math.max(0,Math.min(.1,dt));this.time+=dt;const old=this.distance;this.distance+=(12+this.distance/160)*dt;this.jump=Math.max(0,this.jump-dt);this.slide=Math.max(0,this.slide-dt);while(this.next<this.distance+85){this.rows.push({id:++this.serial,at:this.next,lane:Math.floor(this.rand()*3),kind:['crate','beam','cart'][Math.floor(this.rand()*3)],hit:false});this.next+=19+this.rand()*10;}
+ for(const r of this.rows)if(!r.hit&&r.at>=old&&r.at<this.distance){r.hit=true;if(r.lane===this.lane&&!(r.kind==='crate'&&this.jump>0)&&!(r.kind==='beam'&&this.slide>0))this.health--;}
+ this.rows=this.rows.filter(r=>r.at>this.distance-10);if(this.health<=0)this.done='caught';else if(this.distance>=450)this.done='escaped';return this.done;}
+ serialize(){return{seed:this.seed,time:this.time,distance:this.distance,lane:this.lane,health:this.health,jump:this.jump,slide:this.slide,next:this.next,serial:this.serial,rows:this.rows.map(r=>({...r}))};}
+}

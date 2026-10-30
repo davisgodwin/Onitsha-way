@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Vehicle geometry audit</title><style>html,body{margin:0;background:#e1e7e4;font:16px Arial}canvas{display:block}.label{position:absolute;color:#233830;text-align:center;width:33.333%;pointer-events:none;font-weight:bold;padding-top:12px;box-sizing:border-box}</style></head><body><script type="module">
+import * as T from 'three';
+import {loadModelLibrary} from '/src/render/ModelLibrary.js';
+import {VEHICLE_CATALOGUE} from '/src/data/VehicleCatalogue.js';
+import {VehicleController} from '/src/vehicles/VehicleController.js';
+import {TYPES,splitGlass,GLASS_MATERIAL} from '/src/sim/TrafficSystem.js';
+await loadModelLibrary();
+const renderer=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(1);renderer.setScissorTest(true);renderer.outputColorSpace=T.SRGBColorSpace;document.body.append(renderer.domElement);
+window.auditModels=VEHICLE_CATALOGUE;window.auditT=T;
+window.renderVehicles=(ids,angle='front',mode='owned')=>{
+ renderer.setSize(innerWidth,innerHeight);
+ document.querySelectorAll('.label').forEach(n=>n.remove());
+ renderer.setViewport(0,0,innerWidth,innerHeight);renderer.setScissor(0,0,innerWidth,innerHeight);renderer.setClearColor('#e1e7e4');renderer.clear();
+ const cols=ids.length>1?3:1,rows=Math.ceil(ids.length/cols),w=innerWidth/cols,h=innerHeight/rows;
+ ids.forEach((id,i)=>{const M=VEHICLE_CATALOGUE.find(m=>m.id===id)||{...TYPES[id],height:({sedan:1.48,executive:1.5,suv:1.9,bus:2.8,lorry:2.8,cbus:3,minibus:2.35,keke:1.8})[id],label:'Fleet '+id};const s=new T.Scene();s.background=new T.Color('#e1e7e4');s.add(new T.HemisphereLight(0xffffff,0x768b80,2));const light=new T.DirectionalLight(0xfff4df,2.5);light.position.set(-4,8,6);s.add(light);
+ let obj;if(mode==='owned')obj=VehicleController.prototype.makeMesh.call({},id,'#abc1b5');else{obj=new T.Group();const [body,glass]=splitGlass(TYPES[id].geo());obj.add(new T.Mesh(body,new T.MeshStandardMaterial({vertexColors:true,color:'#abc1b5',side:T.DoubleSide})));if(glass)obj.add(new T.Mesh(glass,GLASS_MATERIAL()));}
+ s.add(obj);const span=Math.max(M.len*1.08,5.4),c=new T.PerspectiveCamera(32,w/h,.05,100);const target=new T.Vector3(0,M.height*.43,0);c.position.set(span*(angle==='right'?-1:1),span*(angle==='low'?.25:.65),span*(angle==='rear'?-1.2:1.2));c.lookAt(target);
+ const floor=new T.Mesh(new T.PlaneGeometry(40,40),new T.MeshStandardMaterial({color:'#d2dcd5',roughness:1}));floor.rotation.x=-Math.PI/2;floor.position.y=-.015;s.add(floor);
+ const x=(i%cols)*w,y=innerHeight-(Math.floor(i/cols)+1)*h;renderer.setViewport(x,y,w,h);renderer.setScissor(x,y,w,h);renderer.render(s,c);
+ const l=document.createElement('div');l.className='label';l.style.cssText=`left:${x}px;top:${Math.floor(i/cols)*h}px;width:${w}px`;l.textContent=M.label+' · '+mode;document.body.append(l);
+ });return true;
+};window.auditReady=true;renderVehicles(['toyota_hilux'],'rear');
+</script></body></html>

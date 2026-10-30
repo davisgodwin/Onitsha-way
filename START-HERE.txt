@@ -1,0 +1,354 @@
+ONITSHA WAY v0.53.0 — MORE GRA HOMES + BUSY FILLING STATIONS + GATES THAT OPEN + FREE FURNITURE PLACEMENT
+=========================================================================================================
+See UPDATE_53.md. Your save carries on (version 23).
+
+ONITSHA WAY v0.52.0 — GRA TARRED + CONCRETE GROUND + GARAGE AT HOME + NEW BUY MODE
+====================================================================================
+
+Start it as before. Your save carries on (still version 23).
+
+Try:
+- Drive into GRA Phase I or II: tarred roads and concrete ground.
+- Your home's garage (Home menu > garage, or the map): a carport in your compound, or a garage built on to it.
+- Buy mode on a computer: the catalogue is on the right; use the search box.
+
+ONITSHA WAY v0.51.0 — PAYSTACK (TEST MODE) FOR BILLBOARD ADS
+================================================================
+
+Start it as before (npm run dev, or npm run lan for phones). Your save carries on (still version 23).
+
+Paystack setup (once):
+- Copy server/paystack.example.json to server/paystack.local.json and put your TEST keys in it
+  (sk_test_... and pk_test_...). Live keys are refused. Restart: the server prints "Paystack: on (test keys)".
+- That file is git-ignored and never put in a zip, so add it again on each machine.
+
+Try:
+- Phone > Business ads > create a flyer order > type an email > Pay with Paystack (test).
+- In the Paystack window use a test card (e.g. 4084 0840 8408 4081, any future date, CVV 408).
+- The flyer goes on the billboard once the server has confirmed the payment with Paystack.
+
+ONITSHA WAY v0.50.0 — WATCH TV + WELCOME TO GRA GATEWAYS + THE NIGHTCLUB REBUILT (DJ REQUESTS, SPRAY MONEY, DORIME)
+=================================================================================================================
+
+Start it as before (npm run dev, or npm run lan for phones). Your save carries on (still version 23).
+
+Try:
+- At home, with a TV bought and placed: tap the TV > Switch on. The programme plays on the TV screen. Pick
+  Watch Nollywood drama / Hollywood-style action / Comedy skit / News / Football highlights / Music videos /
+  Cartoons: it opens big on your screen; Stop watching any time (you get part of the fun).
+- Drive into GRA Phase I or II on a main road: a big WELCOME TO GRA arch over the road. They're on the map too.
+- Any nightclub after 19:00 (adults only):
+  - the DJ: request a song (tip ₦1,000, or ₦5,000 for a shout-out on the big LED wall);
+  - the dance floor: dance, or spray ₦5,000 to ₦100,000 over the crowd;
+  - the VIP lounge: Dorime bottle service, the waitresses bring the bottles with sparklers;
+  - the bar and the bathroom as before.
+- The club plays two original DJ mixes (Afrobeats and amapiano). To add music you have the rights to, read
+  public/audio/club/custom/README.txt.
+
+ONITSHA WAY v0.49.0 — NEW MAP SCREEN + CITY FILLED IN ROWS + WALLED HOUSES + MORE PLACES + TRAFFIC LIGHTS
+==========================================================================================================
+
+Start it as before (npm run dev, or npm run lan for phones). Your save carries on (still version 23).
+
+Try:
+- Open the Map: search ("church", "GRA", a street), tap a chip (Food & markets, Bars...), tap i for the key.
+- Drive around: every street has rows of walled houses with gates; GRA has big plots.
+- Look for the TO LET signs on the new walled houses: rent or buy one.
+- New places: filling stations, hotels, bars, clubs, eateries, recreation centres (pool, draughts, console
+  football), mini pitches (kick-about 15:00-19:00), street markets, schools, churches, police stations,
+  Unity Motors and Executive Motors.
+- Busy junctions have traffic lights (stop on red); the busiest have a traffic warden.
+- Drive to the edge of Onitsha: a big TOWARDS NKPOR / OBOSI / OKPOKO · COMING SOON gantry and a roadblock.
+
+ONITSHA WAY v0.48.0 — ONITSHA ONLY + MOTOR PARKS + BUS STOPS + PREMIUM CARS + NEIGHBOURHOODS + DECORATING ONLINE + 11-A-SIDE
+================================================================================================
+
+Start it as before (npm run dev, or npm run lan for phones). Your save carries on (still version 23).
+
+Try:
+- Drive west on the Niger Bridge: you stop at the barrier at mid-river (Asaba is COMING SOON).
+- Upper Iweka Motor Park or Bridgehead Motor Park: walk in through the gate, watch the buses come and go, talk to
+  the ticket office.
+- Any bus stop: a real shelter with the stop's name.
+- Prestige Autos (next to Onitsha Mall, on the map): the premium cars. A G-Class is in there.
+- Drive through town: trees on family streets, drains in the old districts, painted kerbs on main roads.
+- With a friend online: go into your home > Messages > your friend > Hire to decorate.
+- Footballer at Onitsha City FC: the Saturday league match is 11-a-side.
+
+Before inviting real players, go through LAUNCH_CHECKLIST.md (XAMPP, a real phone, two machines).
+- GRA Phase I and II are in the map (north of the city): villas, palms, lawns and good cars.
+- Drive east or south out of Onitsha: COMING SOON signs at the LGA line (Okpoko, Obosi, Nkpor).
+
+ONITSHA WAY v0.47.0 — STAGE 7 (THE REST) + STAGE 8 (THE CITY RESPONDS)
+
+Read UPDATE_47.md and TEST_RESULTS_47.md. Back up first (Settings > Export save + copy server/data).
+- Phone > Ventures: event planning, decorating, tech agency, landlord, property development, roadside call-outs,
+  security company, street crew, football (Onitsha City FC and the U-17s).
+- News screens: by the mall, the Main Market and the bridgehead (walk up to read). Phone > The Courier has the news.
+- With a warrant out, wanted posters with your name go up; people may call the police.
+- Work shifts: Monday to Saturday now (they were wrongly closed on Mondays).
+- Your save converts by itself (version 23). Start with: npm run dev (close any old copy first).
+
+ONITSHA WAY v0.46.0 — LANDMARK BUILDINGS + ENTER-FIRST WORKPLACES + HOTEL ROOMS + STAGE 7 (PART 1)
+
+Read UPDATE_46.md and TEST_RESULTS_46.md. Back up first (Settings > Export save + copy server/data).
+- Holy Trinity, All Saints, Ime Obi, CKC and Shanahan University have real buildings: walk to the door ("go in").
+  CKC and the palace stand on the nearest clear plot; their map pins moved with them.
+- Workplaces (Metadav and the trade desks): go in first; apply / work / train / tools at the desks inside.
+- Hotels: walk down the corridor to see the rooms; book at the room door (rest 3 hours, or a night).
+- Car doors open only on your side.
+- Shanahan University: Admissions > enrol; one lecture a day (weekdays 8:00-17:00); graduate.
+  Then: doctor/nurse (hospital "Staff only" door), teacher (CKC staff room), lecturer (Shanahan staff room),
+  lawyer (court robing room). Phone > The Courier: journalism. Nightclub DJ booth: DJ set / hypeman.
+- Your save converts by itself (version 22). Start with: npm run dev (close any old copy first).
+
+ONITSHA WAY v0.45.0 — OPEN LIFE (STAGE 6): POLITICS & ELECTIONS + SIT/LIE DOWN + EATERIES & DATES + PALACE
+
+Read UPDATE_45.md and TEST_RESULTS_45.md. Back up first (Settings > Export save + copy server/data).
+- Sit down: X (on the ground) or E at a chair/bench/sofa. Lie down: Z (or E at a bed). Walk to get up.
+  On a phone: the Sit and Lie buttons.
+- Eateries (map search "Eateries"): order at the counter; "Invite someone here on a date" (people you know by name).
+  With another player: walk up to them > "Ask ... on a date" (friends only).
+- Politics: map search "Politics" > Electoral Offices. INEC desk: register. Phone > Politics: join a party.
+  ANSIEC desk: stand (days 1-7 of each 28-day season). Campaign days 8-20: rally grounds, posters, the debate
+  (from day 14). Vote on day 21 (8:00-17:00). Results on day 22. In office: Phone > Politics > projects.
+- Online: Phone > Politics > Players' elections (Mon-Thu stand, Sat vote, Sun results, Onitsha time).
+- Your save converts by itself (version 21). Start the game with: npm run dev (close any old copy first).
+
+ONITSHA WAY v0.44.0 — OPEN LIFE (STAGE 5): PLAYERS TOGETHER + WALK-IN INTERIORS + NEW MENUS
+
+Read UPDATE_44.md and TEST_RESULTS_44.md. Back up first (Settings > Export save + copy server/data).
+- Walk into the police station, EFCC office, hospitals, banks (8:00-17:00), the court (8:00-17:00), Shoprite and the
+  home stores. Counters inside do what the doors used to do.
+- New menus (signboard style). The title font is bundled with the game, so it shows even offline.
+- Online: stand next to another player and press E. Give money, message, report, or (adults, outside safe areas)
+  pick their pocket / rob them. Phone > Law & street > Other players: peace mode (nobody can target you).
+- Run npm install once after unzipping (the menu font is a new package).
+
+ONITSHA WAY v0.43.0 — OPEN LIFE (STAGE 4): THE ACCOUNT SERVER KEEPS THE BOOKS + REAL HOSPITAL/BANK BUILDINGS
+
+Read UPDATE_43.md and TEST_RESULTS_43.md. Back up first (Settings > Export save + copy server/data).
+- Hospitals, banks and the Magistrate Court have their own buildings now (map: Hospitals, Banks, C).
+- Signed in to an account: your account server checks every payment and keeps the true balances. A payment it
+  refuses is taken back out, with a message. Phone > Profile > Account server shows what it decided.
+- Offline (not signed in): nothing changes.
+- MySQL/XAMPP: the server adds one table ("authority") by itself the first time it starts. Nothing else changes.
+
+ONITSHA WAY v0.42.0 — OPEN LIFE (STAGE 3): CRIME, CASES, COURT, HUSTLE KINGDOMS, POLICE & EFCC CAREERS
+
+Read UPDATE_42.md and TEST_RESULTS_42.md. Back up first (Settings > Export save + copy server/data).
+- Fixed: the cloud-save crash "Cannot read properties of undefined (reading 'rev')". If Settings still says the
+  account server can't be reached, close every running copy of the game and start it again with: npm run dev
+- Crime is your choice (adults only): talk to someone > (Try to pick their pocket) / (Rob the stall).
+  Back-street dealer near Ochanja (map: D) buys stolen goods and sells tools (for break-ins at compound gates).
+  Bank job: tools + crew of 2 + "Case the place" in the banking hall by day + go back at night.
+- Crimes become cases. Enough evidence = a warrant. Police at checkpoints/on patrol will stop you.
+  Custody: plead guilty, trial (lawyer), bail + hearing at the Magistrate Court (map: C) the next day, or a bribe.
+- Phone > Law & street: warrants, court date, stolen goods, Hustle Kingdom (schemes, members, informants).
+- Join the police or EFCC: 3 academy sessions at the station/field office (1 a day), then Apply, then Go on duty.
+- Your save converts by itself (version 20).
+
+ONITSHA WAY v0.41.0 — OPEN LIFE (STAGE 2): BANKS, LOANS, YOUR OWN SHOP, TRANSPORT COMPANY, BUSES
+
+Read UPDATE_41.md and TEST_RESULTS_41.md. Back up first (Settings > Export save + copy server/data).
+- Banks: map search "Banks". Open an account (N500), deposit/withdraw, Loans. Pay on time or the bank
+  takes your vehicle/home. A pledged vehicle can't be sold.
+- Your own shop: map search "Shops to let" > walk up > choose a shop > Rent. Put money in, buy stock,
+  hire an attendant, set prices/hours. Customers come every hour it's open. Rent and wages are due daily.
+- Transport company: Phone > My business > Start a transport company. Put your keke/bus to work, hire a driver.
+- Drive a minibus/bus for fares. Phone > My business > Bus route and Hire a conductor (N1,500 a day).
+- Phone > Bank and Phone > My business show everything. Your save converts by itself (version 19).
+
+ONITSHA WAY v0.40.0 — OPEN LIFE (STAGE 1): NO FORCED PATH, JOBS, REPUTATION, RECORD
+
+Read UPDATE_40.md and TEST_RESULTS_40.md. Back up first (Settings > Export save + copy server/data).
+- Nobody tells you what to do. No career at creation, no story chapters, no Find Your Friend.
+- Find work: walk to a workplace on the map (Places on your phone) > Apply > Work a shift (7:00-20:00, Mon-Sat).
+  Promotions take time and good work. Every third shift asks you to choose: do it properly, or take the shortcut.
+  Three warnings and you're dismissed. Resign any time.
+- Trader jobs, keke fares and wholesale deliveries count as working for yourself.
+- Phone > Profile: your jobs, seven reputation bars (why they changed) and your police/work record.
+- Your save converts by itself (version 18). Your old career is now your job. Nothing is lost.
+
+ONITSHA WAY v0.39.0 — CRASHES, NIGHT LIGHTS, FLYOVERS, UNFINISHED BUILDINGS, NEW FLOOR PLANS, HOSPITALS
+
+Read UPDATE_39.md and TEST_RESULTS_39.md. Back up first (Settings > Export save + copy server/data).
+- Bump an NPC's car and the driver stops, puts the hazards on, hoots and shouts at you.
+- At night: LED shows on the DMGS (Zik) and Upper Iweka monuments; billboards are lit.
+- Stairs up the Upper Iweka flyover, two new flyovers nearby and four footbridges: walk up, walk across.
+- Your home has a new floor plan of its own and comes EMPTY: only a bulb + switch per room.
+  Buy your toilet, shower, cooker etc. in Buy mode. Buy mode > My items > Ceiling bulbs: Take out / Put back.
+  Old furniture that now stands in a wall goes to your storage (nothing lost).
+- Hospitals (map search: Hospitals): check-up N2,500 or ward bed N6,000. Knocked down by a car? An ambulance
+  takes you to hospital (up to N3,000). Ambulances drive in the traffic with sirens.
+- Your save is still version 17.
+
+ONITSHA WAY v0.38.0 — ONITSHA BUILDINGS + COMPOUNDS ON EMPTY LAND + 90 HOMES
+
+Read UPDATE_38.md and TEST_RESULTS_38.md. Back up first (Settings > Export save + copy server/data).
+- Houses now have verandas, porches, balconies, proper roofs and paint (8 building types).
+- The empty land along streets is built up: walled compounds with gates, water tanks, generators, washing lines.
+  Walk in through the gate. Nothing is built on roads, junctions, markets, parks, schools or the stadium.
+- 44 new flats (Flat A / Flat B) in storey buildings and blocks: look for TO LET doors, or open the homes list with the Home button.
+- Your save is unchanged (version 17). Loading takes a few seconds longer on slow phones.
+
+ONITSHA WAY v0.37.0 — FURNISH YOUR HOME + FOUR HOME STORES
+
+Read UPDATE_37.md and TEST_RESULTS_37.md. Back up first (Settings > Export save + copy server/data).
+- Enter your home -> Buy (bottom bar). Pick a section and a price tier, tap an item, choose a colour, Place...
+  Drag on the room, rotate with the arrows (45 degrees), then Pay & place. Cancel never charges.
+- Tap any piece of your furniture in Buy mode (or open My items) to Move, Rotate, Store, recolour or Sell (40%).
+- Pictures/curtains snap to walls, fans/lights go on the ceiling, bowls/lamps can sit on tables, duvets on beds,
+  garden chairs and lights are set out by your front door.
+- Four stores in town (map: Shopping): Ezinne Furniture Showroom (Upper Iweka), Bright Star Electronics (Ochanja),
+  Nnamdi Lighting & Electricals (Bridgehead), Adaeze Home Decor (Shoprite). Free delivery to your home's storage.
+  Ordering from home in Buy mode adds a small delivery fee.
+- The supplied-pack houses are removed. Your save converts to version 17 by itself; furniture stays where it was.
+
+ONITSHA WAY v0.36.0 — PHONE FIXES: BUYING, POP-UPS, DASHBOARD, VISITING
+
+Read UPDATE_36.md and TEST_RESULTS_36.md.
+- Car stands and TO LET doors no longer choose a car or "Buy" for you on phones.
+- Your car / your front door open a small card at the bottom (Drive / Enter home).
+- Driving: tap the ▾ on the dashboard to shrink it; ▴ brings it back.
+- Visiting: in Messages open @friend -> ＋ Add friend (they Accept on screen). Host goes inside their
+  home -> Invite home -> the guest taps Accept on the card. Or the guest taps Visit while the host is home.
+- The game reconnects by itself if the Wi-Fi or server drops.
+
+ONITSHA WAY v0.35.0 — VOICE ON PHONES + OTHER PLAYERS' CARS + MAP TEXT
+
+Read UPDATE_35.md (phone certificate steps) and TEST_RESULTS_35.md.
+- npm run lan now prints https://192.168....:5180 addresses. First visit on a phone: the browser says
+  "not private" -> Advanced -> Proceed (Android) / Show Details -> visit this website (iPhone).
+- In the city, tap the 🎙 Voice button (under the ✉ button) -> Talk to players nearby. HOLD the button to talk.
+  On a PC you can also hold V.
+- Other players' cars now show for every model. Map names on phones no longer pile up.
+
+ONITSHA WAY v0.34.0 — PLAY ON YOUR PHONE (SAME WI-FI)
+
+Read UPDATE_34.md for the full guide and troubleshooting; TEST_RESULTS_34.md for checks.
+1. On the host PC: stop npm run dev (Ctrl+C). Start MySQL in XAMPP if you use it.
+2. Run: npm run lan
+3. Windows firewall prompt: tick PRIVATE networks only, then Allow access.
+4. On the phone (same Wi-Fi): open the http://192.168....:5180 address the terminal prints.
+5. New accounts on other devices need the JOIN CODE printed in the terminal. Logging in does not.
+Hostel/cafe Wi-Fi often blocks this - use a phone hotspot instead (connect the PC to it, run npm run lan again).
+Voice chat works on the host PC only (phones would need https). Use trusted Wi-Fi: it is plain http.
+
+ONITSHA WAY v0.33.0 — MYSQL DATABASE (XAMPP) + CLOUD SAVES
+
+Read UPDATE_33.md for the full guide; TEST_RESULTS_33.md for the checks run.
+1. Back up: Settings > Export save, and copy your server/data folder somewhere safe.
+2. XAMPP Control Panel: press Start next to MySQL.
+3. In this folder: npm ci   then   npm run db:setup
+   (creates the onitsha_way database, imports every account from server/data/world.json,
+   keeps the original as world.json.migrated-<date>, and switches the server to MySQL)
+4. npm run dev  — keep MySQL running while you play.
+Your game save now also lives on your account: log in from another browser or browser profile
+on this computer and continue. (Other phones/PCs can't reach the local server yet - it listens
+on this computer only; use Export/Import save to move between devices.)
+Settings > Account save shows when it last synced. Skip step 3 to keep using world.json as before.
+
+ONITSHA WAY v0.32.0 — CITY ACTIVITIES
+
+Read UPDATE_32.md for every new place, its hours, controls, prices and the weekly events; TEST_RESULTS_32.md for checks.
+Open the Map's place directory to find: Market Corner Pool & Draughts, the food stalls, Kingsway salon, Obi's Game Zone,
+Iweka Viewing Centre, CKC Community Court, the stadium running track and Sparkle Car Wash. Walk up and press E.
+
+Launch: npm ci, then npm run dev. Use the same browser/account/address as before.
+Keep your own server/data; export a backup and do not clear saves.
+
+ONITSHA WAY v0.31.0 — 5-A-SIDE FOOTBALL AT THE STADIUM
+
+Read UPDATE_31.md for how to play, controls, rewards and limits; TEST_RESULTS_31.md for the checks run.
+Go to Chuba Ikpeazu Memorial Stadium (map: "5-a-side football"), walk to the green 5-A-SIDE board, press E.
+Saves upgrade from version 15 to 16 automatically (adds an empty football record; nothing else changes).
+
+Launch: npm ci, then npm run dev. Use the same browser/account/address as before.
+Keep your own server/data; export a backup and do not clear saves.
+
+ONITSHA WAY v0.30.2 — PERFORMANCE + PHONE LAYOUT FIXES
+
+Read UPDATE_30_2.md for what changed and TEST_RESULTS_30_2.md for the checks actually run.
+No new gameplay; no save, account or server-data changes.
+
+Launch: npm ci, then npm run dev. Use the same browser/account/address as before.
+Keep your own server/data; export a backup and do not clear saves.
+
+ONITSHA WAY v0.30.1 — LOCAL NAMES + LANDMARK SIGN STANDS
+
+Read UPDATE_30_1.md for the current naming/signage changes and source notes.
+Read TEST_RESULTS_30_1.md for actual checks. First-mission controls remain in MISSIONS_30.md.
+
+Launch: npm ci, then npm run dev. Use the same browser/account/address as before.
+Keep your own server/data; export a backup and do not clear saves.
+
+ONITSHA WAY v0.30.0 — FIRST PLAYABLE MISSION
+
+Read MISSIONS_30.md for the current update, exact controls, safe upgrade steps,
+changed files and remaining work. MISSION_TEST_RESULTS_30.md records actual tests.
+
+Launch: npm ci, then npm run dev. Open the SAME browser/account and localhost URL
+as before. Keep your own server/data and export a backup; do not reset saves.
+Press J > Find Your Friend > Find contact to accept. Accept in NPC dialogue, meet
+the marked friend and finish the welcome conversation for a one-time N500 reward.
+The other four requested missions are later stages, not implemented in this build.
+The existing billboard, home appliance, jobs, shops, housing and career systems remain.
+
+The earlier launcher/account instructions below still apply:
+
+ONITSHA WAY v0.27.3 — ORIGINAL LOADING SCREEN + NPM RUN DEV
+
+START
+1. Back up your old save with Settings > Export save. Keep your own server/data folder.
+2. Extract this release into a fresh folder. Install Node.js 22 LTS or newer.
+3. If upgrading, copy your OWN server/data folder from the previous installation into this project.
+4. In the folder containing package.json, run: npm ci
+5. Start the game with: npm run dev
+6. Open http://localhost:5173 when the terminal prints its Local URL.
+7. Keep this terminal open. Ctrl+C stops both the game and account server.
+
+SIGNUP / LOGIN
+The original warm ONITSHA WAY loading screen now contains the signup form.
+New players: enter display name, username, password (10+ characters), and confirm 18+.
+Returning players: choose Log in. Keep me logged in is selected by default.
+After authentication, the same splash loads the city. A new account opens character
+creation; an existing character in this browser resumes automatically.
+An old offline-save option appears only if this browser has a legacy offline save.
+No separate green welcome page or extra Account app was added.
+
+UPGRADE SAFETY
+Accounts live in server/data/world.json. Back up your OWN server/data folder.
+Character progress is stored separately per account in this browser's localStorage.
+Keep the same browser profile and http://localhost:5173 address when returning.
+Changing devices or browser profiles does not transfer character progress automatically.
+Never delete server/data or clear browser storage to fix a startup error.
+The source ZIP does not contain any player accounts or private server data.
+
+COMMANDS
+npm run dev        Starts account/multiplayer server AND Vite together.
+npm run local      Compatibility alias for the same combined launcher (not required).
+npm run dev:client Frontend only; advanced use when the account server already runs.
+npm run build      Builds the production frontend in dist/.
+npm run preview    Previews dist/; account features still require the backend.
+
+TROUBLESHOOTING
+Stop the previous game terminal before starting this release.
+If port 8787 or 5173 is occupied, stop the old process and run npm run dev again.
+A failed startup does not require removing saves or account data.
+The backend deliberately stays on loopback; do not expose this local prototype publicly.
+Do not use an important password. No email verification or password recovery yet.
+All advertising/payment buttons remain TEST simulations. No real money is charged.
+
+RETAINED UPDATES
+- Switchable home lights, fitted kitchens, larger bathrooms, solar street lamps.
+- Original instrumental Afrobeat-style club/bar tracks; no commercial artist recordings.
+- HD/Ultra mobile graphics controls and mobile HUD minimize/restore.
+- Skill XP/level feedback, shared training cooldown, correct Comedy qualifications.
+- Existing phone, careers, housing, vehicles, furniture and community features retained.
+
+NOT YET IMPLEMENTED
+- Upper Iweka monument has not been verified or added.
+- Production database/cloud-save migration and secure server-authoritative progression.
+
+See README.md, SPLASH_DEV_27_3.md, SKILLS_27_2.md and prior release notes for details.

@@ -1,0 +1,28 @@
+SETUP {"mission":{"status":"available","bindings":{"giver":"career-city:market","target":"gate:117"},"progress":0,"rewardClaimed":false,"acceptedAt":null,"completedAt":null},"residents":2835}
+PASS mission uses existing source and gate neighbour
+PASS journal offers world navigation, not remote accept/complete
+PASS available mission follows source without accepting
+SOURCE {"id":"career-city:market","name":"Workplace mentor","spot":{"x":-257.29043357715784,"z":-645.6486526844658,"label":"Talk to Workplace mentor · Find Your Friend"}}
+PASS E opens actual nearby NPC conversation
+PASS source explains real mission before acceptance
+PASS accepting tracks friend but does not pay or complete
+PASS active mission reload retains binding and zero reward
+FRIEND {"id":"gate:117","name":"Halima","spot":{"x":-245.7344830581247,"z":-916.4822096822049,"label":"Talk to Halima · Find Your Friend"}}
+PASS arriving at friend does not complete mission
+PASS E opens actual nearby NPC conversation
+PASS unrelated NPC opener is not completion
+PASS welcome conversation records first objective only
+PASS finishing conversation pays precisely 500 and records permanent receipt
+PASS completion removes mission marker and does not duplicate residents
+PASS reload keeps completed journal and never pays twice
+PASS completed mission has no accept or follow buttons
+PASS journal fits mobile without horizontal overflow
+PASS touch controls initialize with mission journal
+PASS mobile tap tracks the existing mission contact
+PASS mobile contextual touch opens the actual source NPC
+PASS mobile dialogue accepts without paying
+PASS mobile touch dialogue completes and pays once
+PASS existing keyboard movement remains functional
+PASS existing camera can still turn
+PASS no browser or game-frame exceptions
+DONE 24

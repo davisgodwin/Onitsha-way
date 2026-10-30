@@ -1,0 +1,8 @@
+  · 5 local references in index.html, all present
+  · JS index-_wtVT2ja.js: 1478 KB
+  · CSS index-5fHC55zF.css: 89 KB
+  · map data: 2539 KB
+  · map: 1047 roads, 13823 buildings, 5118 nodes
+
+Build validation passed.
+  · 34 GLB models validated; no taxi assets

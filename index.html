@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#15110e" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="./icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Onitsha Way</title>
+  <meta name="description" content="Onitsha Way — an open-world Nigerian city-life simulator inspired by Onitsha, built on real OpenStreetMap streets." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="app">
+    <div id="viewport"></div>
+
+    <!-- Loading -->
+    <section id="screen-loading" class="screen screen-center">
+      <div class="brand">
+        <h1 class="brand-title" aria-label="Onitsha Way"><span class="sign-board">Onitsha<span>Way</span></span></h1>
+        <div class="brand-kicker">Anambra State, Nigeria</div>
+      </div>
+      <p class="load-version">v0.53.0</p>
+      <div class="loadbar" role="progressbar" aria-label="City loading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="loadbar-fill"></div></div>
+      <p class="load-status">Starting…</p>
+    </section>
+
+    <!-- Main menu -->
+    <section id="screen-menu" class="screen" hidden>
+      <div class="menu-panel">
+        <div class="brand">
+          <h1 class="brand-title" aria-label="Onitsha Way"><span class="sign-board">Onitsha<span>Way</span></span></h1>
+          <div class="brand-kicker">Anambra State, Nigeria</div>
+          <p class="brand-tag">Live, work and hustle on Onitsha’s real streets, from Main Market and Bridgehead to Upper Iweka. Nobody tells you what to do.</p>
+        </div>
+        <nav class="menu-actions route-board" aria-label="Main menu">
+          <button class="btn btn-primary" data-action="continue" hidden>
+            <span class="btn-label">Continue</span><span class="btn-sub" data-slot="save-summary"></span>
+          </button>
+          <button class="btn" data-action="new"><span class="btn-label">New game</span><span class="btn-sub">Make a new character and start a new life</span></button>
+          <button class="btn" data-action="settings"><span class="btn-label">Settings</span><span class="btn-sub">Graphics, controls, sound, your save</span></button>
+          <button class="btn" data-action="credits"><span class="btn-label">About &amp; credits</span></button>
+        </nav>
+        <p class="menu-foot">v0.53.0 · Map data © OpenStreetMap contributors (ODbL)</p>
+      </div>
+    </section>
+
+    <!-- Character creator -->
+    <section id="screen-creator" class="screen" hidden>
+      <div class="creator-panel">
+        <header class="creator-head">
+          <h2>Who are you?</h2>
+          <p>Create your character. Drag on the scene to turn around.</p>
+        </header>
+        <div class="creator-body">
+          <section class="creator-origin" aria-label="Randomly assigned background">
+            <span class="field-label">Your background · randomly assigned</span>
+            <h3 data-slot="creator-background"></h3>
+            <p data-slot="creator-funds"></p>
+            <small>Equal chance. Assigned by the game, not chosen by you. Changing your look does not change your background.</small>
+          </section>
+          <section class="creator-home" aria-label="Starting home">
+            <label class="field" for="creator-home-select"><span class="field-label">Where will you start?</span></label>
+            <select id="creator-home-select" data-field="starting-home" aria-describedby="creator-home-detail"></select>
+            <p id="creator-home-detail" data-slot="creator-home-detail"></p>
+            <p class="creator-balance" data-slot="creator-remaining" aria-live="polite"></p>
+            <p class="creator-start-error" data-slot="creator-start-error" role="alert" hidden></p>
+          </section>
+          <label class="field">
+            <span class="field-label">Name</span>
+            <input type="text" maxlength="18" data-field="name" placeholder="e.g. Chidi" autocomplete="off" />
+          </label>
+          <div class="field"><span class="field-label">Character</span><div class="seg" data-field="gender"></div></div>
+          <div class="field"><span class="field-label">Age</span><div class="chips" data-field="ageGroup"></div></div>
+          <div class="field"><span class="field-label">Build</span><div class="chips" data-field="bodyType"></div></div>
+          <div class="field"><span class="field-label">Your phone · same apps on every model</span><div class="chips" data-field="phone"></div></div>
+          <div class="field"><span class="field-label">Skin tone</span><div class="swatches" data-field="skin"></div></div>
+          <div class="field"><span class="field-label">Hair</span><div class="chips" data-field="hair"></div></div>
+          <div class="field"><span class="field-label">Outfit · 12 looks per character</span><div class="chips outfit-filters" data-field="outfit-category"></div><div class="chips" data-field="outfit"></div></div>
+          <div class="field"><span class="field-label">Ankara print</span><div class="swatches swatches-print" data-field="palette"></div></div>
+          <div class="field"><span class="field-label">Top / jacket colour</span><div class="swatches" data-field="color"></div></div>
+          <div class="field"><span class="field-label">Trouser / shorts colour</span><div class="swatches" data-field="bottomColor"></div></div>
+          <div class="field"><span class="field-label">Shoe colour</span><div class="swatches" data-field="shoeColor"></div></div>
+        </div>
+        <footer class="creator-foot">
+          <button class="btn btn-ghost btn-small" data-action="back">Back</button>
+          <button class="btn btn-primary" data-action="start"><span class="btn-label">Start on Old Market Road</span></button>
+        </footer>
+      </div>
+    </section>
+
+    <!-- HUD -->
+    <section id="screen-hud" class="screen screen-hud" hidden>
+      <div class="hud-top-left">
+        <div class="hud-chip hud-location"><span class="dot"></span><span class="loc-text"><b data-slot="place" hidden></b><span data-slot="location">—</span></span></div>
+        <button class="hud-chip hud-wallet" data-action="bag" title="Bag & wallet (I)"><span class="naira">₦</span><b data-slot="wallet">0</b></button>
+        <div class="hud-chip hud-energy" title="Energy"><span class="energy-ico">⚡</span><span class="energy-bar"><i></i></span><b data-slot="energy">85</b></div>
+        <div class="hud-chip hud-clock"><span data-slot="period">Morning</span><b data-slot="time">09:00</b><span class="muted" data-slot="day">Day 1</span></div>
+        <div class="hud-chip hud-weather"><span data-slot="weather">☀ Clear</span><span class="hud-power" data-slot="power" hidden>No light</span></div>
+        <button class="hud-chip hud-navigation" data-action="map" aria-label="Direction marker — open map" title="Direction marker · open map (M)"><span class="navigation-arrow" aria-hidden="true">➜</span><span class="navigation-copy"><b data-slot="navigation-title">Compass</b><span data-slot="navigation-detail">Mark a destination on the map</span></span></button>
+      <button class="hud-chip hud-waypoint" data-action="waypoint" hidden title="Tap to clear a map marker"><span class="wp-arrow">➜</span><span data-slot="waypoint"></span></button>
+      <button class="hud-chip hud-job" data-action="jobs" hidden title="Missions &amp; Jobs (J)"><span class="job-tag">TASK</span><span class="job-arrow">➜</span><span data-slot="job"></span></button>
+      </div>
+      <button class="hud-chip hud-phone" data-action="phone" title="Phone (O)" aria-label="Open your phone">▣ Phone <kbd>O</kbd></button>
+      <div class="hud-needs" aria-label="Player needs"></div>
+      <button class="hud-pause" data-action="pause" aria-label="Pause"><span class="pause-bar" aria-hidden="true"></span><span class="pause-bar" aria-hidden="true"></span></button>
+      <div class="minimap-wrap" data-action="map" title="Map (M)">
+        <canvas class="minimap" width="176" height="176"></canvas>
+        <span class="minimap-n">N</span>
+      </div>
+      <div class="hud-hints">
+        <div><kbd>W A S D</kbd> move · <kbd>Shift</kbd> run · <kbd>Space</kbd> jump</div>
+        <div><kbd>Click</kbd> look around · <kbd>E</kbd> talk / bus stop · <kbd>I</kbd> bag · <kbd>J</kbd> jobs · <kbd>L</kbd> homes &amp; cars · <kbd>M</kbd> map · <kbd>Esc</kbd> pause</div>
+      </div>
+      <div class="hud-fps" hidden></div>
+      <div class="hud-prompt" hidden><kbd>E</kbd><span data-slot="prompt"></span></div>
+      <button class="hud-chip hud-transit" data-action="transit" hidden title="Tap to stop waiting"><span class="transit-tag">BUS STOP</span><span data-slot="transit"></span></button>
+      <div class="hud-ride" hidden>
+        <div class="ride-line"><span class="ride-badge" data-slot="ride-badge">K1</span><b data-slot="ride-title"></b></div>
+        <div class="ride-status" data-slot="ride-status"></div>
+        <div class="ride-detail" data-slot="ride-detail"></div>
+        <div class="ride-actions">
+          <button class="btn btn-small" data-action="ride-next">Next stop <kbd>N</kbd></button>
+          <button class="btn btn-small" data-action="ride-here">Drop me here <kbd>H</kbd></button>
+          <button class="btn btn-small btn-primary" data-action="ride-down">Get down <kbd>E</kbd></button>
+          <button class="btn btn-small btn-ghost" data-action="ride-view">Seat view (C)</button>
+          <button class="btn btn-small" data-action="ride-skip" hidden>Skip to my stop <kbd>K</kbd></button>
+        </div>
+      </div>
+      <div class="hud-drive" hidden>
+        <div class="drive-top">
+          <div class="drive-speed"><b data-slot="drive-speed">0</b><span>km/h</span></div>
+          <div class="drive-info">
+            <b data-slot="drive-title"></b>
+            <div class="drive-fuel"><span class="fuel-ico">⛽</span><span class="energy-bar fuel-bar"><i data-slot="drive-fuel"></i></span><small data-slot="drive-litres"></small></div>
+            <div class="ride-detail" data-slot="drive-status"></div>
+          </div>
+        </div>
+        <div class="ride-actions">
+          <button class="btn btn-small btn-primary" data-action="drive-exit">Get out <kbd>E</kbd></button>
+          <button class="btn btn-small" data-action="drive-fuel" hidden>Fill up <kbd>F</kbd></button>
+          <button class="btn btn-small" data-action="drive-pickup" hidden>Pick up passengers <kbd>N</kbd></button>
+          <button class="btn btn-small" data-action="drive-skip" hidden>Skip drive <kbd>K</kbd></button>
+          <button class="btn btn-small btn-ghost" data-action="drive-handbrake">Handbrake <kbd>Space</kbd></button>
+          <button class="btn btn-small btn-ghost" data-action="drive-horn">Horn <kbd>H</kbd></button>
+        </div>
+      </div>
+      <div class="toasts" role="status" aria-live="polite"></div>
+    </section>
+
+    <!-- Pause -->
+    <section id="screen-pause" class="screen screen-center screen-dim" hidden>
+      <div class="modal board pause-board">
+        <div class="pause-today">
+          <h2>Paused</h2>
+          <div class="pause-status" data-slot="pause-status"></div>
+        </div>
+        <nav class="pause-actions" aria-label="Pause menu">
+          <button class="btn btn-primary pause-resume" data-action="resume"><span class="btn-label">Resume</span></button>
+          <button class="btn tile" data-action="save"><span class="btn-label">Save game</span></button>
+          <button class="btn tile" data-action="map"><span class="btn-label">Map</span></button>
+          <button class="btn tile" data-action="bag"><span class="btn-label">Bag &amp; wallet</span></button>
+          <button class="btn tile" data-action="jobs"><span class="btn-label">Trader jobs</span></button>
+          <button class="btn tile" data-action="homes"><span class="btn-label">Homes &amp; vehicles</span><span class="btn-sub">Houses to let, cars for sale</span></button>
+          <button class="btn tile" data-action="phrasebook"><span class="btn-label">Phrasebook</span><span class="btn-sub">Expressions you’ve heard</span></button>
+          <button class="btn tile" data-action="settings"><span class="btn-label">Settings</span></button>
+          <button class="btn tile tile-quit" data-action="quit"><span class="btn-label">Save &amp; main menu</span></button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Speech bubbles -->
+    <div id="bubbles" aria-hidden="true"></div>
+
+    <!-- Dialogue -->
+    <section id="screen-dialogue" class="screen screen-dialogue" hidden>
+      <div class="dlg" role="dialog" aria-labelledby="dlg-name">
+        <header class="dlg-head">
+          <div class="dlg-who"><b id="dlg-name" data-slot="npc-name"></b><span data-slot="npc-role"></span></div>
+          <span class="dlg-rel" data-slot="npc-rel"></span>
+          <button class="dlg-x" data-action="close" aria-label="End conversation">✕</button>
+        </header>
+        <div class="dlg-expr" data-slot="expr-card">
+          <div class="dlg-expr-text" data-slot="expr"></div>
+          <div class="dlg-expr-meaning"><span class="tag">Supplied meaning · unverified</span><span data-slot="meaning"></span></div>
+        </div>
+        <p class="dlg-line"><span class="tag tag-gen">Example dialogue</span><span data-slot="line"></span></p>
+        <p class="dlg-note" data-slot="note" hidden></p>
+        <div class="dlg-responses" data-slot="responses"></div>
+      </div>
+    </section>
+
+    <!-- Shop -->
+    <section id="screen-shop" class="screen screen-center screen-dim" hidden>
+      <div class="modal modal-wide shop">
+        <header class="shop-head">
+          <div><h2 data-slot="shop-name">Shop</h2><p data-slot="shop-goods"></p></div>
+          <div class="shop-wallet"><span>Your wallet</span><b data-slot="shop-wallet">₦0</b></div>
+          <button class="btn btn-small btn-primary" data-action="close">Done</button>
+        </header>
+        <div class="shop-reply" data-slot="shop-reply">
+          <div class="dlg-expr-text" data-slot="reply-expr"></div>
+          <div class="dlg-expr-meaning" data-slot="reply-meaning-row"><span class="tag">Supplied meaning · unverified</span><span data-slot="reply-meaning"></span></div>
+          <p class="dlg-line"><span class="tag tag-gen">Example dialogue</span><span data-slot="reply-line"></span></p>
+        </div>
+        <div class="shop-tabs seg" data-slot="shop-tabs"><button type="button" data-tab="buy">Buy</button><button type="button" data-tab="sell">Sell to them</button></div>
+        <div class="shop-body">
+          <ul class="shop-items" data-slot="shop-items"></ul>
+          <div class="shop-deal" data-slot="shop-deal"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bag & wallet -->
+    <section id="screen-bag" class="screen screen-center screen-dim" hidden>
+      <div class="modal modal-wide">
+        <header class="pb-head"><div><h2>Bag &amp; wallet</h2><p data-slot="bag-summary"></p></div><button class="btn btn-small btn-primary" data-action="close">Close</button></header>
+        <div class="bag-energy"><span class="energy-bar big" data-slot="bag-energy"><i></i></span><span data-slot="bag-energy-label"></span></div>
+        <p class="bag-msg" data-slot="bag-msg" hidden></p>
+        <div class="bag-body"><div><h3>Items</h3><ul class="bag-items" data-slot="bag-items"></ul></div><div><h3>Recent transactions</h3><ul class="ledger" data-slot="ledger"></ul></div></div>
+      </div>
+    </section>
+
+    <!-- Jobs -->
+    <section id="screen-jobs" class="screen screen-center screen-dim" hidden>
+      <div class="modal modal-wide">
+        <header class="pb-head"><div><h2>Missions &amp; Jobs</h2><p>Meet your contacts in the city to accept missions. Traders around Onitsha offer small jobs. Talk to a trader and ask: "You get any small work for me?"</p></div><button class="btn btn-small btn-primary" data-action="close">Close</button></header>
+        <div class="jobs-body" data-slot="jobs-body"></div>
+      </div>
+    </section>
+
+    <!-- Bus stop: choose a destination -->
+    <section id="screen-stop" class="screen screen-center screen-dim" hidden>
+      <div class="modal modal-wide stop-modal">
+        <header class="pb-head"><div><span class="transit-tag">BUS STOP</span><h2 data-slot="stop-name">Stop</h2><p data-slot="stop-sub"></p></div><button class="btn btn-small btn-primary" data-action="close">Close</button></header>
+        <div class="stop-lines" data-slot="stop-lines"></div>
+        <input type="text" class="stop-filter" data-slot="stop-filter" placeholder="Search destinations…" autocomplete="off" />
+        <ul class="stop-list" data-slot="stop-list"></ul>
+        <p class="stop-foot">Fares are game prices. Keke take side streets; buses keep to the main roads. Pay once when the vehicle moves off; getting down before then is free.</p>
+      </div>
+    </section>
+
+    <!-- Choice panel (doors, furniture, fares, buying, skipping) -->
+    <section id="screen-phone" class="screen phone-overlay" hidden aria-label="Player phone"><div class="phone-shell" role="dialog" aria-modal="true" aria-label="Your phone"><div class="phone-camera"></div><div id="phone-content"></div><div class="phone-home-indicator"></div></div></section>
+    <section id="screen-choice" class="screen screen-center screen-dim" hidden>
+      <div class="modal choice" role="dialog">
+        <header class="choice-head"><div><span class="transit-tag" data-slot="choice-kicker" hidden></span><h2 data-slot="choice-title"></h2></div><button class="dlg-x" data-action="close" aria-label="Close">✕</button></header>
+        <div class="dlg-expr" data-slot="choice-expr" hidden><div class="dlg-expr-text" data-slot="choice-expr-text"></div><div class="dlg-expr-meaning"><span class="tag">Supplied meaning · unverified</span><span data-slot="choice-expr-meaning"></span></div></div>
+        <p class="choice-text" data-slot="choice-text"></p>
+        <p class="choice-note" data-slot="choice-note" hidden></p>
+        <div class="choice-body" data-slot="choice-body"></div>
+      </div>
+    </section>
+
+    <!-- Homes & vehicles -->
+    <section id="screen-homes" class="screen screen-center screen-dim" hidden>
+      <div class="modal modal-wide homes-modal">
+        <header class="pb-head"><div><h2>Homes &amp; vehicles</h2><p>Houses to let in real Onitsha streets, and tokunbo vehicles for sale. Walk to the door or the car and press E. Wallet: <b data-slot="homes-wallet"></b></p></div><button class="btn btn-small btn-primary" data-action="close">Close</button></header>
+        <div class="homes-body" data-slot="homes-body"></div>
+      </div>
+    </section>
+
+    <!-- Phrasebook -->
+    <section id="screen-phrasebook" class="screen screen-center screen-dim" hidden>
+      <div class="modal modal-wide phrasebook">
+        <header class="pb-head">
+          <div><h2>Onitsha phrasebook</h2><p>Expressions from the game’s language pack, with the meanings supplied for this project. Every entry is marked unverified until checked with local speakers. <b data-slot="pb-count"></b></p></div>
+          <button class="btn btn-small btn-primary" data-action="close">Close</button>
+        </header>
+        <div class="pb-body" data-slot="pb-body"></div>
+      </div>
+    </section>
+
+    <!-- Settings -->
+    <section id="screen-settings" class="screen screen-center screen-dim" hidden>
+      <div class="modal board settings-board">
+        <h2>Settings</h2>
+        <div class="settings-grid">
+          <section class="settings-group"><h3>Display</h3>
+            <div class="field"><span class="field-label">Graphics quality</span><div class="seg" data-setting="quality"></div></div>
+            <label class="field"><span class="field-label">Field of view <output data-out="fov"></output></span>
+            <input type="range" min="50" max="90" step="1" data-setting="fov" /></label>
+            <label class="field field-row"><input type="checkbox" data-setting="adaptive" /> <span>Adaptive resolution (lowers detail when the frame rate drops)</span></label>
+            <label class="field field-row"><input type="checkbox" data-setting="showFps" /> <span>Show FPS</span></label>
+          </section>
+          <section class="settings-group"><h3>Controls</h3>
+            <label class="field"><span class="field-label">Look sensitivity <output data-out="sensitivity"></output></span>
+            <input type="range" min="0.4" max="2.5" step="0.1" data-setting="sensitivity" /></label>
+            <label class="field field-row"><input type="checkbox" data-setting="invertY" /> <span>Invert vertical look</span></label>
+            <label class="field field-row"><input type="checkbox" data-setting="hints" /> <span>Show control hints</span></label>
+          </section>
+          <section class="settings-group"><h3>Sound</h3>
+            <label class="field"><span class="field-label">Sound volume <output data-out="volume"></output></span>
+            <input type="range" min="0" max="1" step="0.05" data-setting="volume" id="setting-volume" /></label>
+          </section>
+          <section class="settings-group"><h3>World</h3>
+            <div class="field"><span class="field-label">World time</span><strong>Real Onitsha time · WAT (UTC+1)</strong><span class="field-hint">Uses your device clock, including while paused. Keep automatic date and time enabled on your device. No time API or internet is needed. Activities apply simulated duration effects without changing the real clock.</span></div>
+            <label class="field field-row"><input type="checkbox" data-setting="liveWeather" /><span>Live Onitsha weather (Open-Meteo; non-commercial demo)</span></label>
+          </section>
+          <section class="settings-group"><h3>Your save</h3>
+            <div class="field"><span class="field-label">Your saved game</span>
+            <div class="row-actions save-io">
+              <button type="button" class="btn btn-small" data-action="export">Export save</button>
+              <button type="button" class="btn btn-small" data-action="import">Import save</button>
+              <input type="file" accept="application/json,.json" data-slot="import-file" hidden />
+            </div>
+            <small class="muted">Export downloads your game as a file — keep it as a backup or move it to another browser or device.</small>
+          </div>
+            <div class="field cloud-save" data-slot="cloud-save">
+            <span class="field-label">Account save</span>
+            <span class="field-hint" data-slot="cloud-status" role="status" aria-live="polite">Offline save: kept in this browser only.</span>
+            <div class="row-actions"><button type="button" class="btn btn-small" data-action="cloud-sync" data-slot="cloud-sync" hidden>Sync now</button></div>
+          </div>
+          </section>
+        </div>
+        <div class="settings-foot"><button class="btn btn-primary" data-action="close"><span class="btn-label">Done</span></button></div>
+      </div>
+    </section>
+
+    <!-- Big map -->
+    <section id="screen-map" class="screen" hidden>
+      <canvas class="bigmap"></canvas>
+      <div class="bigmap-head">
+        <div class="map-search">
+          <svg class="map-search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+          <input type="search" data-slot="map-search" placeholder="Search places, streets, areas" aria-label="Search the map" autocomplete="off">
+          <button class="map-search-clear" data-action="map-clear" aria-label="Clear search" hidden>✕</button>
+        </div>
+        <ul class="map-results" data-slot="map-results" hidden></ul>
+        <div class="map-chips" data-slot="map-chips" role="toolbar" aria-label="Show on the map"></div>
+        <label class="map-place-picker"><span>Browse every place</span><select data-slot="map-place" aria-label="Find a place on the map"><option value="">Choose a place…</option></select></label>
+        <h2 class="map-title-sr">Onitsha</h2>
+      </div>
+      <button class="map-close" data-action="close" aria-label="Close map">✕</button>
+      <div class="bigmap-tools map-side">
+        <button class="map-btn" data-action="zoomin" aria-label="Zoom in">+</button>
+        <button class="map-btn" data-action="zoomout" aria-label="Zoom out">−</button>
+        <button class="map-btn" data-action="me" aria-label="Show me"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
+        <button class="map-btn" data-action="map-legend" aria-label="Map key">i</button>
+      </div>
+      <div class="map-area" data-slot="map-area"><span class="map-area-dot"></span><span data-slot="map-area-name">Onitsha</span></div>
+      <div class="map-legend" data-slot="map-legend" hidden></div>
+    </section>
+
+    <!-- Credits -->
+    <section id="screen-credits" class="screen screen-center screen-dim" hidden>
+      <div class="modal modal-wide">
+        <h2>About Onitsha Way</h2>
+        <p>An open-world city-life simulator inspired by Onitsha, Anambra State. Street geometry and building footprints come from OpenStreetMap. Prices, services, people and interiors are designed for play; some entrances are approximate.</p>
+        <ul class="credits">
+          <li><b>Map data</b> © OpenStreetMap contributors, available under the Open Database License (ODbL).</li>
+          <li><b>3D engine</b> three.js (MIT).</li>
+          <li><b>Signboard lettering</b> Anton by Vernon Adams, bundled via Fontsource (SIL Open Font License 1.1).</li>
+          <li><b>Characters, textures, vehicles and sound</b> generated procedurally in code for this project — no third-party art or audio assets. Vehicle designs are generic.</li>
+          <li><b>Onitsha expressions</b> supplied by the developer; meanings are unverified until checked with local speakers. Example dialogue lines are original to the game.</li>
+        </ul>
+        <button class="btn btn-primary" data-action="close"><span class="btn-label">Close</span></button>
+      </div>
+    </section>
+
+    <!-- Confirm -->
+    <section id="screen-confirm" class="screen screen-center screen-dim" hidden>
+      <div class="modal">
+        <h2 data-slot="title">Are you sure?</h2>
+        <p data-slot="text"></p>
+        <div class="row-actions">
+          <button class="btn btn-ghost" data-action="no">Cancel</button>
+          <button class="btn btn-primary" data-action="yes">Continue</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="fade" aria-hidden="true"></div>
+    <div id="rotate-hint" aria-hidden="true"><div>Turn your phone sideways for the best view</div></div>
+    <section id="screen-chase" class="screen chase-screen" hidden aria-label="Escape run">
+      <div class="run-status"><span class="eyebrow">MARKET DASH · ORIGINAL MINI-GAME</span><h2 data-run="title">Police pursuit</h2><p data-run="stats" aria-live="polite"></p><progress data-run="progress" max="450" value="0" aria-label="Distance to escape"></progress><p>Crates: jump · crossbars: slide · carts: change lane</p></div>
+      <div class="run-top"><button data-run-action="pause">Pause</button><button data-run-action="surrender">Stop running</button></div>
+      <p class="run-paused" data-run="paused" hidden>Paused · tap Resume or press Esc</p>
+      <div class="run-controls"><button data-run-action="left" aria-label="Move left">← Left</button><button data-run-action="jump">↑ Jump</button><button data-run-action="slide">↓ Slide</button><button data-run-action="right" aria-label="Move right">Right →</button><small>A / D or ← / → · Space / ↑ jump · ↓ slide · swipe on scene</small></div>
+    </section>
+    <section id="screen-activity" class="screen activity-screen" hidden aria-label="Activity">
+      <div class="act-bar"><div class="act-score" data-act="score" aria-live="polite"></div><button class="act-pause-btn" type="button" data-act-action="pause" aria-label="Pause">❚❚</button></div>
+      <div class="act-status" data-act="status" aria-live="assertive"></div>
+      <div class="act-meter" data-act="meter" hidden aria-label="Shot power"><i></i></div>
+      <div class="act-stamina" data-act="stamina" hidden aria-label="Stamina"><i></i></div>
+      <div class="act-hint" data-act="hint"></div>
+      <div class="act-touch" data-act="touch" hidden></div>
+      <div class="act-panel" data-act="panel" hidden></div>
+    </section>
+    <div id="ctx-lost" hidden><div><h2>The graphics were reset</h2><p>Your phone or computer needed the memory back. Your game has been saved.</p><button class="btn btn-primary" type="button" onclick="location.reload()">Reload the game</button></div></div>
+    <div id="fatal" hidden></div>
+    <script nomodule>document.getElementById('fatal').hidden = false; document.getElementById('fatal').innerHTML = '<div><h2>Your browser is too old for Onitsha Way</h2><p>Please use a recent Chrome, Edge, Firefox or Safari.</p></div>';</script>
+    <script>
+      // if loading stalls (slow connection, blocked script), say so instead of showing a frozen bar
+      setTimeout(function () {
+        var l = document.getElementById('screen-loading'), st = l && l.querySelector('.load-status');
+        if (l && !l.hidden && !l.classList.contains('entry-active') && st) st.textContent = 'Still loading… On a slow connection the map (2.5 MB) can take a minute. If nothing changes, reload the page.';
+      }, 45000);
+    </script>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

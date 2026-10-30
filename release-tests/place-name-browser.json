@@ -1,0 +1,245 @@
+{
+  "checks": [
+    "stadium is named Chuba Ikpeazu Memorial Stadium",
+    "stadium and Shoprite have freestanding name signs",
+    "all in-bound named places get a stand or retain an existing gateway",
+    "all new sign envelopes clear buildings, billboards and home entrances",
+    "all stands face the road squarely",
+    "six renamed car dealerships keep all 36 purchasable vehicles",
+    "map canvas and place picker omit approximate tags and time ranges",
+    "phone Places shows name-only rows",
+    "clean place list fits mobile width",
+    "dealer catalogue opens under its new name",
+    "mission state remains present and unchanged by signs",
+    "no page or game-frame exceptions"
+  ],
+  "errors": [],
+  "audit": {
+    "stadium": "Chuba Ikpeazu Memorial Stadium",
+    "signs": [
+      {
+        "id": "community-stadium",
+        "name": "Chuba Ikpeazu Memorial Stadium",
+        "dist": 27.81305729048181
+      },
+      {
+        "id": "shoprite",
+        "name": "Shoprite Onitsha Mall",
+        "dist": 89.5655930727811
+      },
+      {
+        "id": "niger-bridge",
+        "name": "Niger Bridge",
+        "dist": 403.7402289416364
+      },
+      {
+        "id": "basilica",
+        "name": "Holy Trinity Basilica",
+        "dist": 31.833563080191137
+      },
+      {
+        "id": "asaba",
+        "name": "Asaba (Head Bridge)",
+        "dist": 20.24069173788186
+      },
+      {
+        "id": "fegge",
+        "name": "Fegge",
+        "dist": 15.216796827975237
+      },
+      {
+        "id": "ike-dunkofia",
+        "name": "Ike Dunkofia Plaza",
+        "dist": 29.392962748985
+      },
+      {
+        "id": "all-saints",
+        "name": "All Saints’ Cathedral",
+        "dist": 70.19103643088826
+      },
+      {
+        "id": "ckc",
+        "name": "Christ the King College (CKC)",
+        "dist": 56.00453835959737
+      },
+      {
+        "id": "ime-obi",
+        "name": "Ime Obi · Palace of the Obi",
+        "dist": 22.961391927867314
+      },
+      {
+        "id": "osm:12569276191",
+        "name": "Shanaham",
+        "dist": 42.113444269553604
+      },
+      {
+        "id": "zik-roundabout",
+        "name": "Zik / DMGS Roundabout",
+        "dist": 25.737205671035728
+      },
+      {
+        "id": "upper-iweka-monument",
+        "name": "Upper Iweka Gateway Monument",
+        "dist": 16.14138274570929
+      },
+      {
+        "id": "niger-waterside",
+        "name": "River Niger · Main Market waterfront",
+        "dist": 105.2706019591652
+      },
+      {
+        "id": "niger-bridge-view",
+        "name": "River Niger · Bridgehead boat landing",
+        "dist": 180.25657665239112
+      },
+      {
+        "id": "metadav",
+        "name": "Metadav ICT Hub",
+        "dist": 18.004443895882886
+      },
+      {
+        "id": "market",
+        "name": "Main Market buyer & apprenticeship desk",
+        "dist": 12.006664815842885
+      },
+      {
+        "id": "property",
+        "name": "Onitsha property work desk",
+        "dist": 11.35472429435743
+      },
+      {
+        "id": "motors",
+        "name": "Onitsha motors & mechanic workshop",
+        "dist": 12.006664815842795
+      },
+      {
+        "id": "dispatch",
+        "name": "Bridgehead delivery & logistics desk",
+        "dist": 12.300000000000155
+      },
+      {
+        "id": "kitchen",
+        "name": "Ochanja catering training kitchen",
+        "dist": 12.006664815842887
+      },
+      {
+        "id": "fashion",
+        "name": "Ochanja fashion workshop",
+        "dist": 12.006664815842868
+      },
+      {
+        "id": "grace-lodge",
+        "name": "Grace Lodge Onitsha",
+        "dist": 12.299999999999985
+      },
+      {
+        "id": "venus-hotel",
+        "name": "Venus Hotel",
+        "dist": 12.006664815842507
+      },
+      {
+        "id": "chizilili",
+        "name": "Chizilili Hotel",
+        "dist": 12.150105288189499
+      },
+      {
+        "id": "market-parlour",
+        "name": "Market Corner Beer Parlour",
+        "dist": 12.30000000000001
+      },
+      {
+        "id": "river-lounge",
+        "name": "Bridgehead Riverside Lounge",
+        "dist": 28.0881961049328
+      },
+      {
+        "id": "house-of-pilate",
+        "name": "House of Pilate",
+        "dist": 25.51583563279026
+      },
+      {
+        "id": "osha-afterdark",
+        "name": "Osha Afterdark",
+        "dist": 15.799999999999898
+      },
+      {
+        "id": "total-oguta",
+        "name": "TotalEnergies Oguta Road",
+        "dist": 12.006664815842944
+      },
+      {
+        "id": "total-old-market",
+        "name": "TotalEnergies Old Market Road",
+        "dist": 11.457384042957681
+      },
+      {
+        "id": "total-new-market",
+        "name": "TotalEnergies New Market Road",
+        "dist": 17.8
+      },
+      {
+        "id": "osm-fuel:12569258830",
+        "name": "Gas filling station",
+        "dist": 10.501294937266131
+      },
+      {
+        "id": "osm-fuel:12569272428",
+        "name": "Pillars filling station",
+        "dist": 12.006664815843017
+      },
+      {
+        "id": "osm-fuel:12569275086",
+        "name": "Conoil filling station",
+        "dist": 12.006664815842903
+      },
+      {
+        "id": "osm-fuel:12569308399",
+        "name": "Ona jones filling station",
+        "dist": 24.003333101883996
+      }
+    ],
+    "unplaced": [],
+    "covered": [
+      "main-market",
+      "ochanja",
+      "upper-iweka",
+      "upper-iweka-park",
+      "bridgehead"
+    ],
+    "dealers": [
+      {
+        "id": "lot-iweka",
+        "name": "Amalu David Automobile Company",
+        "count": 36
+      },
+      {
+        "id": "lot-oldmarket",
+        "name": "Kokan Investment",
+        "count": 36
+      },
+      {
+        "id": "lot-bridgehead",
+        "name": "Shopcar Nigeria",
+        "count": 36
+      },
+      {
+        "id": "lot-ochanja",
+        "name": "Akuma Motors Limited",
+        "count": 36
+      },
+      {
+        "id": "lot-mall",
+        "name": "Unlimited Zion Motors",
+        "count": 36
+      },
+      {
+        "id": "lot-fegge",
+        "name": "Onwurah Autos",
+        "count": 36
+      }
+    ],
+    "bad": [],
+    "unfacing": [],
+    "blockedDoors": []
+  }
+}

@@ -1,0 +1,916 @@
+✔ empty proxy error gives local startup guidance, not a JSON parser error (45.057857ms)
+✔ empty successful response gives local startup guidance, not a JSON parser error (0.469062ms)
+✔ frontend HTML instead of backend gives local startup guidance, not a JSON parser error (1.173509ms)
+✔ truncated JSON gives local startup guidance, not a JSON parser error (4.497397ms)
+✔ unexpected null gives local startup guidance, not a JSON parser error (0.421881ms)
+✔ malformed success gives local startup guidance, not a JSON parser error (0.780064ms)
+✔ connection refused gives local startup guidance, not a JSON parser error (0.235012ms)
+✔ backend validation errors stay useful (0.390469ms)
+✔ valid account response is accepted (1.041118ms)
+✔ timeout gives account-server guidance (30.839965ms)
+✔ two clients cannot reserve/activate the same billboard, and reservations survive server restart (629.019157ms)
+Whole-game audit regressions
+  ✓ the same damage can be repaired again without driving away first
+  ✓ repair sequence survives reload and never duplicates an earlier service key
+  ✓ a full tank or repaired car cannot be charged twice
+  ✓ a 5 L jerrycan is not consumed when only 3 L fits
+  ✓ a can transfers all 5 L when there is exactly enough space
+  ✓ removing zero, negative or fractional quantities cannot mutate inventory
+  ✓ invalid additions and multiple unique parcels are rejected without a crash
+  ✓ partial imported home upgrades cannot crash the power update
+  ✓ malformed wallet ledger is rejected before Continue/import
+  ✓ malformed wallet balance is rejected before Continue/import
+  ✓ malformed transaction keys is rejected before Continue/import
+  ✓ malformed bag items is rejected before Continue/import
+  ✓ malformed bag quantity is rejected before Continue/import
+  ✓ malformed bag capacity is rejected before Continue/import
+  ✓ malformed job list is rejected before Continue/import
+  ✓ malformed job steps is rejected before Continue/import
+  ✓ malformed vehicle model is rejected before Continue/import
+  ✓ malformed messages is rejected before Continue/import
+  ✓ malformed relationships is rejected before Continue/import
+  ✓ malformed home storage is rejected before Continue/import
+  ✓ malformed rental expiry is rejected before Continue/import
+  ✓ malformed stock is rejected before Continue/import
+  ✓ malformed supply orders is rejected before Continue/import
+  ✓ malformed clock day is rejected before Continue/import
+  ✓ a valid legacy save still migrates without a grant or losing equipment
+  ✓ failed save import leaves the current save and backup untouched
+  ✓ errands never request a catalogue category with no actual trader
+  ✓ child betting is rejected by the backend with no debit or ticket
+  ✓ resuming drops the previous menu/map keypress instead of opening it again
+  ✓ hiding controls clears touch movement, run, drag, look and zoom
+  ✓ window blur clears queued actions as well as held keys
+  ✓ hidden tab clears input so returning cannot move or use an item unexpectedly
+  ✓ errand navigation leads to a real seller before buying, then back to client
+  ✓ errands cannot point to a closed supplier or outlive supplier closing time
+  ✓ legacy owned vehicles missing optional numeric state restore safely without free fuel
+  ✓ a short map tap survives keyup until the next render frame
+✔ tests/audit.test.mjs (310.89206ms)
+✔ all catalogue goods have categories, prices and safe size definitions (1.175488ms)
+✔ paid finishes cost once and can be re-applied free, per home (0.707141ms)
+✔ free finishes never enter a zero-naira economy transaction (0.234638ms)
+✔ insufficient funds and unowned homes never apply a finish (0.200886ms)
+✔ unknown finish is rejected and new furniture cannot double charge (0.260153ms)
+✔ new item footprint validation protects boundaries and doors (0.666337ms)
+✔ all categories are expanded with at least five furnishing choices (0.237134ms)
+✔ new home starts with no owned property or free equipment (0.694185ms)
+✔ all new furniture purchases start stored until the player places them (13.629285ms)
+✔ expanded goods charge exact prices once and stay per home (2.011099ms)
+✔ backup variants share fuel or battery and stored units cannot power the home (0.403255ms)
+✔ old purchased property and custom placements survive initialization unchanged (0.333774ms)
+✔ large rugs remain nonblocking, while new furnishings block overlap (0.32388ms)
+✔ every catalogue thumbnail uses a real model inside its safe footprint (121.868195ms)
+Career qualifications and staged work
+  ✓ all twelve legal careers have explicit qualification and varied brief data
+  ✓ tech work refuses level one even with a laptop
+  ✓ tech work refuses level five without an owned laptop
+  ✓ laptop plus coding five qualifies a tech worker
+  ✓ each required tool and skill is enforced for every legal career
+  ✓ stages advance target and never pay early
+  ✓ second stage cannot be finished at first workplace
+  ✓ final completion pays once and increments career progress
+  ✓ selling work equipment mid-contract blocks payout until restored
+  ✓ a rejected intermediate brief gives no reward and consumes one daily attempt
+  ✓ staged contract resumes the exact next destination after a save roundtrip
+  ✓ malformed stage data is discarded safely rather than awarding early
+  ✓ invalid answers and coordinates never consume a job or pay
+  ✓ child photography uses supervised loaners, not adult professional qualification
+  ✓ phone coding and photo payouts cannot bypass owned tools and skill gates
+  ✓ researched hotels and stations retain sources and uncertain placement labels
+  ✓ job interaction wins over an overlapping home door only while in range
+  ✓ normal nearest-interaction behavior remains unchanged without job priority
+  ✓ invalid new stage plans are refused without accepting a job
+  ✓ imported illegal-path contracts are rejected instead of exposing missing task choices
+✔ tests/career-progression.test.mjs (120.516154ms)
+Real-time hotfix
+  ✓ legacy accelerated settings cannot override real time
+  ✓ missing malformed or null settings remain real and offline
+  ✓ an explicit optional weather opt-in survives reload
+  ✓ reported 4:22 pm WAT is 16:22 not simulated 09:22
+  ✓ one real minute advances one minute even with stale fast speed
+✔ tests/clockfix.test.mjs (98.98895ms)
+Economy
+  ✓ credits and debits whole naira
+  ✓ refuses insufficient funds with no change
+  ✓ idempotency: the same key is never applied twice
+  ✓ idempotency survives a save/load round trip
+  ✓ rejects fractional, zero and non-numeric amounts
+Shop
+  ✓ asking price is at least base and bargaining never goes below the floor
+  ✓ buying debits once and adds to the bag
+  ✓ cannot buy what you cannot afford — no money moves, nothing added
+  ✓ full bag blocks the purchase before payment
+Jobs
+  ✓ delivery: parcel goes in the bag, reward paid once on delivery
+  ✓ collect: pick up then return; reward only at the end
+  ✓ errand: refuses without the item, pays item price + tip with it
+  ✓ several jobs at once, up to the limit; abandoning removes the parcel and pays nothing
+  ✓ deadlines: a job past its deadline fails, the parcel goes back, nothing is paid
+  ✓ deadlines: update() expires overdue jobs; on-time hand-in still pays
+  ✓ no offer late in the day when there is no time left before closing
+Stock, selling and using goods
+  ✓ stock is limited: buying runs it down and refuses when sold out
+  ✓ opening stock is deterministic per trader and day, and restocks the next day
+  ✓ selling: credits once, removes the item, always below the buying floor
+  ✓ eating restores energy and uses up the item; raw foodstuff cannot be eaten
+  ✓ opening a bag of pure water gives 20 sachets
+  ✓ energy drains faster when running, recovers while riding, and low energy slows running
+Save migration
+  ✓ a v3 save moves its single job into the list and gains energy, transit and stock
+Public transport
+  ✓ every planned line is routed on real roads, with stops
+  ✓ all lines still route when landmarks use their gateway positions, as they do in the game
+  ✓ stops are on the kerb at ground level, never on bridges, in water, in junctions or on another road
+  ✓ the known places are served and connected
+  ✓ fares: whole naira in ₦50 steps, within each mode’s range, longer costs more
+  ✓ full trip: wait → board → fare charged once on departure → ride → arrive → get down
+  ✓ getting down before the vehicle leaves costs nothing
+  ✓ cannot board without the fare; no money moves
+  ✓ if the money is gone by departure, the driver puts you down at the stop — never a negative balance
+  ✓ “drop me here”: the driver pulls in at the next safe spot (not a bridge or junction)
+  ✓ seats are never over-filled across a long run of the whole fleet
+Homes
+  ✓ listings: real residential houses of each type, deterministic, doors on the front edge facing out
+  ✓ rent: one charge per period, no double charge, renew extends from the end of the period
+  ✓ rent: refused without the money — nothing changes
+  ✓ access: tenant uses everything; vacant can be viewed, not used; expired → due (locked) → back on the market
+  ✓ renewing during the grace period continues the old period (no free days, no gap)
+  ✓ the cupboard keeps its things across rent periods
+Kitchen
+  ✓ cooking uses the ingredients only when everything is there, and the meal goes into the bag
+  ✓ a full bag blocks cooking unless the ingredients free a slot
+Vehicles
+  ✓ vehicles are catalogued at six off-road car stands, not individual kerb sale spots
+  ✓ buying: one charge, the vehicle is yours and no longer for sale; can’t buy it twice
+  ✓ buying without the money: refused, nothing changes
+  ✓ fuel: driving burns it by distance; filling pays only for whole litres you can afford
+  ✓ a jerrycan from the bag tops up the tank (only if it fits)
+  ✓ skip-drive route: real roads between two places, longer than the straight line, ends at a kerb
+  ✓ skip-drive across the Niger Bridge to Asaba and back
+Public transport (Milestone 5 follow-ups)
+  ✓ the coaster crosses the Niger Bridge to a stop on the Asaba bank, and comes back
+  ✓ fare bargaining: keke drivers may knock something off, once; never below the minimum; the agreed fare is what you pay
+  ✓ bus and coaster fares are fixed
+Clock & save
+  ✓ skipping time rolls over days and fires day events
+  ✓ a v4 save migrates to v15: homes, vehicles and sold spots added, everything else kept
+  ✓ the map keeps the earlier area first and unchanged (resident ids depend on that order)
+Calendar, weather, power
+  ✓ day 1 is a Monday in mid-October; each game day moves the season on a week
+  ✓ weather is deterministic, ramps smoothly and follows the seasons
+  ✓ power cuts: 1–3 a day, back on afterwards, deterministic
+  ✓ rush hours, quiet Sunday mornings and rain thin the streets
+Weekday opening hours
+  ✓ markets close on Sunday, shops open after church, Saturday runs late
+Reputation
+  ✓ reputation grows with friends and jobs, falls with trouble, and sets discounts
+  ✓ a known face pays less in shops (never below the old 82% floor less the discount); hawkers stay fixed
+Keke business
+  ✓ pick up from a queue (max 3), each with a real destination stop and the standard keke fare
+  ✓ drop-off pays each passenger exactly once; the rain surge raises fares; late passengers leave unpaid
+Wholesale and supply orders
+  ✓ lots cost under half the shop price per piece, a few a day, all-or-nothing
+  ✓ wholesale → sell to a trader is a small honest margin (no money loop beyond that)
+  ✓ supply orders: posted by traders who sell those goods; deliver once, in time, with the full quantity
+Vehicle wear, repair and sale
+  ✓ crashes dent the car and cut top speed; mechanics fix it; parts fix some; dealers buy back once
+Visiting people
+  ✓ an NPC home is a real house near where you met, not a listing, with a reachable door; deterministic
+Saves
+  ✓ a v5 save migrates to v6: stable weather seed, business and wholesale added, vehicles get damage 0
+Police, church, roads (Milestone 7 follow-ups)
+  ✓ checkpoints sit beside real main roads, apart from each other; manned by day, not in heavy rain
+  ✓ police: only seen near a post; pay once; flee → wanted, doubled; cannot pay → vehicle held until released
+  ✓ reputation counts running from the police against you
+  ✓ Sunday Mass: churchgoers outside before and after, inside during it
+  ✓ the carriageway test finds roads (and not footpaths or flyover decks); collision shapes can be removed
+  ✓ a v6 save gains a clean police record (v7)
+Milestone 9
+  ✓ six needs initialize from legacy energy without overwriting it
+  ✓ all needs are bounded and decay, with hygiene draining faster while running
+  ✓ food restores hunger even at full energy
+  ✓ drinks drain bladder slightly and toilet/shower effects clamp
+  ✓ all nine skills start at 1 and cap at 10
+  ✓ skill XP and level survive serialization
+  ✓ furniture requires a current rental, debits once, and rejects duplicate purchases
+  ✓ furniture cannot be delivered to an unknown house or after rental expiry
+  ✓ insufficient funds do not install furniture
+  ✓ generator needs owned equipment and fuel; fuel is conserved over power cuts
+  ✓ inverter charges only on grid and drains only during uncovered outage time
+  ✓ generator backup covers part of a long outage before inverter takes over
+  ✓ equipment belongs to the specific home, not its shared interior
+  ✓ hustles pay once per day, grow skills and refuse replay after reload
+  ✓ hustles reject unknown jobs and depleted needs without paying
+  ✓ betting is optional, fixed-stake, once daily and reload-stable
+  ✓ a player without game money cannot place a ticket
+  ✓ phone messages are bounded and persisted as plain local text
+  ✓ version 7 saves retain wallet, energy, rentals and gain all M9 state
+  ✓ all phone brands are cosmetic and new saves keep the selected model
+  ✓ overnight club hours work on both sides of midnight, including NPC schedules
+  ✓ mall parking aisles are pedestrian-accessible but never ambient traffic edges
+  ✓ expanded map rental selection includes multi-level duplexes and premium homes
+  ✓ all owned car models contain genuine independently opening doors
+Milestone 10
+  ✓ Onitsha clock is WAT regardless of host timezone
+  ✓ live clock uses the actual calendar date and weekday
+  ✓ live clock ignores fast-forward activities
+  ✓ real midnight advances a single day and emits an event
+  ✓ saved real calendar resumes elapsed dates, not a random week
+  ✓ game time still supports acceleration and pausing
+  ✓ live clock rate does not inherit accelerated clock speed
+  ✓ weather request has fixed Onitsha coordinates and no geolocation
+  ✓ weather decodes real temperature, cloud, rain and storms
+  ✓ clear current conditions do not invent rain
+  ✓ weather rejects missing or invalid API payloads
+  ✓ weather refresh caches and throttles requests for 15 minutes
+  ✓ weather outage retains cache but labels it cached, not live
+  ✓ no network and no cache explicitly reports offline fallback
+  ✓ weather does not load expired or future cache records
+  ✓ furniture can move to any clear room coordinate
+  ✓ rotation changes the actual collision footprint
+  ✓ placement rejects room boundary and NaN position
+  ✓ placement rejects overlapping walls and other furniture
+  ✓ placement protects door, stair and interaction approaches
+  ✓ rug is non-solid and can sit underneath furniture
+  ✓ non-overlapping rectangles remain independent after rotation
+  ✓ saved placements sanitize invalid coordinates and colour
+  ✓ clubs open only at night and shut exactly at 04:00
+  ✓ map labels do not occupy overlapping screen rectangles
+  ✓ map labels stay inside the visible canvas
+Real-time hotfix
+  ✓ legacy accelerated settings cannot override real time
+  ✓ missing malformed or null settings remain real and offline
+  ✓ an explicit optional weather opt-in survives reload
+  ✓ reported 4:22 pm WAT is 16:22 not simulated 09:22
+  ✓ one real minute advances one minute even with stale fast speed
+Character and wardrobe
+  ✓ each gender has sixteen unique valid outfits
+  ✓ shorts and suits are available to both genders
+  ✓ legacy outfits and original six colours retain their IDs
+  ✓ old characters get automatic trouser and shoe colours
+  ✓ independent clothing colours persist through normalization
+  ✓ invalid appearance values fall back safely
+  ✓ NPC redcaps and all existing hair styles remain supported
+Random backgrounds and starting homes
+  ✓ only the two specified backgrounds exist with exact starting grants
+  ✓ equal random partitions include both outcomes and the midpoint boundary
+  ✓ nwa_ogbe street start receives its full grant exactly once
+  ✓ nwa_mummy street start receives its full grant exactly once
+  ✓ nwa_ogbe rents a selected home from the grant without extra fees
+  ✓ nwa_mummy rents a selected home from the grant without extra fees
+  ✓ unknown background or home is rejected before any saved game changes
+  ✓ unaffordable and invalid rental prices are rejected
+  ✓ loading repeatedly preserves money and rentals rather than regranting funds
+  ✓ v9 existing lives gain no background, free money or forced relocation
+  ✓ invalid imported background is ignored without changing current balance
+  ✓ a pending random assignment persists across reopen and simulated reload
+  ✓ malformed pending assignment is replaced with a valid random background
+Story, careers and Market Dash
+  ✓ old characters default to adult average build without losing identity
+  ✓ four ages and three builds are normalized safely
+  ✓ fourteen careers include requested trades and distinct oso afia
+  ✓ child career list excludes illegal paths and apprenticeship
+  ✓ story initialization never grants or resets wallet money
+  ✓ path and career advance the opening chapters
+  ✓ contracts require visiting workplace and pay only once
+  ✓ wrong choice gives no pay and loses trust
+  ✓ daily cap and active-play rest prevent unlimited work clicking
+  ✓ three paid contracts unlock the story crossroads
+  ✓ apprenticeship settles once after five successful training shifts
+  ✓ fraud remains abstract and once per real-clock day
+  ✓ EFCC opportunity cannot occur before twenty active-play minutes
+  ✓ honest work never arms an EFCC raid
+  ✓ EFCC arrest seizes only available criminal proceeds
+  ✓ unaffordable bail does not debit money or release custody
+  ✓ three free service tasks release a player with no money
+  ✓ paying bail is atomic and cannot double charge
+  ✓ custody and pursuit block work and career changes
+  ✓ runner lanes, jump and slide controls are bounded
+  ✓ runner pausing freezes distance
+  ✓ runner generates one obstacle per row with two clear lanes
+  ✓ runner collision, jump and slide avoidance work
+  ✓ runner snapshot preserves seed obstacles distance and health across reload
+  ✓ runner reaches escape and catches on the third collision
+  ✓ malformed imported story records are safely discarded
+  ✓ a missed EFCC opportunity waits another full interval
+Career qualifications and staged work
+  ✓ all twelve legal careers have explicit qualification and varied brief data
+  ✓ tech work refuses level one even with a laptop
+  ✓ tech work refuses level five without an owned laptop
+  ✓ laptop plus coding five qualifies a tech worker
+  ✓ each required tool and skill is enforced for every legal career
+  ✓ stages advance target and never pay early
+  ✓ second stage cannot be finished at first workplace
+  ✓ final completion pays once and increments career progress
+  ✓ selling work equipment mid-contract blocks payout until restored
+  ✓ a rejected intermediate brief gives no reward and consumes one daily attempt
+  ✓ staged contract resumes the exact next destination after a save roundtrip
+  ✓ malformed stage data is discarded safely rather than awarding early
+  ✓ invalid answers and coordinates never consume a job or pay
+  ✓ child photography uses supervised loaners, not adult professional qualification
+  ✓ phone coding and photo payouts cannot bypass owned tools and skill gates
+  ✓ researched hotels and stations retain sources and uncertain placement labels
+  ✓ job interaction wins over an overlapping home door only while in range
+  ✓ normal nearest-interaction behavior remains unchanged without job priority
+  ✓ invalid new stage plans are refused without accepting a job
+  ✓ imported illegal-path contracts are rejected instead of exposing missing task choices
+Whole-game audit regressions
+  ✓ the same damage can be repaired again without driving away first
+  ✓ repair sequence survives reload and never duplicates an earlier service key
+  ✓ a full tank or repaired car cannot be charged twice
+  ✓ a 5 L jerrycan is not consumed when only 3 L fits
+  ✓ a can transfers all 5 L when there is exactly enough space
+  ✓ removing zero, negative or fractional quantities cannot mutate inventory
+  ✓ invalid additions and multiple unique parcels are rejected without a crash
+  ✓ partial imported home upgrades cannot crash the power update
+  ✓ malformed wallet ledger is rejected before Continue/import
+  ✓ malformed wallet balance is rejected before Continue/import
+  ✓ malformed transaction keys is rejected before Continue/import
+  ✓ malformed bag items is rejected before Continue/import
+  ✓ malformed bag quantity is rejected before Continue/import
+  ✓ malformed bag capacity is rejected before Continue/import
+  ✓ malformed job list is rejected before Continue/import
+  ✓ malformed job steps is rejected before Continue/import
+  ✓ malformed vehicle model is rejected before Continue/import
+  ✓ malformed messages is rejected before Continue/import
+  ✓ malformed relationships is rejected before Continue/import
+  ✓ malformed home storage is rejected before Continue/import
+  ✓ malformed rental expiry is rejected before Continue/import
+  ✓ malformed stock is rejected before Continue/import
+  ✓ malformed supply orders is rejected before Continue/import
+  ✓ malformed clock day is rejected before Continue/import
+  ✓ a valid legacy save still migrates without a grant or losing equipment
+  ✓ failed save import leaves the current save and backup untouched
+  ✓ errands never request a catalogue category with no actual trader
+  ✓ child betting is rejected by the backend with no debit or ticket
+  ✓ resuming drops the previous menu/map keypress instead of opening it again
+  ✓ hiding controls clears touch movement, run, drag, look and zoom
+  ✓ window blur clears queued actions as well as held keys
+  ✓ hidden tab clears input so returning cannot move or use an item unexpectedly
+  ✓ errand navigation leads to a real seller before buying, then back to client
+  ✓ errands cannot point to a closed supplier or outlive supplier closing time
+  ✓ legacy owned vehicles missing optional numeric state restore safely without free fuel
+  ✓ a short map tap survives keyup until the next render frame
+  ✓ every Shoprite grocery resolves to usable existing catalogue data
+  ✓ Shoprite checkout charges exactly the item price and adds one item
+  ✓ full bag and insufficient funds do not take payment or create items
+  ✓ purchases cannot be triggered from outside Shoprite
+  ✓ bought clothing changes the player and save; rewearing does not charge again
+  ✓ appliances are delivered into existing home equipment without duplicate charges
+  ✓ home selector reads rental wrapper records correctly
+  ✓ shopping receipts and v12 wallet/inventory migrate without a new grant
+  ✓ Keke Napep: buy, doors, fuel, repair and save support
+  ✓ Mercedes-Benz C 300: buy, doors, fuel, repair and save support
+  ✓ Mercedes-AMG G 63: buy, doors, fuel, repair and save support
+  ✓ Lexus ES 350: buy, doors, fuel, repair and save support
+  ✓ Lexus RX 350: buy, doors, fuel, repair and save support
+  ✓ BMW 330i: buy, doors, fuel, repair and save support
+  ✓ BMW X5: buy, doors, fuel, repair and save support
+  ✓ Toyota Camry (2002–2011): buy, doors, fuel, repair and save support
+  ✓ Toyota RAV4: buy, doors, fuel, repair and save support
+  ✓ Toyota Corolla (2003–2019): buy, doors, fuel, repair and save support
+  ✓ Honda Accord (2003–2012): buy, doors, fuel, repair and save support
+  ✓ Toyota Highlander: buy, doors, fuel, repair and save support
+  ✓ Honda CR-V: buy, doors, fuel, repair and save support
+  ✓ Toyota Land Cruiser Prado: buy, doors, fuel, repair and save support
+  ✓ Lexus GX 460: buy, doors, fuel, repair and save support
+  ✓ Mercedes-Benz C-Class: buy, doors, fuel, repair and save support
+  ✓ Mercedes-Benz E-Class: buy, doors, fuel, repair and save support
+  ✓ Lexus GS 350: buy, doors, fuel, repair and save support
+  ✓ BMW 5 Series: buy, doors, fuel, repair and save support
+  ✓ Range Rover Sport: buy, doors, fuel, repair and save support
+  ✓ Mercedes-AMG GT: buy, doors, fuel, repair and save support
+  ✓ Porsche 911: buy, doors, fuel, repair and save support
+  ✓ Ford Mustang GT: buy, doors, fuel, repair and save support
+  ✓ Lamborghini Urus: buy, doors, fuel, repair and save support
+  ✓ Toyota Sienna: buy, doors, fuel, repair and save support
+  ✓ Toyota Avensis: buy, doors, fuel, repair and save support
+  ✓ Nissan Altima: buy, doors, fuel, repair and save support
+  ✓ Hyundai Elantra: buy, doors, fuel, repair and save support
+  ✓ Kia Rio: buy, doors, fuel, repair and save support
+  ✓ Honda Pilot: buy, doors, fuel, repair and save support
+  ✓ Lexus LX 570: buy, doors, fuel, repair and save support
+  ✓ Toyota Hilux: buy, doors, fuel, repair and save support
+  ✓ Toyota HiAce: buy, doors, fuel, repair and save support
+  ✓ Toyota Coaster Bus: buy, doors, fuel, repair and save support
+  ✓ Mitsubishi L300: buy, doors, fuel, repair and save support
+  ✓ Isuzu NPR Truck: buy, doors, fuel, repair and save support
+  ✓ Commercial Mini Bus: buy, doors, fuel, repair and save support
+  ✓ Commercial Passenger Bus: buy, doors, fuel, repair and save support
+  ✓ Mercedes-Benz Sprinter: buy, doors, fuel, repair and save support
+  ✓ Motorcycle: buy, doors, fuel, repair and save support
+  ✓ malformed shopping receipt state is rejected before import
+
+283 passed
+✔ tests/economy.test.mjs (4430.460844ms)
+✔ remembered local sessions survive restart, expire, and logout (361.281684ms)
+✔ flyer required; supported complete PNG accepted; text, HTML, SVG, spoofed and oversized payloads refused (3.052565ms)
+✔ routine police stop costs exactly ₦200 once and uses road centre rather than shoulder for stopping (0.914324ms)
+✔ broke checkpoint payment never debits; running adds a finite demand and wanted state, runner can escape or be caught (0.498747ms)
+✔ all enclosed remodels contain solid cabin fill and all glass writes opaque depth (535.935106ms)
+✔ nearby passing players no longer drive idle NPC facing or head rotation; conversations still do (1.07292ms)
+✔ cutting a crossing face preserves the exact boundary instead of deleting the face (3.384872ms)
+✔ Toyota Corolla (2003–2019): front, both cab sides, rear closure, roof and underfloor are present (78.506773ms)
+✔ Toyota Camry (2002–2011): front, both cab sides, rear closure, roof and underfloor are present (26.206754ms)
+✔ Honda Accord (2003–2012): front, both cab sides, rear closure, roof and underfloor are present (15.211729ms)
+✔ Toyota Highlander: front, both cab sides, rear closure, roof and underfloor are present (10.047099ms)
+✔ Lexus RX 350: front, both cab sides, rear closure, roof and underfloor are present (24.608099ms)
+✔ Toyota RAV4: front, both cab sides, rear closure, roof and underfloor are present (14.640064ms)
+✔ Honda CR-V: front, both cab sides, rear closure, roof and underfloor are present (17.888393ms)
+✔ Toyota Land Cruiser Prado: front, both cab sides, rear closure, roof and underfloor are present (12.820962ms)
+✔ Lexus GX 460: front, both cab sides, rear closure, roof and underfloor are present (19.152108ms)
+✔ Mercedes-Benz C-Class: front, both cab sides, rear closure, roof and underfloor are present (12.608026ms)
+✔ Mercedes-Benz E-Class: front, both cab sides, rear closure, roof and underfloor are present (13.135559ms)
+✔ Lexus ES 350: front, both cab sides, rear closure, roof and underfloor are present (11.230858ms)
+✔ Lexus GS 350: front, both cab sides, rear closure, roof and underfloor are present (6.386375ms)
+✔ BMW 5 Series: front, both cab sides, rear closure, roof and underfloor are present (8.752084ms)
+✔ Range Rover Sport: front, both cab sides, rear closure, roof and underfloor are present (14.998093ms)
+✔ Mercedes-AMG GT: front, both cab sides, rear closure, roof and underfloor are present (14.829725ms)
+✔ Porsche 911: front, both cab sides, rear closure, roof and underfloor are present (13.551888ms)
+✔ Ford Mustang GT: front, both cab sides, rear closure, roof and underfloor are present (16.369815ms)
+✔ Lamborghini Urus: front, both cab sides, rear closure, roof and underfloor are present (12.562395ms)
+✔ Toyota Sienna: front, both cab sides, rear closure, roof and underfloor are present (17.107586ms)
+✔ Toyota Avensis: front, both cab sides, rear closure, roof and underfloor are present (11.579361ms)
+✔ Nissan Altima: front, both cab sides, rear closure, roof and underfloor are present (12.295614ms)
+✔ Hyundai Elantra: front, both cab sides, rear closure, roof and underfloor are present (15.50257ms)
+✔ Kia Rio: front, both cab sides, rear closure, roof and underfloor are present (12.50116ms)
+✔ Honda Pilot: front, both cab sides, rear closure, roof and underfloor are present (6.802327ms)
+✔ Lexus LX 570: front, both cab sides, rear closure, roof and underfloor are present (10.018634ms)
+✔ Toyota Hilux: front, both cab sides, rear closure, roof and underfloor are present (181.00485ms)
+✔ Toyota HiAce: front, both cab sides, rear closure, roof and underfloor are present (8.011376ms)
+✔ Toyota Coaster Bus: front, both cab sides, rear closure, roof and underfloor are present (27.226512ms)
+✔ Mitsubishi L300: front, both cab sides, rear closure, roof and underfloor are present (6.032682ms)
+✔ Isuzu NPR Truck: front, both cab sides, rear closure, roof and underfloor are present (34.714621ms)
+✔ Commercial Mini Bus: front, both cab sides, rear closure, roof and underfloor are present (7.50167ms)
+✔ Commercial Passenger Bus: front, both cab sides, rear closure, roof and underfloor are present (21.693362ms)
+✔ Mercedes-Benz Sprinter: front, both cab sides, rear closure, roof and underfloor are present (17.227197ms)
+✔ Hilux has a closed cab/window at the cut, an open-top bed with floor and all four bed walls (9.215374ms)
+✔ every actual agbero encounter maps to its own stable marker and opening/resolved status (1.010974ms)
+✔ agbero approach prompts without debit, walking away resolves today, repeat/manual spam is blocked (0.871066ms)
+✔ agbero ₦200 choice debits only once; Run uses thugs runner, not police (0.482988ms)
+✔ night, safe zones, indoor scenes, riding and driving cannot start an agbero encounter (0.923951ms)
+✔ coach front and rear have continuous opaque windows, floor and tyres in catalogue and fleet geometries (85.460951ms)
+✔ closed-door coupe meshes match their catalogue surfaces without protruding duplicate dashboard geometry (207.562032ms)
+✔ desktop HUD is unchanged by the mobile-only control (0.807136ms)
+✔ saved mobile minimize preference loads without hiding the restore button or writing settings (0.418314ms)
+✔ one tap toggles and persists both modes with clear accessible labels (0.243983ms)
+Random backgrounds and starting homes
+  ✓ only the two specified backgrounds exist with exact starting grants
+  ✓ equal random partitions include both outcomes and the midpoint boundary
+  ✓ nwa_ogbe street start receives its full grant exactly once
+  ✓ nwa_mummy street start receives its full grant exactly once
+  ✓ nwa_ogbe rents a selected home from the grant without extra fees
+  ✓ nwa_mummy rents a selected home from the grant without extra fees
+  ✓ unknown background or home is rejected before any saved game changes
+  ✓ unaffordable and invalid rental prices are rejected
+  ✓ loading repeatedly preserves money and rentals rather than regranting funds
+  ✓ v9 existing lives gain no background, free money or forced relocation
+  ✓ invalid imported background is ignored without changing current balance
+  ✓ a pending random assignment persists across reopen and simulated reload
+  ✓ malformed pending assignment is replaced with a valid random background
+✔ tests/lifestart.test.mjs (58.378004ms)
+PASS real npm run dev: server 0.30.1, Vite, entry HTML and API proxy
+✔ npm run dev starts both services with matching package version and serves entry (1905.800392ms)
+PASS occupied port: no false readiness, no Vite, unrelated server untouched
+✔ occupied 8787 fails without accepting or stopping an unrelated server (1764.330959ms)
+Milestone 10
+  ✓ Onitsha clock is WAT regardless of host timezone
+  ✓ live clock uses the actual calendar date and weekday
+  ✓ live clock ignores fast-forward activities
+  ✓ real midnight advances a single day and emits an event
+  ✓ saved real calendar resumes elapsed dates, not a random week
+  ✓ game time still supports acceleration and pausing
+  ✓ live clock rate does not inherit accelerated clock speed
+  ✓ weather request has fixed Onitsha coordinates and no geolocation
+  ✓ weather decodes real temperature, cloud, rain and storms
+  ✓ clear current conditions do not invent rain
+  ✓ weather rejects missing or invalid API payloads
+  ✓ weather refresh caches and throttles requests for 15 minutes
+  ✓ weather outage retains cache but labels it cached, not live
+  ✓ no network and no cache explicitly reports offline fallback
+  ✓ weather does not load expired or future cache records
+  ✓ furniture can move to any clear room coordinate
+  ✓ rotation changes the actual collision footprint
+  ✓ placement rejects room boundary and NaN position
+  ✓ placement rejects overlapping walls and other furniture
+  ✓ placement protects door, stair and interaction approaches
+  ✓ rug is non-solid and can sit underneath furniture
+  ✓ non-overlapping rectangles remain independent after rotation
+  ✓ saved placements sanitize invalid coordinates and colour
+  ✓ clubs open only at night and shut exactly at 04:00
+  ✓ map labels do not occupy overlapping screen rectangles
+  ✓ map labels stay inside the visible canvas
+✔ tests/m10.test.mjs (234.778582ms)
+Homes
+  ✓ listings: real residential houses of each type, deterministic, doors on the front edge facing out
+  ✓ rent: one charge per period, no double charge, renew extends from the end of the period
+  ✓ rent: refused without the money — nothing changes
+  ✓ access: tenant uses everything; vacant can be viewed, not used; expired → due (locked) → back on the market
+  ✓ renewing during the grace period continues the old period (no free days, no gap)
+  ✓ the cupboard keeps its things across rent periods
+Kitchen
+  ✓ cooking uses the ingredients only when everything is there, and the meal goes into the bag
+  ✓ a full bag blocks cooking unless the ingredients free a slot
+Vehicles
+  ✓ vehicles are catalogued at six off-road car stands, not individual kerb sale spots
+  ✓ buying: one charge, the vehicle is yours and no longer for sale; can’t buy it twice
+  ✓ buying without the money: refused, nothing changes
+  ✓ fuel: driving burns it by distance; filling pays only for whole litres you can afford
+  ✓ a jerrycan from the bag tops up the tank (only if it fits)
+  ✓ skip-drive route: real roads between two places, longer than the straight line, ends at a kerb
+  ✓ skip-drive across the Niger Bridge to Asaba and back
+Public transport (Milestone 5 follow-ups)
+  ✓ the coaster crosses the Niger Bridge to a stop on the Asaba bank, and comes back
+  ✓ fare bargaining: keke drivers may knock something off, once; never below the minimum; the agreed fare is what you pay
+  ✓ bus and coaster fares are fixed
+Clock & save
+  ✓ skipping time rolls over days and fires day events
+  ✓ a v4 save migrates to v15: homes, vehicles and sold spots added, everything else kept
+  ✓ the map keeps the earlier area first and unchanged (resident ids depend on that order)
+✔ tests/m6.test.mjs (591.281711ms)
+Calendar, weather, power
+  ✓ day 1 is a Monday in mid-October; each game day moves the season on a week
+  ✓ weather is deterministic, ramps smoothly and follows the seasons
+  ✓ power cuts: 1–3 a day, back on afterwards, deterministic
+  ✓ rush hours, quiet Sunday mornings and rain thin the streets
+Weekday opening hours
+  ✓ markets close on Sunday, shops open after church, Saturday runs late
+Reputation
+  ✓ reputation grows with friends and jobs, falls with trouble, and sets discounts
+  ✓ a known face pays less in shops (never below the old 82% floor less the discount); hawkers stay fixed
+Keke business
+  ✓ pick up from a queue (max 3), each with a real destination stop and the standard keke fare
+  ✓ drop-off pays each passenger exactly once; the rain surge raises fares; late passengers leave unpaid
+Wholesale and supply orders
+  ✓ lots cost under half the shop price per piece, a few a day, all-or-nothing
+  ✓ wholesale → sell to a trader is a small honest margin (no money loop beyond that)
+  ✓ supply orders: posted by traders who sell those goods; deliver once, in time, with the full quantity
+Vehicle wear, repair and sale
+  ✓ crashes dent the car and cut top speed; mechanics fix it; parts fix some; dealers buy back once
+Visiting people
+  ✓ an NPC home is a real house near where you met, not a listing, with a reachable door; deterministic
+Saves
+  ✓ a v5 save migrates to v6: stable weather seed, business and wholesale added, vehicles get damage 0
+Police, church, roads (Milestone 7 follow-ups)
+  ✓ checkpoints sit beside real main roads, apart from each other; manned by day, not in heavy rain
+  ✓ police: only seen near a post; pay once; flee → wanted, doubled; cannot pay → vehicle held until released
+  ✓ reputation counts running from the police against you
+  ✓ Sunday Mass: churchgoers outside before and after, inside during it
+  ✓ the carriageway test finds roads (and not footpaths or flyover decks); collision shapes can be removed
+  ✓ a v6 save gains a clean police record (v7)
+✔ tests/m7.test.mjs (553.575944ms)
+Milestone 9
+  ✓ six needs initialize from legacy energy without overwriting it
+  ✓ all needs are bounded and decay, with hygiene draining faster while running
+  ✓ food restores hunger even at full energy
+  ✓ drinks drain bladder slightly and toilet/shower effects clamp
+  ✓ all nine skills start at 1 and cap at 10
+  ✓ skill XP and level survive serialization
+  ✓ furniture requires a current rental, debits once, and rejects duplicate purchases
+  ✓ furniture cannot be delivered to an unknown house or after rental expiry
+  ✓ insufficient funds do not install furniture
+  ✓ generator needs owned equipment and fuel; fuel is conserved over power cuts
+  ✓ inverter charges only on grid and drains only during uncovered outage time
+  ✓ generator backup covers part of a long outage before inverter takes over
+  ✓ equipment belongs to the specific home, not its shared interior
+  ✓ hustles pay once per day, grow skills and refuse replay after reload
+  ✓ hustles reject unknown jobs and depleted needs without paying
+  ✓ betting is optional, fixed-stake, once daily and reload-stable
+  ✓ a player without game money cannot place a ticket
+  ✓ phone messages are bounded and persisted as plain local text
+  ✓ version 7 saves retain wallet, energy, rentals and gain all M9 state
+  ✓ all phone brands are cosmetic and new saves keep the selected model
+  ✓ overnight club hours work on both sides of midnight, including NPC schedules
+  ✓ mall parking aisles are pedestrian-accessible but never ambient traffic edges
+  ✓ expanded map rental selection includes multi-level duplexes and premium homes
+  ✓ all owned car models contain genuine independently opening doors
+✔ tests/m9.test.mjs (507.209924ms)
+PASS exact username lookup finds another account
+PASS first non-friend DM becomes a message request
+PASS recipient sees a private incoming request
+PASS unrelated player receives no private inbox summary
+PASS second message waits for request acceptance
+PASS recipient cannot reply before accepting
+PASS sender cannot accept own message request
+PASS third party cannot read a conversation
+PASS recipient can consent without automatically becoming friends
+PASS opening an accepted conversation clears unread count
+PASS read receipt comes from recipient read cursor
+PASS send retry is idempotent
+PASS messages stay inert text in storage
+PASS background history fetch does not mark incoming message read
+PASS accepted conversations deliver while recipient is offline
+PASS empty messages rejected
+PASS history and unread state survive server restart
+PASS current crew members can send group messages
+PASS crew member can load group history
+PASS outsider cannot read crew messages
+PASS former member cannot reopen crew history
+PASS friend can request a visit to an occupied private home
+PASS visitor cannot accept their own visit request
+PASS host acceptance grants the visitor temporary home access
+PASS host leaving ends accepted visit permission
+PASS blocked player cannot send new DM
+PASS blocked thread cannot be fetched
+PASS blocked lookup is unavailable
+PASS declining prevents repeat contact in that thread
+29 mail checks passed
+✔ persistent private chats, requests, read receipts, group membership and blocked access (875.256666ms)
+✔ v14 saves migrate without changing wallet, housing, inventory or daily jobs (7.020387ms)
+✔ bindings are deterministic and reuse existing reachable residents only (0.904794ms)
+✔ journal offers directions only, not remote acceptance or completion (0.61933ms)
+✔ source acceptance requires real active NPC, range, scene, dialogue node and session (0.429008ms)
+✔ wrong actor, arrival alone and unrelated conversations never pay (0.347338ms)
+✔ closed friend, distant contact, and an interior cannot advance objectives (4.655435ms)
+✔ welcome branch advances and pays exactly once through wallet (0.880221ms)
+✔ permanent mission receipt survives wallet ledger/key pruning (3.413183ms)
+✔ reload restores progress and requires a fresh in-world welcome conversation (1.023087ms)
+✔ a blocked save never creates a persisted wallet-only reward or allows memory replay (0.530214ms)
+✔ damaged completion, bindings, progress or tracking are rejected, not reset to payable (1.015751ms)
+✔ daily job slots are separate and existing wallet prevents negative balances (0.232391ms)
+✔ actual generated dialogue exposes mission branches without replacing normal options (6.464318ms)
+✔ lamp spacing is continuous across bent street segments and covers short roads (0.933884ms)
+✔ all home floor plans support the larger bathroom and clear circulation (0.608838ms)
+✔ three bundled MP3s exist with attribution and offline cache rules (0.344633ms)
+✔ home essentials are no longer gated by unfurnished mode (0.289741ms)
+✔ all 20 home layout variants retain connected circulation at the real player radius (616.479677ms)
+✔ checkpoint animation accepts omitted traffic without a frame error (2.704839ms)
+✔ checkpoint animation accepts null traffic without a frame error (0.323005ms)
+✔ checkpoint animation accepts empty traffic without a frame error (0.336069ms)
+✔ checkpoint officer signals a nearby ambient vehicle, but not a distant one (0.392454ms)
+✔ checkpoint officer signals the player car even if ambient traffic is empty (0.30299ms)
+PASS fixed price and seven-day slot contract
+PASS under-18 registration is rejected
+PASS separate player accounts register
+PASS duplicate usernames cannot overwrite accounts
+PASS incorrect password is rejected
+PASS foreign browser origin is rejected
+PASS real server replicates nearby players
+PASS custom outfit colour indices replicate without losing wardrobe choices
+PASS relationship needs friendship consent first
+PASS sender cannot accept their own invitation
+PASS recipient acceptance creates mutual friendship
+PASS invitation cannot be replayed
+PASS nearby chat reaches another client
+PASS nearby chat is range-limited
+PASS relationship is mutual
+PASS either player can end a relationship
+PASS consensual date completes only after both arrive and wait
+PASS home invitation grants temporary visit
+PASS host departure actively ends a guest visit
+PASS private home access is revoked when host leaves
+PASS friend can consent to a stopped-car passenger seat
+PASS passenger follows driver server position
+PASS passenger may leave at any time
+PASS accepted crew can start a co-op task
+PASS co-op cannot pay before minimum task time
+PASS shared rendezvous pays every member once
+PASS completed team task cannot duplicate payout
+PASS server computes checkout amount and does not activate before test confirmation
+PASS checkout retries are idempotent
+PASS another player cannot activate your order
+PASS two slots create exactly fourteen server-clock days in test mode
+PASS payment retry does not extend a campaign
+PASS test ad is shared with other authenticated players
+PASS negative ad slots are rejected
+PASS text-only and script-link adverts without a flyer are rejected
+PASS SVG and active artwork are rejected
+PASS blocking removes friendship and prevents direct chat
+PASS accounts, social state and campaigns survive a server restart
+PASS password login works after restart
+PASS expired campaigns leave all billboards after server-clock expiry
+40 server checks passed
+PASS independent account saves and untouched original offline save
+✔ local multiplayer, social consent, ad checkout, expiry and persistent accounts (2397.862112ms)
+✔ browser save scopes preserve the original offline character (11.962665ms)
+PASS TEST_PAYMENTS=false cannot activate campaigns
+✔ turning off test payments prevents local activation (128.497347ms)
+✔ six named Onitsha dealerships keep all lot IDs and catalogue assignments (1.463771ms)
+✔ stadium keeps stable save/navigation identity and existing footprint (0.45263ms)
+✔ place display paths contain names without approximate labels or visiting-hour suffixes (6.18031ms)
+✔ stand footprint is rejected if any part enters a building, including a thin centre wall (2.955153ms)
+✔ stands cannot overlap stadium, dealership, other signs, home access, water or residents (0.432574ms)
+✔ naming update does not change mission or wallet save schema/state (2.648071ms)
+✔ malformed settings normalize without a broken station or level (4.754019ms)
+✔ only HTTPS stream endpoints allowed (0.626209ms)
+✔ no audio or network before entering an owned vehicle (0.390229ms)
+✔ first use waits for explicit live-stream consent (0.446249ms)
+✔ auto-tune last station on vehicle entry only after prior consent (0.189843ms)
+✔ UI reports playing only after a real media playing event (0.212916ms)
+✔ power off releases media and stays off on re-entry (0.241161ms)
+✔ leaving a car promptly stops stream and clears source (0.178196ms)
+✔ different car uses same preferences and only one active media element (2.267639ms)
+✔ station switching and next/previous wrap without overlapping streams (0.948613ms)
+✔ unconfigured station has honest unavailable state without network (0.518271ms)
+✔ failed stream stops without retry storm; manual retry works (1.205285ms)
+✔ browser autoplay refusal is actionable and retryable (0.768802ms)
+✔ network error is caught without an unhandled play promise (0.183734ms)
+✔ late callbacks from a previous station cannot change current state (2.419573ms)
+✔ connection/buffering timeout stops media and offers manual retry (0.42542ms)
+✔ ended live stream never pretends playback continues (0.261107ms)
+✔ background suspension and foreground restoration release/reconnect (0.207007ms)
+✔ offline stops internet audio and reconnects once when network returns (0.461436ms)
+✔ leaving gameplay for menu stops playback even if vehicle reference remains (0.095803ms)
+✔ radio volume is clamped and persists (0.161477ms)
+✔ master mute immediately mutes streaming audio as well as game sounds (0.559223ms)
+✔ voice activity ducks the radio and restores it afterwards (0.222308ms)
+✔ pause/menu attenuation multiplies radio level (0.152692ms)
+✔ destroy cleans pending timers and all playback (0.190976ms)
+✔ all 200 complete billboards are square to their adjacent road, never canted (1.738451ms)
+✔ full billboard reservations exclude rendered building bounds, roof overhangs and roads (107.731479ms)
+✔ concave building voids are not treated as clear space underneath a rectangular roof (0.280663ms)
+✔ same map produces identical board IDs, locations and orientations (2560.760355ms)
+✔ installed inverter charges from grid, automatically supplies an outage, empties and recharges (10.446145ms)
+✔ direct backup switch conserves reserve while off and stored equipment cannot supply power (0.370689ms)
+✔ direct inverter control lights the home immediately and turns it off without grid (1.080659ms)
+✔ appliance switches stop during outage, recover with backup, and persist through save-state reload (0.385295ms)
+✔ generator cannot start empty, and unowned homes cannot control backup (0.309387ms)
+✔ TV, fan and inverter models expose visible appliance state parts (19.528232ms)
+Road geometry audit: {"roads":1044,"segments":5767,"roundJoins":4465,"curbCandidates":3044,"trimmedCurbs":1698,"curbBands":2717,"curbFootprints":2717}
+✔ closed road offsets share an identical first and last join (5.953069ms)
+✔ acute turns, U-turns and duplicate nodes cannot produce unbounded offsets (0.372594ms)
+✔ road ribbons and round joins remain within the actual road width, with no acute spikes (19.999432ms)
+✔ a crossing road clips the middle of a long curb, not only its endpoints (5.807116ms)
+✔ saved home-access corridors get clear curb openings (0.888204ms)
+✔ the entire real map has finite road meshes and no retained curb footprint crosses a ground road (2482.270083ms)
+✔ Upper Iweka original monument fits a clear island near the interchange, not DMGS (182.030553ms)
+✔ roadside advertising boards use two readable 14 by 7 metre faces and sturdy supports (3.67763ms)
+  ✓ every Shoprite grocery resolves to usable existing catalogue data
+  ✓ Shoprite checkout charges exactly the item price and adds one item
+  ✓ full bag and insufficient funds do not take payment or create items
+  ✓ purchases cannot be triggered from outside Shoprite
+  ✓ bought clothing changes the player and save; rewearing does not charge again
+  ✓ appliances are delivered into existing home equipment without duplicate charges
+  ✓ home selector reads rental wrapper records correctly
+  ✓ shopping receipts and v12 wallet/inventory migrate without a new grant
+  ✓ Keke Napep: buy, doors, fuel, repair and save support
+  ✓ Mercedes-Benz C 300: buy, doors, fuel, repair and save support
+  ✓ Mercedes-AMG G 63: buy, doors, fuel, repair and save support
+  ✓ Lexus ES 350: buy, doors, fuel, repair and save support
+  ✓ Lexus RX 350: buy, doors, fuel, repair and save support
+  ✓ BMW 330i: buy, doors, fuel, repair and save support
+  ✓ BMW X5: buy, doors, fuel, repair and save support
+  ✓ Toyota Camry (2002–2011): buy, doors, fuel, repair and save support
+  ✓ Toyota RAV4: buy, doors, fuel, repair and save support
+  ✓ Toyota Corolla (2003–2019): buy, doors, fuel, repair and save support
+  ✓ Honda Accord (2003–2012): buy, doors, fuel, repair and save support
+  ✓ Toyota Highlander: buy, doors, fuel, repair and save support
+  ✓ Honda CR-V: buy, doors, fuel, repair and save support
+  ✓ Toyota Land Cruiser Prado: buy, doors, fuel, repair and save support
+  ✓ Lexus GX 460: buy, doors, fuel, repair and save support
+  ✓ Mercedes-Benz C-Class: buy, doors, fuel, repair and save support
+  ✓ Mercedes-Benz E-Class: buy, doors, fuel, repair and save support
+  ✓ Lexus GS 350: buy, doors, fuel, repair and save support
+  ✓ BMW 5 Series: buy, doors, fuel, repair and save support
+  ✓ Range Rover Sport: buy, doors, fuel, repair and save support
+  ✓ Mercedes-AMG GT: buy, doors, fuel, repair and save support
+  ✓ Porsche 911: buy, doors, fuel, repair and save support
+  ✓ Ford Mustang GT: buy, doors, fuel, repair and save support
+  ✓ Lamborghini Urus: buy, doors, fuel, repair and save support
+  ✓ Toyota Sienna: buy, doors, fuel, repair and save support
+  ✓ Toyota Avensis: buy, doors, fuel, repair and save support
+  ✓ Nissan Altima: buy, doors, fuel, repair and save support
+  ✓ Hyundai Elantra: buy, doors, fuel, repair and save support
+  ✓ Kia Rio: buy, doors, fuel, repair and save support
+  ✓ Honda Pilot: buy, doors, fuel, repair and save support
+  ✓ Lexus LX 570: buy, doors, fuel, repair and save support
+  ✓ Toyota Hilux: buy, doors, fuel, repair and save support
+  ✓ Toyota HiAce: buy, doors, fuel, repair and save support
+  ✓ Toyota Coaster Bus: buy, doors, fuel, repair and save support
+  ✓ Mitsubishi L300: buy, doors, fuel, repair and save support
+  ✓ Isuzu NPR Truck: buy, doors, fuel, repair and save support
+  ✓ Commercial Mini Bus: buy, doors, fuel, repair and save support
+  ✓ Commercial Passenger Bus: buy, doors, fuel, repair and save support
+  ✓ Mercedes-Benz Sprinter: buy, doors, fuel, repair and save support
+  ✓ Motorcycle: buy, doors, fuel, repair and save support
+  ✓ malformed shopping receipt state is rejected before import
+✔ tests/shoprite.test.mjs (1105.211451ms)
+✔ all nine skills cross each level only at the exact XP boundary (2.942213ms)
+✔ invalid, inherited and nonpositive XP awards cannot mutate skills (0.18037ms)
+✔ bad numeric XP is normalized; levels cap without rollover (0.659713ms)
+✔ only crossing a level emits feedback; bulk XP produces one final-level event (0.244707ms)
+✔ phone practice awards XP, drains needs and shares the workshop cooldown (1.63436ms)
+✔ failed practices do not consume XP, needs or cooldown (0.35478ms)
+✔ last practice awards only remaining XP and reports mastery accurately (0.391537ms)
+✔ all normal career skill gates enforce both level and equipment (0.809779ms)
+✔ comedy requires Comedy, not Charisma, and rewards the same skill (0.679115ms)
+✔ XP, levels and active-play cooldown survive real save/load and migration (3.335008ms)
+Story, careers and Market Dash
+  ✓ old characters default to adult average build without losing identity
+  ✓ four ages and three builds are normalized safely
+  ✓ fourteen careers include requested trades and distinct oso afia
+  ✓ child career list excludes illegal paths and apprenticeship
+  ✓ story initialization never grants or resets wallet money
+  ✓ path and career advance the opening chapters
+  ✓ contracts require visiting workplace and pay only once
+  ✓ wrong choice gives no pay and loses trust
+  ✓ daily cap and active-play rest prevent unlimited work clicking
+  ✓ three paid contracts unlock the story crossroads
+  ✓ apprenticeship settles once after five successful training shifts
+  ✓ fraud remains abstract and once per real-clock day
+  ✓ EFCC opportunity cannot occur before twenty active-play minutes
+  ✓ honest work never arms an EFCC raid
+  ✓ EFCC arrest seizes only available criminal proceeds
+  ✓ unaffordable bail does not debit money or release custody
+  ✓ three free service tasks release a player with no money
+  ✓ paying bail is atomic and cannot double charge
+  ✓ custody and pursuit block work and career changes
+  ✓ runner lanes, jump and slide controls are bounded
+  ✓ runner pausing freezes distance
+  ✓ runner generates one obstacle per row with two clear lanes
+  ✓ runner collision, jump and slide avoidance work
+  ✓ runner snapshot preserves seed obstacles distance and health across reload
+  ✓ runner reaches escape and catches on the third collision
+  ✓ malformed imported story records are safely discarded
+  ✓ a missed EFCC opportunity waits another full interval
+✔ tests/story.test.mjs (140.916935ms)
+✔ all retained city footprints stay outside road setbacks (504.512191ms)
+✔ edge crossings are caught even with all building corners outside the road (0.631697ms)
+✔ repairs are deterministic and idempotent (666.017995ms)
+✔ raised bridge decks do not cut ground-floor plots (0.378922ms)
+✔ venue fronts are parallel to and immediately connected to their chosen road (2.444633ms)
+✔ non-rental frontage repair preserves saved rental doors (0.598486ms)
+✔ venue frontage rejects tracks and narrow paths in favour of vehicle streets (0.526333ms)
+Public transport
+  ✓ every planned line is routed on real roads, with stops
+  ✓ all lines still route when landmarks use their gateway positions, as they do in the game
+  ✓ stops are on the kerb at ground level, never on bridges, in water, in junctions or on another road
+  ✓ the known places are served and connected
+  ✓ fares: whole naira in ₦50 steps, within each mode’s range, longer costs more
+  ✓ full trip: wait → board → fare charged once on departure → ride → arrive → get down
+  ✓ getting down before the vehicle leaves costs nothing
+  ✓ cannot board without the fare; no money moves
+  ✓ if the money is gone by departure, the driver puts you down at the stop — never a negative balance
+  ✓ “drop me here”: the driver pulls in at the next safe spot (not a bridge or junction)
+  ✓ seats are never over-filled across a long run of the whole fleet
+✔ tests/transport.test.mjs (764.738531ms)
+✔ stadium fits a clear 150 × 112 m plot about 486 m from Shoprite (18.126341ms)
+✔ 200 stable billboard IDs have safe, separate full footprints (14.792046ms)
+✔ wire pins follow the actual crossarm local-X axis (0.269227ms)
+✔ utility poles are rejected on crossing carriageways and home paths (0.336314ms)
+✔ exclusive bookings reject active and pending owners, release after hold or expiry (0.619123ms)
+✔ legacy campaigns migrate without silently sharing a board (0.348683ms)
+✔ business URLs accept only HTTP(S), no embedded credentials or script links (0.188136ms)
+✔ permanent home buying is charged once and remains accessible without rent (0.595068ms)
+✔ garage snapshot stores every unheld vehicle without mutating live vehicle state (0.285176ms)
+✔ all ten car colours are accepted and saved; invalid colour is rejected before payment (4.703422ms)
+✔ v13 saves migrate with ownership, garage flags and paint intact (2.517244ms)
+✔ exactly 36 requested vehicles, six stands and all entries stocked once (1.625078ms)
+✔ Toyota Corolla (2003–2019): model, purchase, duplicate guard, fuel, resale and saved ownership (37.110075ms)
+✔ Toyota Camry (2002–2011): model, purchase, duplicate guard, fuel, resale and saved ownership (23.445077ms)
+✔ Honda Accord (2003–2012): model, purchase, duplicate guard, fuel, resale and saved ownership (8.667157ms)
+✔ Toyota Highlander: model, purchase, duplicate guard, fuel, resale and saved ownership (8.299702ms)
+✔ Lexus RX 350: model, purchase, duplicate guard, fuel, resale and saved ownership (13.937408ms)
+✔ Toyota RAV4: model, purchase, duplicate guard, fuel, resale and saved ownership (12.273781ms)
+✔ Honda CR-V: model, purchase, duplicate guard, fuel, resale and saved ownership (22.017397ms)
+✔ Toyota Land Cruiser Prado: model, purchase, duplicate guard, fuel, resale and saved ownership (9.419066ms)
+✔ Lexus GX 460: model, purchase, duplicate guard, fuel, resale and saved ownership (13.442216ms)
+✔ Mercedes-Benz C-Class: model, purchase, duplicate guard, fuel, resale and saved ownership (10.734875ms)
+✔ Mercedes-Benz E-Class: model, purchase, duplicate guard, fuel, resale and saved ownership (4.940898ms)
+✔ Lexus ES 350: model, purchase, duplicate guard, fuel, resale and saved ownership (4.925445ms)
+✔ Lexus GS 350: model, purchase, duplicate guard, fuel, resale and saved ownership (5.063785ms)
+✔ BMW 5 Series: model, purchase, duplicate guard, fuel, resale and saved ownership (4.615479ms)
+✔ Range Rover Sport: model, purchase, duplicate guard, fuel, resale and saved ownership (5.751618ms)
+✔ Mercedes-AMG GT: model, purchase, duplicate guard, fuel, resale and saved ownership (5.423719ms)
+✔ Porsche 911: model, purchase, duplicate guard, fuel, resale and saved ownership (6.615937ms)
+✔ Ford Mustang GT: model, purchase, duplicate guard, fuel, resale and saved ownership (8.584008ms)
+✔ Lamborghini Urus: model, purchase, duplicate guard, fuel, resale and saved ownership (5.329673ms)
+✔ Toyota Sienna: model, purchase, duplicate guard, fuel, resale and saved ownership (5.666483ms)
+✔ Toyota Avensis: model, purchase, duplicate guard, fuel, resale and saved ownership (4.591045ms)
+✔ Nissan Altima: model, purchase, duplicate guard, fuel, resale and saved ownership (4.260221ms)
+✔ Hyundai Elantra: model, purchase, duplicate guard, fuel, resale and saved ownership (3.951146ms)
+✔ Kia Rio: model, purchase, duplicate guard, fuel, resale and saved ownership (5.179941ms)
+✔ Honda Pilot: model, purchase, duplicate guard, fuel, resale and saved ownership (3.715736ms)
+✔ Lexus LX 570: model, purchase, duplicate guard, fuel, resale and saved ownership (5.09669ms)
+✔ Toyota Hilux: model, purchase, duplicate guard, fuel, resale and saved ownership (116.388091ms)
+✔ Toyota HiAce: model, purchase, duplicate guard, fuel, resale and saved ownership (3.262276ms)
+✔ Toyota Coaster Bus: model, purchase, duplicate guard, fuel, resale and saved ownership (19.724027ms)
+✔ Mitsubishi L300: model, purchase, duplicate guard, fuel, resale and saved ownership (6.111077ms)
+✔ Isuzu NPR Truck: model, purchase, duplicate guard, fuel, resale and saved ownership (32.343684ms)
+✔ Keke Napep: model, purchase, duplicate guard, fuel, resale and saved ownership (52.305139ms)
+✔ Commercial Mini Bus: model, purchase, duplicate guard, fuel, resale and saved ownership (4.536988ms)
+✔ Commercial Passenger Bus: model, purchase, duplicate guard, fuel, resale and saved ownership (24.087852ms)
+✔ Mercedes-Benz Sprinter: model, purchase, duplicate guard, fuel, resale and saved ownership (18.797185ms)
+✔ Motorcycle: model, purchase, duplicate guard, fuel, resale and saved ownership (29.582422ms)
+✔ insufficient funds and blocked collection never take money or mark stock sold (0.350738ms)
+✔ existing owned vehicle blocks shared bay without charging; moving it allows next purchase (0.160374ms)
+✔ NPC garages persist all 36 models with stable IDs and paint (1.898259ms)
+✔ all legacy model IDs remain valid in existing saves (0.585131ms)
+Character and wardrobe
+  ✓ each gender has sixteen unique valid outfits
+  ✓ shorts and suits are available to both genders
+  ✓ legacy outfits and original six colours retain their IDs
+  ✓ old characters get automatic trouser and shoe colours
+  ✓ independent clothing colours persist through normalization
+  ✓ invalid appearance values fall back safely
+  ✓ NPC redcaps and all existing hair styles remain supported
+✔ tests/wardrobe.test.mjs (83.232418ms)
+ℹ tests 236
+ℹ suites 0
+ℹ pass 236
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 38205.758232

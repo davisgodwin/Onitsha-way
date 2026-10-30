@@ -1,0 +1,26 @@
+LOADED
+AUDIT {"boards":200,"houses":800,"buildingOverlaps":[],"venueOverlaps":[],"unfacing":[],"blockedDoors":[],"reservations":0}
+PASS all 200 boards face the road squarely
+PASS no billboard envelope enters any building or later venue
+PASS home access and decorative houses remain intact
+PASS temporary sign reservation colliders removed for walking
+PASS purchased inverter and home appliances are installed with interactions
+PASS outage leaves bulbs off when backup is disabled
+PASS walking up to inverter opens its direct power controls
+PASS inverter control immediately restores home lights during outage
+PASS disabling backup extinguishes lights during outage
+PASS TV switch saves on-state and illuminates its screen
+PASS fan switch starts the visible rotor
+PASS switched-on home radio plays bundled music through game audio
+PASS empty battery stops bulbs, TV, fan and radio
+PASS washing machine action is disabled without electricity
+PASS grid return charges battery and re-enables appliance use
+PASS washing machine performs its named household activity
+PASS home appliance switches and inverter reserve survive reload
+PASS direct appliance controls fit mobile screen
+PASS phone home menu opens installed appliance controls
+PASS outdoor generator has a reachable direct interaction
+PASS empty generator cannot start
+PASS fuelled generator supplies backup after direct refuel and start
+PASS no browser or game frame errors
+DONE 23

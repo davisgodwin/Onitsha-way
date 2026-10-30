@@ -1,0 +1,2 @@
+export const VEHICLE_PAINTS=[{name:'Pearl white',hex:'#f3f3ed'},{name:'Midnight black',hex:'#141920'},{name:'Silver',hex:'#c9ccd1'},{name:'Graphite grey',hex:'#596168'},{name:'Royal blue',hex:'#245da8'},{name:'Crimson red',hex:'#a62635'},{name:'Forest green',hex:'#285c43'},{name:'Champagne gold',hex:'#bba06b'},{name:'Sunshine yellow',hex:'#f2c200'},{name:'Burnt orange',hex:'#c7682e'}];
+export const paintName=hex=>VEHICLE_PAINTS.find(p=>p.hex===hex)?.name??'Dealer colour';
