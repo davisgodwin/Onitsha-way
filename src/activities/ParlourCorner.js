@@ -54,7 +54,7 @@ export class ParlourCorner {
   }
   boardMesh() {
     const c = this.boardCanvas = document.createElement('canvas'); c.width = c.height = 256;
-    const t = this.boardTex = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+    const t = this.boardTex = new THREE.CanvasTexture(c); t.userData.keepCanvas = true; t.colorSpace = THREE.SRGBColorSpace;
     const m = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.02, 0.5), [null, null, new THREE.MeshStandardMaterial({ map: t, roughness: 0.7 }), null, null, null].map((x) => x ?? new THREE.MeshStandardMaterial({ color: '#4b3220' })));
     this.drawBoard(null); return m;
   }

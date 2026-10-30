@@ -18,7 +18,7 @@ export class Billboards{
  if(!ad||dist>range){if(r.c)this.release(r);continue;}const resolution=sharp.has(r.id)?2048:256;if(r.c&&r.c.width!==resolution)this.release(r);r.resolution=resolution;const key=ad.id;if(!force&&r.key===key)continue;r.key=key;this.paint(r,ad);}
  this.updateLinks();
  }
- paint(r,ad){if(!ad?.image)return;if(!r.c){r.c=document.createElement('canvas');r.c.width=r.resolution??2048;r.c.height=r.c.width/2;r.texture=new THREE.CanvasTexture(r.c);r.texture.colorSpace=THREE.SRGBColorSpace;r.texture.anisotropy=Math.min(16,this.o.g.renderer.renderer.capabilities.getMaxAnisotropy());this.faces(r,r.texture);}
+ paint(r,ad){if(!ad?.image)return;if(!r.c){r.c=document.createElement('canvas');r.c.width=r.resolution??2048;r.c.height=r.c.width/2;r.texture=new THREE.CanvasTexture(r.c);r.texture.userData.keepCanvas=true;r.texture.colorSpace=THREE.SRGBColorSpace;r.texture.anisotropy=Math.min(16,this.o.g.renderer.renderer.capabilities.getMaxAnisotropy());this.faces(r,r.texture);}
  const ctx=r.c.getContext('2d'),draw=im=>{if(r.key!==ad.id||!r.c)return;ctx.fillStyle='#101719';const W=r.c.width,H=r.c.height;ctx.fillRect(0,0,W,H);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';const scale=Math.min(W/im.width,H/im.height),w=im.width*scale,h=im.height*scale;ctx.drawImage(im,(W-w)/2,(H-h)/2,w,h);r.texture.needsUpdate=true;};
  if(this.images.has(ad.id))draw(this.images.get(ad.id));else{const im=new Image();im.onload=()=>{if(r.resolution===2048){if(this.images.size>=8)this.images.delete(this.images.keys().next().value);this.images.set(ad.id,im);}draw(im);};im.onerror=()=>{if(r.key===ad.id){r.key=null;}};im.src=ad.image;}
  }

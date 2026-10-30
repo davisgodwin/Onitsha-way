@@ -40,7 +40,7 @@ export class ClubInterior {
   for(const x of[6.5,23.5]){box(2,3.2,1.6,x,1.6,2.2,'#0d0e12',true);for(const y of[.7,1.6,2.5]){cyl(.42,.05,x,y,3.02,'#22252c');}box(2.1,.08,.08,x,3.25,3.05,'#7b2ff7',false,2);}
   box(16,.25,.25,15,H-.6,4.6,'#2a2d36');for(const x of[7.2,22.8])box(.25,H-.6,.25,x,(H-.6)/2,4.6,'#2a2d36');
   // the LED wall behind the DJ (a canvas that the update() draws: equaliser, the club's name, shout-outs)
-  const cv=document.createElement('canvas');cv.width=768;cv.height=256;this.wallCanvas=cv;this.wallTex=new THREE.CanvasTexture(cv);this.wallTex.colorSpace=THREE.SRGBColorSpace;
+  const cv=document.createElement('canvas');cv.width=768;cv.height=256;this.wallCanvas=cv;this.wallTex=new THREE.CanvasTexture(cv);this.wallTex.userData.keepCanvas=true;this.wallTex.colorSpace=THREE.SRGBColorSpace;
   const wall=new THREE.Mesh(new THREE.PlaneGeometry(13,4.3),new THREE.MeshBasicMaterial({map:this.wallTex,toneMapped:false}));wall.position.set(this.ox+15,3.2,.2);grp.add(wall);
   // the dance floor: LED tiles (one instanced mesh, coloured each frame)
   const nx=12,nz=8;this.tiles=new THREE.InstancedMesh(new THREE.BoxGeometry(.96,.03,.96),new THREE.MeshBasicMaterial({toneMapped:false}),nx*nz);this.tileXY=[];
@@ -84,7 +84,7 @@ export class ClubInterior {
   this.bottles=this.waitresses.map(()=>{const b=new THREE.Group();const glass=new THREE.Mesh(new THREE.CylinderGeometry(.06,.07,.32,10),this.mat('#1f5c3a',0,{metalness:.4,roughness:.2}));glass.position.y=.16;const neck=new THREE.Mesh(new THREE.CylinderGeometry(.02,.04,.14,8),this.mat('#d4af37',.3));neck.position.y=.38;b.add(glass,neck);b.visible=false;return b;});
   this.waitresses.forEach((p,i)=>p.h.bones['hand.R'].add(this.bottles[i]));
   // the club's name over the bar
-  const tc=document.createElement('canvas');tc.width=1024;tc.height=128;this.titleCanvas=tc;this.titleTexture=new THREE.CanvasTexture(tc);this.titleTexture.colorSpace=THREE.SRGBColorSpace;const title=new THREE.Mesh(new THREE.PlaneGeometry(7,.9),new THREE.MeshBasicMaterial({map:this.titleTexture,transparent:true,toneMapped:false}));title.position.set(this.ox+29.3,4.3,11.5);title.rotation.y=-Math.PI/2;grp.add(title);
+  const tc=document.createElement('canvas');tc.width=1024;tc.height=128;this.titleCanvas=tc;this.titleTexture=new THREE.CanvasTexture(tc);this.titleTexture.userData.keepCanvas=true;this.titleTexture.colorSpace=THREE.SRGBColorSpace;const title=new THREE.Mesh(new THREE.PlaneGeometry(7,.9),new THREE.MeshBasicMaterial({map:this.titleTexture,transparent:true,toneMapped:false}));title.position.set(this.ox+29.3,4.3,11.5);title.rotation.y=-Math.PI/2;grp.add(title);
   this.mergeStats=mergeStatic(st);
   // what you can do
   this.register(15,22,'Exit club',()=>this.exit());

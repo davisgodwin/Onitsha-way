@@ -30,7 +30,7 @@ export const TV_CHANNELS = [
 export const TV_BY_ID = Object.fromEntries(TV_CHANNELS.map(c => [c.id, c]));
 
 export class TVShows {
- constructor(g){this.g=g;this.canvas=document.createElement('canvas');this.canvas.width=512;this.canvas.height=288;this.ctx=this.canvas.getContext('2d');this.texture=new THREE.CanvasTexture(this.canvas);this.texture.colorSpace=THREE.SRGBColorSpace;
+ constructor(g){this.g=g;this.canvas=document.createElement('canvas');this.canvas.width=512;this.canvas.height=288;this.ctx=this.canvas.getContext('2d');this.texture=new THREE.CanvasTexture(this.canvas);this.texture.userData.keepCanvas=true;this.texture.colorSpace=THREE.SRGBColorSpace;
   this.material=new THREE.MeshBasicMaterial({map:this.texture,toneMapped:false});this.channel='news';this.show=0;this.t=0;this.watching=null;this.frame=0;}
  /** the programme now on a channel (changes with the game hour, so it isn't always the same show) */
  programme(id=this.channel){const c=TV_BY_ID[id];const h=Math.floor((this.g.clock?.minutes??0)/60)+(this.g.clock?.day??0)*24;return{c,s:c.shows[h%c.shows.length]};}

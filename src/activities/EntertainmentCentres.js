@@ -83,7 +83,7 @@ export class EntertainmentCentres {
     const g = this.g, s = this.view = new VenueSite(g, 'iweka-viewing-centre', near, { w: 10, d: 9 });
     s.shed({ w: 9.6, d: 8.6, h: 3.2, wall: '#d9cdb4', roof: '#7a8a8e', trim: '#1d3b2f', sign: 'IWEKA VIEWING CENTRE · LIVE FOOTBALL', signBg: '#1d3b2f', signFg: '#ffd35a' });
     this.screenCanvas = document.createElement('canvas'); this.screenCanvas.width = 512; this.screenCanvas.height = 300;
-    this.screenTex = new THREE.CanvasTexture(this.screenCanvas); this.screenTex.colorSpace = THREE.SRGBColorSpace;
+    this.screenTex = new THREE.CanvasTexture(this.screenCanvas); this.screenTex.userData.keepCanvas = true; this.screenTex.colorSpace = THREE.SRGBColorSpace;
     const scr = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 2), new THREE.MeshBasicMaterial({ map: this.screenTex, toneMapped: false })); scr.position.set(0, 1.85, -8.45); s.group.add(scr); this.screen = scr;
     s.box(3.6, 2.2, 0.08, 0, 1.85, -8.5, '#111');
     const seats = [];

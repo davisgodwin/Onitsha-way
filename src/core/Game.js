@@ -24,6 +24,7 @@ import { ClubInterior } from '../life/ClubInterior.js';
 import { TVShows } from '../life/TVShows.js';
 import { FuelStationLife } from '../life/FuelStationLife.js';
 import { CompoundGates } from '../world/CompoundGates.js';
+import { installCanvasRelease, IS_PHONE } from '../render/CanvasRelease.js';
 import { RetailShop } from '../life/RetailShop.js';
 import { CityLife } from '../life/CityLife.js';
 import { CONFIG } from '../config.js';
@@ -113,6 +114,8 @@ export class Game {
     this.bus = new EventBus();
     this.ui = new UIManager(this.bus);
     this.settings = SaveSystem.loadSettings(DEFAULT_SETTINGS);
+    // v0.54: phones (iPhones above all) have far less memory for web pages: start them on the low setting once (they can change it after)
+    try { if (IS_PHONE && !localStorage.getItem('onitshaway:phone54')) { localStorage.setItem('onitshaway:phone54', '1'); if (this.settings.quality !== 'low') { this.settings.quality = 'low'; SaveSystem.saveSettings(this.settings); } } } catch { /* private mode */ }
     let hasSettings = false;
     try { hasSettings = !!localStorage.getItem('onitshaway:settings'); } catch { /* storage blocked */ }
     if (isTouchDevice() && !hasSettings) this.settings.quality = 'low';
@@ -180,6 +183,7 @@ export class Game {
 
   async init() {
     this.renderer = new Renderer(document.getElementById('viewport'), this.settings.quality);
+    this.canvasRelease = installCanvasRelease(this.renderer.renderer); // v0.54: free canvas memory (iPhone limit)
     this.ui.setLoading(0.02, 'Preparing renderer');
     this.world = await World.create(this.renderer, {
       quality: this.settings.quality,
@@ -825,6 +829,8 @@ export class Game {
     if (this.state === 'creator' && this.creatorKey) { const y=this.cameraRig.yaw;this.creatorKey.position.set(Math.sin(y)*2.5+Math.cos(y)*1.2,2.8,Math.cos(y)*2.5-Math.sin(y)*1.2);this.creatorFill.position.set(Math.sin(y)*1.8-Math.cos(y)*1.6,1.8,Math.cos(y)*1.8+Math.sin(y)*1.6); }
     this.vehicles?.animateDoors(dt);
     this.cityLife?.update(dt);
+    if (this.canvasRelease && this.state !== 'loading') this.canvasRelease.loading = false;
+    if ((this._sweepT = (this._sweepT ?? 0) + dt) > 3) { this._sweepT = 0; this.canvasRelease?.sweep(); }
     this.gates?.update(dt); (this.fuelLife ??= new FuelStationLife(this)).update(dt); // v0.53 cars and attendants at the filling stations
     this.showroom?.update?.(dt); this.morePlaces?.update(dt); // v0.49 the showrooms' turntables (and hiding them when far off)
     for(const place of this.activityPlaces??[])place.update?.(dt);

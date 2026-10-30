@@ -25,7 +25,7 @@
         <h1 class="brand-title" aria-label="Onitsha Way"><span class="sign-board">Onitsha<span>Way</span></span></h1>
         <div class="brand-kicker">Anambra State, Nigeria</div>
       </div>
-      <p class="load-version">v0.54.0</p>
+      <p class="load-version">v0.54.1</p>
       <div class="loadbar" role="progressbar" aria-label="City loading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="loadbar-fill"></div></div>
       <p class="load-status">Starting…</p>
     </section>
@@ -46,7 +46,7 @@
           <button class="btn" data-action="settings"><span class="btn-label">Settings</span><span class="btn-sub">Graphics, controls, sound, your save</span></button>
           <button class="btn" data-action="credits"><span class="btn-label">About &amp; credits</span></button>
         </nav>
-        <p class="menu-foot">v0.54.0 · Map data © OpenStreetMap contributors (ODbL)</p>
+        <p class="menu-foot">v0.54.1 · Map data © OpenStreetMap contributors (ODbL)</p>
       </div>
     </section>
 
@@ -401,6 +401,14 @@
         var l = document.getElementById('screen-loading'), st = l && l.querySelector('.load-status');
         if (l && !l.hidden && !l.classList.contains('entry-active') && st) st.textContent = 'Still loading… On a slow connection the map (2.5 MB) can take a minute. If nothing changes, reload the page.';
       }, 45000);
+      // v0.54: if something breaks while the game loads, show it (so a player can send a screenshot) instead of a frozen bar
+      window.__owLoadErr = function (msg) {
+        var l = document.getElementById('screen-loading'), st = l && l.querySelector('.load-status');
+        if (!l || l.hidden || !st || window.__game && window.__game.state && window.__game.state !== 'loading') return;
+        st.textContent = 'The game could not finish loading on this device: ' + String(msg).slice(0, 160) + ' — please reload. If it happens again, send us a screenshot of this message.';
+      };
+      window.addEventListener('error', function (e) { window.__owLoadErr(e.message || (e.error && e.error.message) || 'script error'); });
+      window.addEventListener('unhandledrejection', function (e) { window.__owLoadErr((e.reason && e.reason.message) || e.reason || 'error'); });
     </script>
   </div>
   <script type="module" src="/src/main.js"></script>

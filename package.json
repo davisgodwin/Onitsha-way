@@ -1,6 +1,6 @@
 {
   "name": "onitsha-way",
-  "version": "0.54.0",
+  "version": "0.54.1",
   "description": "Onitsha Way \u2014 open-world Nigerian lifestyle simulator (browser, Three.js)",
   "scripts": {
     "dev": "node scripts/local.mjs",

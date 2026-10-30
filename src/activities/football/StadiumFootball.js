@@ -93,7 +93,7 @@ export class StadiumFootball {
     for (const x of [-L / 2, L / 2]) for (const z of [-W / 2, W / 2]) { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.3, 5), steel); p.position.set(x, 0.65, z); f.add(p); const fl = new THREE.Mesh(new THREE.PlaneGeometry(0.35, 0.25), flagMat); fl.position.set(x + 0.17, 1.15, z); f.add(fl); }
     // scoreboard behind the far touchline, facing the main side
     this.sbCanvas = document.createElement('canvas'); this.sbCanvas.width = 512; this.sbCanvas.height = 160;
-    this.sbTex = new THREE.CanvasTexture(this.sbCanvas); this.sbTex.colorSpace = THREE.SRGBColorSpace;
+    this.sbTex = new THREE.CanvasTexture(this.sbCanvas); this.sbTex.userData.keepCanvas = true; this.sbTex.colorSpace = THREE.SRGBColorSpace;
     const face = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 2), new THREE.MeshBasicMaterial({ map: this.sbTex, toneMapped: false }));
     face.position.set(0, 4.1, -W / 2 - 4.8); f.add(face);
     const back = new THREE.Mesh(new THREE.BoxGeometry(6.7, 2.3, 0.2), steel); back.position.set(0, 4.1, -W / 2 - 4.92); f.add(back);

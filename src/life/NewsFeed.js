@@ -92,7 +92,7 @@ export class NewsFeed {
   const grp = new THREE.Group(); grp.position.set(x, 0, z); const yaw = Math.random() * 0; grp.rotation.y = yaw;
   const post = new THREE.Mesh(new THREE.BoxGeometry(0.35, 5.6, 0.35), new THREE.MeshStandardMaterial({ color: '#2b2f33' })); post.position.y = 2.8; grp.add(post);
   const frame = new THREE.Mesh(new THREE.BoxGeometry(6.4, 3.4, 0.35), new THREE.MeshStandardMaterial({ color: '#15181c' })); frame.position.set(0, 6.6, 0); grp.add(frame);
-  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.userData.keepCanvas = true;
   const mat = new THREE.MeshBasicMaterial({ map: tex }); for (const s of [1, -1]) { const m = new THREE.Mesh(new THREE.PlaneGeometry(6, 3), mat); m.position.set(0, 6.6, 0.19 * s); if (s < 0) m.rotation.y = Math.PI; grp.add(m); }
   this.group.add(grp); this.g.world.collision.addCircle(x, z, 0.4); return { x, z, cv, tex, group: grp };
  }
