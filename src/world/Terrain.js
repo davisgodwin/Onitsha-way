@@ -1,3 +1,4 @@
+import { planned } from '../core/PlanLog.js';
 import * as THREE from 'three';
 import { GeoBuilder } from './GeoBuilder.js';
 
@@ -30,7 +31,7 @@ export function buildTerrain(map, tex, collision) {
   const wbox = map.water.map((w) => { let a = Infinity, b = -Infinity, c = Infinity, d = -Infinity; for (const [x, z] of w.outer) { a = Math.min(a, x); b = Math.max(b, x); c = Math.min(c, z); d = Math.max(d, z); } return { w, a, b, c, d }; });
   // v0.54.4: plus edges bucketed by z band, so a point only tests the edges its ray can cross (identical parity answer)
   for (const q of wbox) q.band = bandIndex(q.w.outer, q.c, q.d);
-  const waterTest = (x, z) => wbox.some((q) => x >= q.a && x <= q.b && z >= q.c && z <= q.d && inPolyBanded(x, z, q.w.outer, q.band));
+  const waterTest = planned('isWater', (x, z) => wbox.some((q) => x >= q.a && x <= q.b && z >= q.c && z <= q.d && inPolyBanded(x, z, q.w.outer, q.band)));
   const col = new THREE.Color('#ffffff');
   const skirt = (ring) => {
     for (let i = 0; i < ring.length; i++) {

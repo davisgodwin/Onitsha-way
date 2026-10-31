@@ -39,7 +39,7 @@ export function yardClear(world, g, pts, ignore, why = null, { roadEnd = false }
   const xs = pts.map((p) => p[0]), zs = pts.map((p) => p[1]), minX = Math.min(...xs), maxX = Math.max(...xs), minZ = Math.min(...zs), maxZ = Math.max(...zs);
   // walls and buildings: any wall inside or crossing the rectangle
   for (const ei of col._nearbyEdges(minX, minZ, maxX, maxZ)) {
-    const e = col.edges[ei], poly = col.polys[e.poly]; if (!poly || poly.height <= 0 || poly.minX === Infinity) continue;
+    const e = col.edge(ei), poly = col.polys[e.poly]; if (!poly || poly.height <= 0 || poly.minX === Infinity) continue;
     const A = [e.ax, e.az], B = [e.bx, e.bz];
     if (pointInPolygon(A[0], A[1], pts) || pointInPolygon(B[0], B[1], pts)) return no('wall');
     for (let i = 0; i < 4; i++) if (segX(A, B, pts[i], pts[(i + 1) % 4])) return no('wall');

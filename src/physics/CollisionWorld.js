@@ -1,4 +1,5 @@
 import { pointInPolygon } from '../core/utils.js';
+import { planned, indexIn } from '../core/PlanLog.js';
 
 /**
  * 2D (top-down) collision world. The city is effectively flat, so walls are line segments and
@@ -9,7 +10,9 @@ export class CollisionWorld {
   constructor(cellSize = 8) {
     this.cs = cellSize;
     this.grid = new Map();
-    this.edges = [];      // {ax, az, bx, bz, nx, nz, poly}
+    // v0.55: walls are kept in flat number arrays (ax, az, bx, bz per wall + its polygon), not one object per wall:
+    // the city has over 600,000 walls and as objects they took about 85 MB. edge(ei) gives an object when needed.
+    this._E = new Float64Array(4 * 4096); this._EP = new Int32Array(4096); this.edgeCount = 0;
     this.polys = [];      // {pts, height, minX, maxX, minZ, maxZ}
     this.circles = [];    // {x, z, r}
     this.circleGrid = new Map();
@@ -33,18 +36,38 @@ export class CollisionWorld {
     const pi = this.polys.length;
     let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
     for (const [x, z] of pts) { minX = Math.min(minX, x); maxX = Math.max(maxX, x); minZ = Math.min(minZ, z); maxZ = Math.max(maxZ, z); }
-    this.polys.push({ pts, height, minX, maxX, minZ, maxZ, tag: this.tag ?? 0, e0: this.edges.length, en: pts.length }); // tag: v0.48 map-extension phase; e0/en: its walls (v0.54.2)
+    this.polys.push({ pts, height, minX, maxX, minZ, maxZ, tag: this.tag ?? 0, e0: this.edgeCount, en: pts.length }); // tag: v0.48 map-extension phase; e0/en: its walls (v0.54.2)
     for (let i = 0; i < pts.length; i++) {
       const [ax, az] = pts[i], [bx, bz] = pts[(i + 1) % pts.length];
-      const L = Math.hypot(bx - ax, bz - az) || 1;
-      const ei = this.edges.length;
-      this.edges.push({ ax, az, bx, bz, nx: (bz - az) / L, nz: -(bx - ax) / L, poly: pi });
+      const ei = this._pushEdge(ax, az, bx, bz, pi);
       this._cellsFor(Math.min(ax, bx), Math.min(az, bz), Math.max(ax, bx), Math.max(az, bz), (k) => {
-        if (!this.grid.has(k)) this.grid.set(k, []);
-        this.grid.get(k).push(ei);
+        const l = this.grid.get(k); if (l) l.push(ei); else this.grid.set(k, [ei]);
       });
     }
     return pi;
+  }
+
+  _pushEdge(ax, az, bx, bz, pi) {
+    const ei = this.edgeCount;
+    if (ei >= this._EP.length) { const n = this._EP.length * 2, E = new Float64Array(4 * n), P = new Int32Array(n); E.set(this._E); P.set(this._EP); this._E = E; this._EP = P; }
+    const E = this._E, o = ei * 4; E[o] = ax; E[o + 1] = az; E[o + 2] = bx; E[o + 3] = bz; this._EP[ei] = pi; this.edgeCount = ei + 1;
+    return ei;
+  }
+  /** Old code that reads collision.edges[i] / .length still works (slow path; the game's own code uses edge(i)). */
+  get edges() { return this._edgesView ??= new Proxy([], { get: (t, k) => k === 'length' ? this.edgeCount : typeof k === 'string' && /^\d+$/.test(k) ? this.edge(+k) : k === Symbol.iterator ? function* () { for (let i = 0; i < this.edgeCount; i++) yield this.edge(i); }.bind(this) : undefined }); }
+  /** One wall as an object {ax, az, bx, bz, nx, nz, poly} (for code outside the hot paths). */
+  edge(ei) {
+    if (!(ei >= 0 && ei < this.edgeCount)) return undefined;
+    const E = this._E, o = ei * 4, ax = E[o], az = E[o + 1], bx = E[o + 2], bz = E[o + 3], L = Math.hypot(bx - ax, bz - az) || 1;
+    return { ax, az, bx, bz, nx: (bz - az) / L, nz: -(bx - ax) / L, poly: this._EP[ei] };
+  }
+
+  /** v0.55: after loading, give every grid cell a list of exactly its size (a growing list keeps spare room: ~20 MB here). Same contents, same order. */
+  compact() {
+    let cells = 0;
+    for (const g of [this.grid, this.circleGrid]) for (const [k, l] of g) { if (l.length) g.set(k, l.slice()); else g.delete(k); cells++; }
+    if (this._EP.length > this.edgeCount + 1024) { this._E = this._E.slice(0, 4 * (this.edgeCount + 1024)); this._EP = this._EP.slice(0, this.edgeCount + 1024); }
+    return cells;
   }
 
   addCircle(x, z, r) {
@@ -67,17 +90,19 @@ export class CollisionWorld {
   removePolygon(pi) {
     const p = this.polys[pi]; if (!p) return;
     // v0.54.2: only this polygon's own walls (they were added together), not a scan of every wall in the city
-    const from = p.e0 ?? 0, to = p.e0 != null ? p.e0 + p.en : this.edges.length;
-    for (let ei = from; ei < to; ei++) { const e = this.edges[ei];
-      if (e.poly !== pi) continue;
-      this._cellsFor(Math.min(e.ax, e.bx), Math.min(e.az, e.bz), Math.max(e.ax, e.bx), Math.max(e.az, e.bz), (k) => { const l = this.grid.get(k); if (l) { const i = l.indexOf(ei); if (i >= 0) l.splice(i, 1); } });
+    const from = p.e0 ?? 0, to = p.e0 != null ? p.e0 + p.en : this.edgeCount;
+    const to2 = p.e0 != null ? to : this.edgeCount, E = this._E;
+    for (let ei = from; ei < to2; ei++) {
+      if (this._EP[ei] !== pi) continue;
+      const o = ei * 4, ax = E[o], az = E[o + 1], bx = E[o + 2], bz = E[o + 3];
+      this._cellsFor(Math.min(ax, bx), Math.min(az, bz), Math.max(ax, bx), Math.max(az, bz), (k) => { const l = this.grid.get(k); if (l) { const i = l.indexOf(ei); if (i >= 0) l.splice(i, 1); } });
     }
     p.minX = p.minZ = Infinity; p.maxX = p.maxZ = -Infinity; // never "inside" it again
   }
 
   _nearbyEdges(minX, minZ, maxX, maxZ) {
     // v0.54.4: same edges in the same order as before, de-duplicated with a stamp array instead of a Set
-    const out = [], cs = this.cs, n = this.edges.length;
+    const out = [], cs = this.cs, n = this.edgeCount;
     if (!this._stamp || this._stamp.length < n) { this._stamp = new Uint32Array(n + 4096); this._mk = 0; }
     if (++this._mk >= 0xffffffff) { this._stamp.fill(0); this._mk = 1; }
     const st = this._stamp, mk = this._mk;
@@ -91,7 +116,7 @@ export class CollisionWorld {
   /** Is the point inside any building footprint? */
   insidePolygon(x, z, ignoreTag = null) {
     for (const ei of this._nearbyEdges(x, z, x, z)) {
-      const p = this.polys[this.edges[ei].poly];
+      const p = this.polys[this._EP[ei]];
       if (ignoreTag != null && p.tag === ignoreTag) continue;
       if (x >= p.minX && x <= p.maxX && z >= p.minZ && z <= p.maxZ && pointInPolygon(x, z, p.pts)) return p;
     }
@@ -102,10 +127,11 @@ export class CollisionWorld {
   /** ignoreTag (v0.48): leave out colliders added with that tag (the map extension), to place things of the earlier map exactly as before. */
   isFree(x, z, r, ignoreTag = null) {
     if (this.insidePolygon(x, z, ignoreTag)) return false;
+    const E = this._E;
     for (const ei of this._nearbyEdges(x - r, z - r, x + r, z + r)) {
-      const e = this.edges[ei];
-      if (ignoreTag != null && this.polys[e.poly]?.tag === ignoreTag) continue;
-      if (distToSeg(x, z, e) < r) return false;
+      if (ignoreTag != null && this.polys[this._EP[ei]]?.tag === ignoreTag) continue;
+      const o = ei * 4;
+      if (distToSegXY(x, z, E[o], E[o + 1], E[o + 2], E[o + 3]) < r) return false;
     }
     for (const ci of this.circleGrid.get(this._key(Math.floor(x / this.cs), Math.floor(z / this.cs))) ?? []) {
       const c = this.circles[ci];
@@ -123,7 +149,7 @@ export class CollisionWorld {
     for (let iter = 0; iter < 3; iter++) {
       let moved = false;
       for (const ei of this._nearbyEdges(pos.x - r, pos.z - r, pos.x + r, pos.z + r)) {
-        const e = this.edges[ei];
+        const e = this.edge(ei);
         const [cx, cz] = closestOnSeg(pos.x, pos.z, e);
         let dx = pos.x - cx, dz = pos.z - cz;
         const d = Math.hypot(dx, dz);
@@ -172,9 +198,10 @@ export class CollisionWorld {
   /** First hit along a→b against walls. Returns fraction 0..1 (1 = clear). */
   raycast(ax, az, bx, bz) {
     let best = 1;
+    const E = this._E;
     for (const ei of this._nearbyEdges(Math.min(ax, bx), Math.min(az, bz), Math.max(ax, bx), Math.max(az, bz))) {
-      const e = this.edges[ei];
-      const t = segIntersect(ax, az, bx, bz, e.ax, e.az, e.bx, e.bz);
+      const o = ei * 4;
+      const t = segIntersect(ax, az, bx, bz, E[o], E[o + 1], E[o + 2], E[o + 3]);
       if (t !== null && t < best) best = t;
     }
     return best;
@@ -188,7 +215,12 @@ function closestOnSeg(px, pz, e) {
   t = t < 0 ? 0 : t > 1 ? 1 : t;
   return [e.ax + t * dx, e.az + t * dz];
 }
-function distToSeg(px, pz, e) { const [cx, cz] = closestOnSeg(px, pz, e); return Math.hypot(px - cx, pz - cz); }
+function distToSegXY(px, pz, ax, az, bx, bz) {
+  const dx = bx - ax, dz = bz - az, L = dx * dx + dz * dz;
+  let t = L ? ((px - ax) * dx + (pz - az) * dz) / L : 0;
+  t = t < 0 ? 0 : t > 1 ? 1 : t;
+  return Math.hypot(px - (ax + t * dx), pz - (az + t * dz));
+}
 function segIntersect(p0x, p0z, p1x, p1z, q0x, q0z, q1x, q1z) {
   const rx = p1x - p0x, rz = p1z - p0z, sx = q1x - q0x, sz = q1z - q0z;
   const den = rx * sz - rz * sx;
@@ -197,3 +229,7 @@ function segIntersect(p0x, p0z, p1x, p1z, q0x, q0z, q1x, q1z) {
   const t = (qx * sz - qz * sx) / den, u = (qx * rz - qz * rx) / den;
   return t >= 0 && t <= 1 && u >= 0 && u <= 1 ? t : null;
 }
+
+// v0.55: answered from the city plan file while loading (see core/PlanLog.js)
+CollisionWorld.prototype.isFree = planned('col.isFree', CollisionWorld.prototype.isFree);
+CollisionWorld.prototype.insidePolygon = planned('col.inside', CollisionWorld.prototype.insidePolygon, indexIn(function () { return this.polys; }));

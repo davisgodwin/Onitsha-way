@@ -1,3 +1,4 @@
+import { planned, indexIn } from '../core/PlanLog.js';
 import * as THREE from 'three';
 import { GeoBuilder } from './GeoBuilder.js';
 import { rect, roadConflict, frontageCandidates } from './StreetLayout.js';
@@ -25,7 +26,7 @@ export const CIVIC_SITES = [
 ];
 const C = (c) => new THREE.Color(c);
 const corners = (pts) => pts;
-function overlapsBuilding(map, pts) {
+const overlapsBuilding = planned('civicOverlap', function overlapsBuilding(map, pts) {
  const xs = pts.map((p) => p[0]), zs = pts.map((p) => p[1]), minX = Math.min(...xs) - 2, maxX = Math.max(...xs) + 2, minZ = Math.min(...zs) - 2, maxZ = Math.max(...zs) + 2;
  for (const b of map.buildings) {
   if (b.layoutHidden) continue; const bp = b.pts; let inBox = false;
@@ -35,7 +36,7 @@ function overlapsBuilding(map, pts) {
   const cx = bp.reduce((a, p) => a + p[0], 0) / bp.length, cz = bp.reduce((a, p) => a + p[1], 0) / bp.length; if (pointInPolygon(cx, cz, pts)) return b;
  }
  return null;
-}
+}, indexIn((args) => args[0].buildings));
 /** Oriented box of a footprint, its front edge facing the road. */
 function footprintBox(b) {
  const pts = b.pts, e = b.front >= 0 ? b.front : 0, [ax, az] = pts[e], [bx, bz] = pts[(e + 1) % pts.length], L = Math.hypot(bx - ax, bz - az) || 1;

@@ -5,6 +5,7 @@ import { segDistSq } from '../core/utils.js';
  * Read-only access to the extracted OSM map (public/data/onitsha_core.json).
  * Also exposes the road graph that NPC navigation and transport routes will use later.
  */
+import { planned, indexIn } from '../core/PlanLog.js';
 const EMPTY = Object.freeze([]);
 export class MapData {
   static async load(url, onProgress) {
@@ -108,3 +109,6 @@ export class MapData {
   isJunction(nodeIndex) { return this.junctions.has(nodeIndex); }
   useFullBounds() { this.bounds = this.fullBounds; }
 }
+
+// v0.55: answered from the city plan file while loading (see core/PlanLog.js)
+MapData.prototype.onCarriageway = planned('map.onRoad', MapData.prototype.onCarriageway, indexIn(function () { return this.roads; }));

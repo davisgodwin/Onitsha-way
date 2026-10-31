@@ -1,8 +1,11 @@
 import { defineConfig } from 'vite';
+import { planKey } from './scripts/plan-key.mjs';
 
 // base './' keeps the build portable (works from a sub-folder or static host)
 export default defineConfig({
   base: './',
+  // v0.55: the city plan file must match this exact game code and map (see src/core/PlanLog.js)
+  define: { __OW_PLAN_KEY__: JSON.stringify(planKey()) },
   server: { host: '127.0.0.1', port: 5173, strictPort: true, fs: { deny: ['.env', '.env.*', '*.{crt,pem}', '**/.git/**', '**/server/**'] }, proxy: { '/api': 'http://127.0.0.1:8787', '/socket': { target: 'ws://127.0.0.1:8787', ws: true } } },
   preview: { host: '127.0.0.1', proxy: { '/api': 'http://127.0.0.1:8787', '/socket': { target: 'ws://127.0.0.1:8787', ws: true } } },
   build: {

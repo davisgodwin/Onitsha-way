@@ -66,13 +66,24 @@ export const IS_PHONE = typeof navigator !== 'undefined' && (IS_IOS || /Android.
  * code builds new things from them), and instanced meshes are left alone.
  */
 let hooked = false;
-export function freeAfterUpload(root) {
-  if (!root) return 0;
+/** v0.55: one geometry that nothing reads back on the CPU (no picking, no culling box needed): drop its arrays once uploaded. */
+export function freeGeometryAfterUpload(g) {
+  if (!g) return 0; hookUploads(); let n = 0;
+  if (!g.boundingSphere) g.computeBoundingSphere(); if (!g.boundingBox) g.computeBoundingBox();
+  for (const a of Object.values(g.attributes)) if (!a.isInterleavedBufferAttribute && a.usage === THREE.StaticDrawUsage && a.version === 0) { a.__freeAfterUpload = true; n++; }
+  if (g.index && g.index.version === 0) g.index.__freeAfterUpload = true;
+  return n;
+}
+function hookUploads() {
   if (!hooked) { hooked = true; const proto = THREE.BufferAttribute.prototype, orig = proto.onUploadCallback;
     proto.onUploadCallback = function () { orig?.call(this); if (this.__freeAfterUpload) this.array = null; };
     const desc = Object.getOwnPropertyDescriptor(proto, 'needsUpdate');
     if (desc?.set) Object.defineProperty(proto, 'needsUpdate', { configurable: true, get: desc.get, set(v) { if (this.array === null) return; desc.set.call(this, v); } });
   }
+}
+export function freeAfterUpload(root) {
+  if (!root) return 0;
+  hookUploads();
   const uses = new Map(); root.traverse((o) => { if (o.geometry) uses.set(o.geometry, (uses.get(o.geometry) ?? 0) + 1); });
   let n = 0;
   root.traverse((o) => {

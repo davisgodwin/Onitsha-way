@@ -122,7 +122,7 @@ export class Minimap {
     g.globalCompositeOperation = 'source-over'; g.fillStyle = C.soon;
     if (pa.zs?.length) { g.beginPath(); const [ax] = T(this.ox, 0), z0 = pa.zs[0], z1 = pa.zs[pa.zs.length - 1]; g.moveTo(ax, 0); g.lineTo(T(pa.rows.get(z0), 0)[0], 0); for (const z of pa.zs) { const [px, py] = T(pa.rows.get(z), z); g.lineTo(px, py); } g.lineTo(T(pa.rows.get(z1), 0)[0], H); g.lineTo(ax, H); g.closePath();
       g.save(); g.globalCompositeOperation = 'destination-out'; g.fill(); g.restore(); g.fill(); }
-    const bg = this.base.getContext('2d'); bg.drawImage(shade, 0, 0); this.ground.getContext('2d').drawImage(shade, 0, 0, this.ground.width, this.ground.height);
+    const bg = this.base.getContext('2d'); bg.drawImage(shade, 0, 0); this.ground.getContext('2d').drawImage(shade, 0, 0, this.ground.width, this.ground.height); shade.width = shade.height = 0; // v0.55: give its memory back now (iPhone canvas limit)
     // the LGA lines, dashed
     bg.save(); bg.setLineDash([6, 5]); bg.strokeStyle = 'rgba(120,96,150,0.75)'; bg.lineWidth = 1.4; for (const p of polys) outline(bg, p, T); bg.restore();
     this.soonLabels = COMING_SOON.filter((p) => !p.onitsha).map((p) => { const q = project(this.map.meta, p.lat, p.lon), B = this.map.fullBounds ?? this.map.bounds; // a town beyond the map's edge is named just inside it

@@ -1,3 +1,4 @@
+import { freeGeometryAfterUpload } from '../render/CanvasRelease.js';
 import {VEHICLE_MODELS} from '../data/housing.js';
 import {ensureNPCVehicleOwners} from '../vehicles/NPCVehicleOwners.js';
 import {VEHICLE_CATALOGUE} from '../data/VehicleCatalogue.js';
@@ -131,7 +132,9 @@ export class TrafficSystem {
     this.group = new THREE.Group(); this.group.name = 'Traffic';
     this.glass = {};
     for (const [k, t] of Object.entries(TYPES)) {
-      const [bodyGeo, glassGeo] = splitGlass(t.geo());
+      const src = t.geo(), [bodyGeo, glassGeo] = splitGlass(src);
+      // v0.55: these copies are only drawn (instanced, never picked): their arrays go once on the graphics card (~20 MB)
+      for (const q of [bodyGeo, glassGeo]) if (q && q !== src) freeGeometryAfterUpload(q);
       const m = new THREE.InstancedMesh(bodyGeo, new THREE.MeshStandardMaterial({ vertexColors: true, side: THREE.DoubleSide, roughness: 0.27, metalness: 0.45 }), this.capacity);
       m.count = 0; m.castShadow = true; m.frustumCulled = false; m.name = 'traffic:' + k;
       m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);

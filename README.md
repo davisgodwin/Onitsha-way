@@ -1,4 +1,6 @@
-## Current update — v0.54.4: faster loading (about 18% on the test machine), same city layout, street dressing built near you. See [UPDATE_54_4.md](UPDATE_54_4.md).
+## Current update — v0.55.0: the city is worked out once (plan files in public/plan/), not on every phone: load about 40–45% faster on Low and Medium on the test machine, same city, less memory. After changing src/ or the map run `npm run bake`. See [UPDATE_55.md](UPDATE_55.md).
+
+## Previous update — v0.54.4: faster loading (about 18% on the test machine), same city layout, street dressing built near you. See [UPDATE_54_4.md](UPDATE_54_4.md).
 
 ## Previous update — v0.54.0: ready to launch on Render (game + accounts + multiplayer + Paystack test), playable on Vercel offline
 

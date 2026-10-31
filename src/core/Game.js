@@ -100,6 +100,7 @@ import { BasketballCourt } from '../activities/basketball/BasketballCourt.js';
 import { Jogging } from '../activities/Jogging.js';
 import { CarWash } from '../activities/CarWash.js';
 import { CityEvents } from '../activities/CityEvents.js';
+import { PlanLog, startRecording, packRecording, startReplay, finishReplay } from './PlanLog.js';
 
 const DEFAULT_SETTINGS = { quality: 'medium', sensitivity: 1, invertY: false, showFps: false, volume: 0.7, fov: CONFIG.camera.fov, adaptive: true, clockSpeed: 1, clockMode:'real', liveWeather:false, hints: true };
 const AUTOSAVE_SECONDS = 60;
@@ -119,6 +120,9 @@ export class Game {
     let hasSettings = false;
     try { hasSettings = !!localStorage.getItem('onitshaway:settings'); } catch { /* storage blocked */ }
     if (isTouchDevice() && !hasSettings) this.settings.quality = 'low';
+    // v0.55: if the last load never finished (the browser ran out of memory and reloaded the page, as Safari does on
+    // older iPhones), this load uses the low setting, which lays out a smaller city and needs less memory
+    try { const at = +localStorage.getItem('ow:loadingAt') || 0; if (at && Date.now() - at < 15 * 60000 && this.settings.quality !== 'low') { this.settings.quality = 'low'; SaveSystem.saveSettings(this.settings); this.loweredAfterCrash = true; } localStorage.setItem('ow:loadingAt', String(Date.now())); } catch { /* storage blocked */ }
     this.state = 'loading';
     this.touch = isTouchDevice();
     this.params = new URLSearchParams(location.search);
@@ -185,6 +189,7 @@ export class Game {
     this.renderer = new Renderer(document.getElementById('viewport'), this.settings.quality);
     this.canvasRelease = installCanvasRelease(this.renderer.renderer); // v0.54: free canvas memory (iPhone limit)
     this.ui.setLoading(0.02, 'Preparing renderer');
+    await this.loadPlan(); // v0.55: the city plan file (answers worked out once, so phones don't redo them)
     this.world = await World.create(this.renderer, {
       quality: this.settings.quality,
       onProgress: (p, t) => this.ui.setLoading(p, t),
@@ -322,10 +327,14 @@ export class Game {
     // v0.54.3: the big static parts of the city keep no second copy of their shapes once on the graphics card (phones)
     try { const W = this.world, freed = [W.roads, W.props?.group, W.bridges?.group, W.markets?.group, W.districtDressing, W.comingSoon?.group, W.graWelcome?.group, W.graGround?.group, this.transport?.shelters, W.riverfront?.group, W.placeSigns?.group, W.terrain?.group]
       .reduce((n, grp) => n + freeAfterUpload(grp), 0); for (const ch of W.root?.children ?? []) if (/MarketDistricts|Monuments|MallPrecinct|Flyover|LandmarkDressing|civic:/.test(ch.name)) freeAfterUpload(ch); W.stats.freedAttrs = freed; } catch (err) { console.warn('[memory]', err); }
+    if (!this.endPlan()) return; // the plan file didn't fit: reloading without it
+    try { this.world.stats.collisionCells = this.world.collision.compact(); } catch (err) { console.warn('[collision] compact', err); }
     await this.loadStep(0.62, 'Building the streets around Old Market Road');
     await this.world.warmUp(this.spawn.x, this.spawn.z, (p) => this.ui.setLoading(0.62 + p * 0.36));
     this.ui.setLoading(1, 'Ready');
     this.ui.hideLoading();
+    try { localStorage.removeItem('ow:loadingAt'); } catch { /* storage blocked */ }
+    if (this.loweredAfterCrash) setTimeout(() => this.ui.toast?.('The last load ran out of memory, so the game switched to the Low setting. You can change it in Settings.'), 1500);
     this.showMenu();
 
     this.fps = { frames: 0, t: 0, value: 0 };
@@ -1536,6 +1545,45 @@ export class Game {
   }
 
   /** v0.54.2: a loading step: show it, note how long the last one took, and let the browser draw and breathe */
+  /** v0.55: fetch the city plan for this build and graphics setting (see core/PlanLog.js). Never blocks loading for long. */
+  async loadPlan() {
+    const key = typeof __OW_PLAN_KEY__ === 'string' ? __OW_PLAN_KEY__ : null, q = this.settings.quality;
+    this.planInfo = { key, quality: q, used: false };
+    const qs = new URLSearchParams(location.search);
+    if (qs.has('planrecord')) { startRecording(); this.planInfo.recording = true; return; }
+    if (!key || qs.has('noplan')) return;
+    if (/[?&](lots|preview-gra)=/.test(location.search)) { this.planInfo.skipped = 'test settings in the address'; return; } // they change the layout
+    try { if (sessionStorage.getItem('ow:noplan') === key) { this.planInfo.skipped = 'reloaded without it'; return; } } catch { /* private mode */ }
+    try {
+      this.ui.setLoading(0.03, 'Loading the city plan');
+      const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 25000);
+      const res = await fetch(`${import.meta.env.BASE_URL}plan/${key}-${q}.bin`, { signal: ctl.signal }); clearTimeout(t);
+      if (!res.ok) { this.planInfo.skipped = 'no plan file (' + res.status + ')'; return; }
+      const buf = await res.arrayBuffer(); this.planInfo.bytes = buf.byteLength;
+      this.planInfo.used = startReplay(buf, { key, quality: q });
+      if (this.planInfo.used) { const v = document.querySelector('.load-version'); if (v) v.textContent += ' · city plan'; } // so you can see it is in use
+    } catch (err) { this.planInfo.skipped = String(err?.message ?? err); }
+  }
+  /** What the finished plan must look like (compared with the recording). */
+  planCheck() {
+    const C = this.world.collision, h = (a) => { let x = 0; for (const t of a) { const s = String(t); for (let i = 0; i < s.length; i++) x = (x * 31 + s.charCodeAt(i)) | 0; } return x; };
+    return { edges: C.edgeCount, polys: C.polys.length, circles: C.circles.length, listings: this.homes?.listings?.length ?? 0,
+      polyH: h(C.polys.map((p) => p.minX.toFixed(3) + p.maxZ.toFixed(3))), circH: h(C.circles.map((c) => c.x.toFixed(3) + c.z.toFixed(3) + c.r)),
+      homesH: h((this.homes?.listings ?? []).map((l) => l.id)), hidden: this.world.map.buildings.filter((b) => b.layoutHidden).length };
+  }
+  /** End of the planned part of loading. False: the plan didn't match, the page reloads without it. */
+  endPlan() {
+    const P = this.planInfo; if (!P) return true;
+    if (P.recording) { window.__planQuality = P.quality; window.__planFile = packRecording({ key: P.key, quality: P.quality, version: document.querySelector('.load-version')?.textContent }, this.planCheck()); P.recorded = window.__planFile.length; return true; }
+    if (!P.used) return true;
+    const ok = finishReplay(this.planCheck()); P.stats = PlanLog.stats;
+    if (ok) return true;
+    console.warn('[plan] the city did not match the plan file; loading again without it', PlanLog.stats);
+    try { sessionStorage.setItem('ow:noplan', P.key); } catch { /* private mode: the address says it instead */ }
+    try { localStorage.removeItem('ow:loadingAt'); } catch { /* storage blocked */ } // not a crash: don't lower the setting
+    const u = new URL(location.href); u.searchParams.set('noplan', '1'); location.replace(u.href); return false;
+  }
+
   async loadStep(frac, label) {
     const now = performance.now(); if (this._stepAt) console.info(`[load] ${this._stepLabel}: ${Math.round(now - this._stepAt)} ms`);
     this._stepAt = now; this._stepLabel = label; this.ui.setLoading(frac, label); await new Promise((r) => setTimeout(r, 0));

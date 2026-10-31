@@ -1,7 +1,10 @@
 import { segDistSq, pointInPolygon } from '../core/utils.js';
+import { planned, indexIn } from '../core/PlanLog.js';
+// v0.55: answered from the city plan file while loading (see core/PlanLog.js)
+export const roadConflict = planned('roadConflict', roadConflictNow, indexIn((args) => args[0].segments));
 
 // Check complete edges, including a road crossing the middle of a footprint.
-export function roadConflict(map, pts, margin = 1.2, skip = null) {
+function roadConflictNow(map, pts, margin = 1.2, skip = null) {
   let minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity;for(const p of pts){if(p[0]<minX)minX=p[0];if(p[0]>maxX)maxX=p[0];if(p[1]<minZ)minZ=p[1];if(p[1]>maxZ)maxZ=p[1];}
   // v0.54.4: same checks in the same order, without string keys, a Set or argument spreading (load-time hot spot)
   const reach=30+margin,c=map.cell,num=!!map.cellSegs,mark=num?map.segMark():0,stamp=num?map._stamp:null,seen=num?null:new Set(),n=pts.length;
@@ -55,9 +58,10 @@ export function frontageCandidates(map,p,{w=14,d=15,maxDistance=780}={}){
  const preferred=p.preferredRoad?.toLowerCase();
  return out.sort((a,b)=>((preferred&&!(a.road.displayName||a.road.name||'').toLowerCase().includes(preferred)?10000:0)+a.dist)-((preferred&&!(b.road.displayName||b.road.name||'').toLowerCase().includes(preferred)?10000:0)+b.dist));
 }
-export function venuePlot(world,p,{w=14,d=15}={}){
- world.venuePlots??=[];const map=world.map,ob=map.bounds,b=(p.x<ob.minX||p.x>ob.maxX||p.z<ob.minZ||p.z>ob.maxZ)?(map.fullBounds??ob):ob; // v0.48: places in the map extension use its bounds
- for(const c of frontageCandidates(map,p,{w,d})){const {x,z,yaw,pts,road,roadPoint}=c;
+// v0.55: choosing the plot (pure, answered from the city plan file while loading) is apart from claiming it
+function venuePick(world,p,{w=14,d=15}={}){
+ const map=world.map,ob=map.bounds,b=(p.x<ob.minX||p.x>ob.maxX||p.z<ob.minZ||p.z>ob.maxZ)?(map.fullBounds??ob):ob; // v0.48: places in the map extension use its bounds
+ for(const c of frontageCandidates(map,p,{w,d})){const {x,z,yaw,pts}=c;
   if(pts.some(([px,pz])=>px<b.minX+2||px>b.maxX-2||pz<b.minZ+2||pz>b.maxZ-2)||roadConflict(map,pts,1.6))continue;
   if(world.venuePlots.some(q=>Math.hypot(q.x-x,q.z-z)<Math.hypot(q.w,q.d)/2+Math.hypot(w,d)/2+1))continue;
   let ok=true;
@@ -68,11 +72,23 @@ export function venuePlot(world,p,{w=14,d=15}={}){
   // Keep the entire street-side apron accessible (two vehicle-width mouths for fuel).
   for(let xx=-w/2;xx<=w/2&&ok;xx+=1.5)for(let t=d/2;t<=d/2+2.3;t+=.7){const px=x+Math.cos(yaw)*xx+Math.sin(yaw)*t,pz=z-Math.sin(yaw)*xx+Math.cos(yaw)*t;if(!world.collision.isFree(px,pz,.5)||world.terrain.isWater(px,pz)||map.inHomeAccess?.(px,pz,.5))ok=false;}
   if(!ok)continue;
-  const pi=world.collision.addPolygon(pts,.01),frontage={roadId:road.id,roadName:road.displayName||road.name||('Unnamed '+road.type+' road'),roadPoint,roadWidth:road.width,setback:2.1};
-  world.venuePlots.push({x,z,w,d,yaw,pi,pts,frontage});
-  return{x:x+Math.sin(yaw)*(d/2-1.5),z:z+Math.cos(yaw)*(d/2-1.5),yaw,frontage,driveway:{length:3.9,width:w-1},plot:{x,z,w,d,pts,pi}};
+  return c;
  }
- throw new Error('No directly road-fronting venue plot near '+JSON.stringify(p));
+ return null;
+}
+const pickRoad=indexIn((args)=>args[0].map.roads);
+const venuePickPlanned=planned('venuePick',venuePick,{
+ enc(c,put,args){if(!c)return put(0);put(1);pickRoad.enc.call(this,c.road,put,args);put(c.x,'f');put(c.z,'f');put(c.yaw,'f');put(c.roadPoint.x,'f');put(c.roadPoint.z,'f');},
+ dec(get,args){if(!get())return null;const road=pickRoad.dec.call(this,get,args),x=get('f'),z=get('f'),yaw=get('f'),rx=get('f'),rz=get('f'),{w=14,d=15}=args[2]??{};return{x,z,yaw,road,roadPoint:{x:rx,z:rz},pts:rect(x,z,w,d,yaw)};},
+});
+export function venuePlot(world,p,{w=14,d=15}={}){
+ world.venuePlots??=[];
+ const c=venuePickPlanned(world,p,{w,d});
+ if(!c)throw new Error('No directly road-fronting venue plot near '+JSON.stringify(p));
+ const {x,z,yaw,pts,road,roadPoint}=c;
+ const pi=world.collision.addPolygon(pts,.01),frontage={roadId:road.id,roadName:road.displayName||road.name||('Unnamed '+road.type+' road'),roadPoint,roadWidth:road.width,setback:2.1};
+ world.venuePlots.push({x,z,w,d,yaw,pi,pts,frontage});
+ return{x:x+Math.sin(yaw)*(d/2-1.5),z:z+Math.cos(yaw)*(d/2-1.5),yaw,frontage,driveway:{length:3.9,width:w-1},plot:{x,z,w,d,pts,pi}};
 }
 
 // Re-pick visible front edges for non-rental buildings; never rotate an irregular

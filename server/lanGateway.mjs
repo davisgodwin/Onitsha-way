@@ -46,7 +46,7 @@ export function createGateway({ distDir, backendHost = '127.0.0.1', backendPort 
 
   function serveFile(req, res, file, stat) {
     const ext = path.extname(file).toLowerCase(), type = TYPES[ext] ?? 'application/octet-stream';
-    const hashed = /\/assets\//.test(file.replaceAll('\\', '/'));
+    const hashed = /\/(assets|plan)\//.test(file.replaceAll('\\', '/')); // v0.55: plan files are named by build too
     res.setHeader('Content-Type', type);
     res.setHeader('Cache-Control', hashed ? 'public, max-age=31536000, immutable' : 'no-cache');
     res.setHeader('X-Content-Type-Options', 'nosniff');

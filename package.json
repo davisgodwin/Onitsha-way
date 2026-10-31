@@ -1,10 +1,11 @@
 {
   "name": "onitsha-way",
-  "version": "0.54.4",
+  "version": "0.55.0",
   "description": "Onitsha Way \u2014 open-world Nigerian lifestyle simulator (browser, Three.js)",
   "scripts": {
     "dev": "node scripts/local.mjs",
     "build": "vite build",
+    "bake": "node scripts/bake-plan.mjs",
     "preview": "vite preview",
     "map": "python tools/osm_extract.py",
     "test": "node tests/economy.test.mjs",
